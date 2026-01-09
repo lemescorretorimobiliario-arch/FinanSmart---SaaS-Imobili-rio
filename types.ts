@@ -70,11 +70,14 @@ export interface UserProfile {
   name: string;
   email: string;
   phone?: string; // Added for PDF contact info
-  avatarUrl?: string; // Google Image
+  avatarUrl?: string; // Public URL from Supabase Storage
+  coverUrl?: string; // Public URL from Supabase Storage
   plan: 'FREE' | 'PRO';
   type: 'CORRETOR' | 'CLIENTE';
   simulationsCount: number;
 }
+
+export type LeadStatus = 'NOVO' | 'EM_ATENDIMENTO' | 'VISITA' | 'PROPOSTA' | 'FECHADO' | 'PERDIDO';
 
 export interface LeadData {
   id: string;
@@ -82,14 +85,19 @@ export interface LeadData {
   email: string;
   phone: string;
   date: string;
-  status: 'NOVO' | 'CONTATADO' | 'FECHADO';
+  status: LeadStatus;
   interest: string; // Valor do imóvel simulado
+  simulationData?: SimulationData; // Dados completos da simulação
 }
 
 export interface SavedSimulation {
   id: string;
   date: string;
   propertyValue: number;
+  downPayment: number;
   termYears: number;
   monthlyPayment: number;
+  interestRate: number;
+  amortizationSystem: AmortizationSystem;
+  monthlyIncome: number;
 }

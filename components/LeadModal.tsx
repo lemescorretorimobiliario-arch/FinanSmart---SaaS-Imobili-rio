@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, Lock, X } from 'lucide-react';
+import { User, Mail, Phone, Save, X, UserPlus } from 'lucide-react';
 
 interface LeadModalProps {
   isOpen: boolean;
@@ -26,24 +26,26 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSubmit }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative animate-scale-in">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <div className="bg-blue-600 p-6 text-center">
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Lock className="w-6 h-6 text-white" />
+        <div className="bg-slate-800 p-6 flex items-center gap-4 border-b border-slate-700">
+          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+            <UserPlus className="w-6 h-6 text-white" />
           </div>
-          <h3 className="text-xl font-bold text-white">Resultado Pronto!</h3>
-          <p className="text-blue-100 text-sm mt-1">
-            Libere sua análise completa preenchendo abaixo.
-          </p>
+          <div>
+            <h3 className="text-xl font-bold text-white">Novo Lead</h3>
+            <p className="text-slate-400 text-sm">
+              Vincular simulação a um cliente.
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Nome Completo</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Nome do Cliente</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -51,14 +53,15 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSubmit }) => {
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="Seu nome"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium text-slate-800"
+                placeholder="Nome completo"
+                autoFocus
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">E-mail</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">E-mail</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -66,14 +69,14 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSubmit }) => {
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="seu@email.com"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium text-slate-800"
+                placeholder="cliente@email.com"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">WhatsApp</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Telefone / WhatsApp</label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -81,22 +84,21 @@ const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSubmit }) => {
                 required
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium text-slate-800"
                 placeholder="(00) 00000-0000"
               />
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-600/20 mt-2"
-          >
-            Ver Minha Simulação
-          </button>
-          
-          <p className="text-xs text-center text-slate-400 mt-4">
-            Seus dados estão seguros. Não enviamos spam.
-          </p>
+          <div className="pt-2">
+            <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
+            >
+                <Save className="w-5 h-5" />
+                Salvar no CRM
+            </button>
+          </div>
         </form>
       </div>
     </div>

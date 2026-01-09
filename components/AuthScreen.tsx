@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Mail, Lock, User, Eye, EyeOff, ArrowRight, Briefcase, Smile } from 'lucide-react';
+import { Layout, Mail, Lock, User, Eye, EyeOff, ArrowRight, Briefcase, Smile, ShieldAlert } from 'lucide-react';
 import { UserProfile } from '../types';
 import { loginWithEmail, registerUser, googleLogin } from '../utils/auth';
 
@@ -14,6 +14,10 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  
+  // Security: Client-side Rate Limiting
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
 
   // Form State
   const [email, setEmail] = useState('');
@@ -23,6 +27,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLocked) return;
+
     setError('');
     setIsLoading(true);
 
@@ -36,20 +42,39 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
         user = await registerUser({ name, email, password, type: userType });
       }
       
+      // Reset attempts on success
+      setLoginAttempts(0);
       onLogin(user);
     } catch (err: any) {
-      setError(err.message || 'Ocorreu um erro. Tente novamente.');
+      // Security: Rate Limiting Logic
+      const newAttempts = loginAttempts + 1;
+      setLoginAttempts(newAttempts);
+      
+      let errorMessage = err.message || 'Ocorreu um erro. Tente novamente.';
+      
+      // If attempts > 3, introduce artificial delay and lock
+      if (newAttempts >= 3) {
+         setIsLocked(true);
+         errorMessage = "Muitas tentativas falhas. Aguarde alguns segundos.";
+         setTimeout(() => {
+             setIsLocked(false);
+         }, 5000 * (newAttempts - 2)); // 5s, 10s, 15s...
+      }
+
+      setError(errorMessage);
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    if (isLocked) return;
     setIsLoading(true);
     // Default to client if generic login, or try to infer context. 
     // For demo, we'll just pick CLIENTE unless we are in register mode and selected Corretor
     const type = mode === 'REGISTER' ? userType : 'CLIENTE';
-    const user = await googleLogin(type);
-    onLogin(user);
+    await googleLogin(type);
+    // OAuth redirects, so we don't need to call onLogin manually.
+    // The app will re-init on redirect return.
   };
 
   return (
@@ -83,7 +108,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
             ></div>
             
             <button 
-              onClick={() => setMode('LOGIN')}
+              onClick={() => { setMode('LOGIN'); setError(''); }}
               className={`flex-1 py-2 text-sm font-bold rounded-lg relative z-10 transition-colors ${
                 mode === 'LOGIN' ? 'text-slate-800' : 'text-slate-400 hover:text-slate-600'
               }`}
@@ -91,7 +116,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
               Entrar
             </button>
             <button 
-              onClick={() => setMode('REGISTER')}
+              onClick={() => { setMode('REGISTER'); setError(''); }}
               className={`flex-1 py-2 text-sm font-bold rounded-lg relative z-10 transition-colors ${
                 mode === 'REGISTER' ? 'text-slate-800' : 'text-slate-400 hover:text-slate-600'
               }`}
@@ -196,18 +221,24 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
           )}
 
           {error && (
-            <div className="text-red-500 text-xs text-center bg-red-50 p-2 rounded-lg">
+            <div className="text-red-600 text-xs text-center bg-red-50 p-3 rounded-lg flex items-center justify-center gap-2 animate-fade-in">
+                {isLocked && <ShieldAlert className="w-4 h-4" />}
                 {error}
             </div>
           )}
 
           <button 
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || isLocked}
             className="w-full bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
           >
             {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            ) : isLocked ? (
+                <>
+                  <ShieldAlert className="w-4 h-4" />
+                  Bloqueado
+                </>
             ) : (
                 <>
                   {mode === 'LOGIN' ? 'Entrar' : 'Criar Conta'}
@@ -225,7 +256,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin }) => {
           <button 
             type="button"
             onClick={handleGoogleLogin}
-            disabled={isLoading}
+            disabled={isLoading || isLocked}
             className="w-full bg-white border border-slate-200 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
           >
              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />

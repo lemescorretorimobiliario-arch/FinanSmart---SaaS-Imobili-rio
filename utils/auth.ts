@@ -1,110 +1,115 @@
+import { supabase } from './supabaseClient';
 import { UserProfile } from '../types';
 
-// Simula banco de dados local
-const getStoredUser = (): UserProfile | null => {
-  const stored = localStorage.getItem('finansmart_user');
-  return stored ? JSON.parse(stored) : null;
+// Helper to map Supabase DB Profile to App UserProfile
+const mapProfileToUser = (profile: any): UserProfile => ({
+  id: profile.id,
+  name: profile.full_name || 'Usuário',
+  email: profile.email,
+  phone: profile.phone,
+  avatarUrl: profile.avatar_url,
+  coverUrl: profile.cover_url,
+  plan: profile.plan as 'FREE' | 'PRO',
+  type: profile.user_type as 'CORRETOR' | 'CLIENTE',
+  simulationsCount: profile.simulations_count || 0
+});
+
+export const getStoredUser = async (): Promise<UserProfile | null> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return null;
+
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .single();
+
+  if (error || !profile) return null;
+  return mapProfileToUser(profile);
 };
 
-// Login com Google (Mock)
-export const googleLogin = (userType: 'CORRETOR' | 'CLIENTE'): Promise<UserProfile> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const stored = getStoredUser();
-      if (stored && stored.type === userType) {
-        resolve(stored);
-        return;
+export const loginWithEmail = async (email: string, password: string): Promise<UserProfile> => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) throw new Error(error.message);
+  if (!data.session) throw new Error('Erro ao iniciar sessão.');
+
+  // Fetch Profile Data
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.session.user.id)
+    .single();
+
+  if (profileError || !profile) throw new Error('Perfil de usuário não encontrado.');
+
+  return mapProfileToUser(profile);
+};
+
+export const registerUser = async (userData: { name: string; email: string; password: string; type: 'CORRETOR' | 'CLIENTE' }): Promise<UserProfile> => {
+  // Sign up creates the Auth User. 
+  // The SQL Trigger (handle_new_user) MUST be set up in Supabase to create the Profile row automatically.
+  const { data, error } = await supabase.auth.signUp({
+    email: userData.email,
+    password: userData.password,
+    options: {
+      data: {
+        full_name: userData.name,
+        user_type: userData.type
       }
-
-      const mockUser: UserProfile = {
-        id: crypto.randomUUID(),
-        name: userType === 'CORRETOR' ? 'Carlos Silva' : 'Ana Pereira',
-        email: userType === 'CORRETOR' ? 'carlos.realtor@gmail.com' : 'ana.cliente@gmail.com',
-        phone: userType === 'CORRETOR' ? '(11) 99999-8888' : undefined,
-        avatarUrl: userType === 'CORRETOR' 
-          ? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-          : 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        plan: userType === 'CORRETOR' ? 'PRO' : 'FREE',
-        type: userType,
-        simulationsCount: userType === 'CORRETOR' ? 142 : 3
-      };
-      
-      localStorage.setItem('finansmart_user', JSON.stringify(mockUser));
-      resolve(mockUser);
-    }, 1500);
+    }
   });
+
+  if (error) throw new Error(error.message);
+  if (!data.user) throw new Error('Erro no cadastro.');
+
+  // Optimistic return or fetch
+  return {
+    id: data.user.id,
+    name: userData.name,
+    email: userData.email,
+    type: userData.type,
+    plan: 'FREE',
+    simulationsCount: 0
+  };
 };
 
-// Login com Email e Senha (Novo)
-export const loginWithEmail = (email: string, password: string): Promise<UserProfile> => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // Simples verificação mockada
-      if (password.length < 6) {
-        reject(new Error('Senha incorreta.'));
-        return;
+export const googleLogin = async (userType: 'CORRETOR' | 'CLIENTE'): Promise<void> => {
+  // Google login redirects, so we pass metadata to be handled by trigger on return
+  await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin,
+      queryParams: {
+        // Note: passing custom data to OAuth for triggers is tricky. 
+        // For simplicity in this demo, the user might need to set type after login if not using a custom flow.
+        // Assuming the trigger handles defaults or updates.
       }
-
-      // Tenta recuperar usuário ou cria um baseado no email
-      const stored = getStoredUser();
-      if (stored && stored.email === email) {
-        resolve(stored);
-        return;
-      }
-
-      // Se não existir, simula um erro ou cria um genérico (para fins de demo, criamos um genérico)
-      // Na vida real, retornaria erro de "usuário não encontrado"
-      const type = email.includes('imob') || email.includes('corretor') ? 'CORRETOR' : 'CLIENTE';
-      
-      const mockUser: UserProfile = {
-        id: crypto.randomUUID(),
-        name: email.split('@')[0].replace(/[0-9]/g, '').replace('.', ' '),
-        email: email,
-        phone: '(11) 90000-0000',
-        avatarUrl: undefined,
-        plan: type === 'CORRETOR' ? 'PRO' : 'FREE',
-        type: type,
-        simulationsCount: 0
-      };
-      
-      localStorage.setItem('finansmart_user', JSON.stringify(mockUser));
-      resolve(mockUser);
-    }, 1500);
+    }
   });
 };
 
-// Cadastro de Novo Usuário (Novo)
-export const registerUser = (data: { name: string; email: string; password: string; type: 'CORRETOR' | 'CLIENTE' }): Promise<UserProfile> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const newUser: UserProfile = {
-        id: crypto.randomUUID(),
-        name: data.name,
-        email: data.email,
-        phone: '', // Usuário preenche depois no perfil
-        avatarUrl: undefined,
-        plan: 'FREE', // Começa free
-        type: data.type,
-        simulationsCount: 0
-      };
+export const updateUserProfile = async (user: UserProfile): Promise<UserProfile> => {
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      full_name: user.name,
+      phone: user.phone,
+      avatar_url: user.avatarUrl,
+      cover_url: user.coverUrl,
+      plan: user.plan,
+      simulations_count: user.simulationsCount
+    })
+    .eq('id', user.id);
 
-      localStorage.setItem('finansmart_user', JSON.stringify(newUser));
-      resolve(newUser);
-    }, 1500);
-  });
+  if (error) throw new Error(error.message);
+  return user;
 };
 
-export const updateUserProfile = (user: UserProfile): Promise<UserProfile> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      localStorage.setItem('finansmart_user', JSON.stringify(user));
-      resolve(user);
-    }, 800);
-  });
+export const logout = async () => {
+  await supabase.auth.signOut();
+  localStorage.removeItem('finansmart_user'); // Clear legacy if exists
 };
-
-export const logout = () => {
-  localStorage.removeItem('finansmart_user');
-};
-
-export { getStoredUser };

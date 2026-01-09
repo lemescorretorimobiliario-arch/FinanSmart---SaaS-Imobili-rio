@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { getBankRates } from '../utils/api';
 import { BankRate } from '../types';
 
-const BankCarousel: React.FC = () => {
+interface BankCarouselProps {
+    onSelect?: (rate: number) => void;
+}
+
+const BankCarousel: React.FC<BankCarouselProps> = ({ onSelect }) => {
   const [rates, setRates] = useState<BankRate[]>([]);
 
   useEffect(() => {
@@ -13,11 +17,16 @@ const BankCarousel: React.FC = () => {
 
   return (
     <div className="w-full bg-slate-900 overflow-hidden py-3 border-b border-slate-800">
-      <div className="relative flex overflow-x-hidden">
-        <div className="animate-marquee whitespace-nowrap flex gap-12 items-center">
+      <div className="relative flex overflow-x-hidden group/marquee">
+        <div className="animate-marquee whitespace-nowrap flex gap-12 items-center group-hover/marquee:paused">
           {/* Double the list for infinite loop effect */}
           {[...rates, ...rates, ...rates].map((rate, index) => (
-            <div key={`${rate.id}-${index}`} className="flex items-center gap-3 text-slate-300">
+            <div 
+                key={`${rate.id}-${index}`} 
+                className={`flex items-center gap-3 text-slate-300 transition-all ${onSelect ? 'cursor-pointer hover:scale-110 hover:text-white' : ''}`}
+                onClick={() => onSelect && onSelect(rate.annualRate)}
+                title={onSelect ? "Clique para aplicar esta taxa" : ""}
+            >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs ${rate.logoColor}`}>
                 {rate.bankName[0]}
               </div>
@@ -34,6 +43,9 @@ const BankCarousel: React.FC = () => {
       <style>{`
         .animate-marquee {
           animation: marquee 25s linear infinite;
+        }
+        .group-hover\\/marquee\\:paused:hover .animate-marquee {
+            animation-play-state: paused;
         }
         @keyframes marquee {
           0% { transform: translateX(0); }
