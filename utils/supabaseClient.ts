@@ -34,7 +34,11 @@ export const isSupabaseConfigured = (): boolean => {
 };
 
 // Initialize Supabase client
+// FIX: Prevent crash if env vars are missing (common in fresh Vercel deploys)
+const fallbackUrl = 'https://placeholder.supabase.co';
+const fallbackKey = 'placeholder';
+
 export const supabase = createClient(
-  supabaseUrl,
-  supabaseAnonKey
+  supabaseUrl || fallbackUrl,
+  supabaseAnonKey || fallbackKey
 );
