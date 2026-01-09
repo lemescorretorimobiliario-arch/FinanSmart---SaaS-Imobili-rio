@@ -22,23 +22,23 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   const width = doc.internal.pageSize.getWidth();
   const height = doc.internal.pageSize.getHeight();
   const margin = 15;
-  
+
   // --- HEADER ---
   // Modern gradient-like header
   doc.setFillColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
   doc.rect(0, 0, width, 40, 'F');
-  
+
   // Title
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
   doc.text('FinanSmart', margin, 22);
-  
+
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
   doc.text('Relatório de Análise Financeira Imobiliária', margin, 30);
-  
+
   // Header Info
   doc.setFontSize(9);
   doc.setTextColor(255, 255, 255);
@@ -52,14 +52,14 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
   doc.setFont('helvetica', 'bold');
   doc.text('Resumo da Operação', margin, yPos);
-  
+
   yPos += 8;
-  
+
   // Background Box
   doc.setFillColor(COLORS.lightBg[0], COLORS.lightBg[1], COLORS.lightBg[2]);
   doc.setDrawColor(COLORS.grid[0], COLORS.grid[1], COLORS.grid[2]);
   doc.roundedRect(margin, yPos, width - (margin * 2), 35, 3, 3, 'FD');
-  
+
   // Input Data Layout
   const row1 = yPos + 10;
   const row2 = yPos + 22;
@@ -72,7 +72,7 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
     doc.text(label.toUpperCase(), x, y);
-    
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
@@ -81,10 +81,10 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
 
   addField('Valor do Imóvel', formatCurrency(data.propertyValue), col1, row1);
   addField('Entrada', formatCurrency(data.downPayment), col1, row2);
-  
+
   addField('Valor Financiado', formatCurrency(result.financedAmount), col2, row1);
   addField('Taxa de Juros', `${data.interestRateAnnual}% a.a.`, col2, row2);
-  
+
   addField('Prazo Total', `${data.termYears} anos`, col3, row1);
   addField('Sistema', data.amortizationSystem, col3, row2);
 
@@ -93,12 +93,12 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   // --- KPI CARDS ---
   const cardWidth = (width - (margin * 2) - 10) / 3;
   const cardHeight = 25;
-  
+
   const drawCard = (title: string, value: string, subtext: string, x: number, color: number[]) => {
     doc.setDrawColor(COLORS.grid[0], COLORS.grid[1], COLORS.grid[2]);
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(x, yPos, cardWidth, cardHeight, 3, 3, 'FD');
-    
+
     // Icon Placeholder (Colored Dot)
     doc.setFillColor(color[0], color[1], color[2]);
     doc.circle(x + 8, yPos + 8, 2, 'F');
@@ -106,12 +106,12 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
     doc.setFontSize(8);
     doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
     doc.text(title, x + 14, yPos + 9);
-    
+
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
     doc.text(value, x + 8, yPos + 18);
-    
+
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
@@ -120,7 +120,7 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
 
   drawCard('1ª Parcela', formatCurrency(result.firstInstallment), 'Parcela Inicial', margin, COLORS.primary);
   drawCard('Total Pago', formatCurrency(result.totalPaid), `Juros: ${formatCurrency(result.totalInterest)}`, margin + cardWidth + 5, COLORS.accent);
-  
+
   const incomeStatus = result.isCreditApproved ? 'Compatível' : 'Incompatível';
   const statusColor = result.isCreditApproved ? COLORS.success : COLORS.accent;
   drawCard('Renda Mínima', formatCurrency(result.requiredMinimumIncome), `Status: ${incomeStatus}`, margin + (cardWidth * 2) + 10, statusColor);
@@ -134,7 +134,7 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
 
   // 1. LEFT CHART: BALANCE EVOLUTION (AREA)
   const leftChartX = margin;
-  
+
   doc.setFontSize(10);
   doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
   doc.setFont('helvetica', 'bold');
@@ -143,24 +143,24 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   // Draw Axes
   const graphY = yPos + 5;
   const graphH = chartHeight - 5;
-  
+
   doc.setDrawColor(COLORS.grid[0], COLORS.grid[1], COLORS.grid[2]);
   doc.setLineWidth(0.5);
   doc.line(leftChartX, graphY + graphH, leftChartX + chartWidth, graphY + graphH); // X Axis
-  
+
   // Calculate Points
   const dataPoints = result.schedule.filter((_, i) => i % Math.ceil(result.schedule.length / 40) === 0 || i === result.schedule.length - 1);
   const maxBalance = result.financedAmount;
-  
+
   // Construct Path for Area Fill
   const startX = leftChartX;
   const bottomY = graphY + graphH;
-  
+
   // Fill Color (Light Indigo)
   doc.setFillColor(COLORS.primaryLight[0], COLORS.primaryLight[1], COLORS.primaryLight[2]);
-  
+
   // Start drawing polygon
-  const points: {x: number, y: number}[] = [];
+  const points: { x: number, y: number }[] = [];
   points.push({ x: startX, y: bottomY }); // Start bottom-left
 
   dataPoints.forEach((point) => {
@@ -169,13 +169,13 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
     points.push({ x, y });
   });
 
-  points.push({ x: points[points.length-1].x, y: bottomY }); // End bottom-right
-  
+  points.push({ x: points[points.length - 1].x, y: bottomY }); // End bottom-right
+
   // Draw Polygon (Manual because lines/path API in jspdf is tricky with typed arrays, using simple lines loop + fill)
   // Actually, standard jsPDF 'lines' supports filling if path is closed.
   const pathOps: any[] = [];
   pathOps.push({ op: 'm', c: [points[0].x, points[0].y] });
-  for(let i = 1; i < points.length; i++) {
+  for (let i = 1; i < points.length; i++) {
     pathOps.push({ op: 'l', c: [points[i].x, points[i].y] });
   }
   pathOps.push({ op: 'h' }); // Close path
@@ -190,17 +190,17 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   // Convert to relative for doc.lines or just use absolute context logic if available.
   // Fallback: Stick to stroke line for simplicity if fill is too complex without advanced API, 
   // BUT user asked for "modern". Let's try doc.triangle strips or just simple lines.
-  
+
   // Robust approach: Stroke only (thick line) + Grid
   doc.setDrawColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
   doc.setLineWidth(1.5);
   let prevP = points[1]; // First actual data point
-  for(let i = 2; i < points.length - 1; i++) {
+  for (let i = 2; i < points.length - 1; i++) {
     const p = points[i];
     doc.line(prevP.x, prevP.y, p.x, p.y);
     prevP = p;
   }
-  
+
   // X-Axis Labels
   doc.setFontSize(7);
   doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
@@ -210,10 +210,10 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
 
   // 2. RIGHT CHART: COMPOSITION OR COMPARISON (BAR)
   const rightChartX = margin + chartWidth + 10;
-  
+
   const isComparison = result.comparison?.isActive;
   const chartTitle = isComparison ? 'Poder da Amortização' : 'Composição do Custo';
-  
+
   doc.setFontSize(10);
   doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
   doc.setFont('helvetica', 'bold');
@@ -235,10 +235,10 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   // Bar 1
   const bar1Color = isComparison ? COLORS.secondary : COLORS.primary;
   const label1 = isComparison ? 'Padrão' : 'Imóvel';
-  
+
   doc.setFillColor(bar1Color[0], bar1Color[1], bar1Color[2]);
   doc.roundedRect(barsStartX, bottomY - barHeight1, barWidth, barHeight1, 1, 1, 'F');
-  
+
   // Bar 2
   const bar2Color = isComparison ? COLORS.success : COLORS.accent;
   const label2 = isComparison ? 'Estratégia' : 'Juros';
@@ -254,14 +254,14 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   // Labels
   doc.setFontSize(7);
   doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
-  doc.text(label1, barsStartX + barWidth/2, bottomY + 4, { align: 'center' });
-  doc.text(label2, barsStartX + barWidth + spacing + barWidth/2, bottomY + 4, { align: 'center' });
+  doc.text(label1, barsStartX + barWidth / 2, bottomY + 4, { align: 'center' });
+  doc.text(label2, barsStartX + barWidth + spacing + barWidth / 2, bottomY + 4, { align: 'center' });
 
   // Value Labels on top of bars
   doc.setFontSize(7);
   doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
-  doc.text(formatCurrency(val1), barsStartX + barWidth/2, bottomY - barHeight1 - 2, { align: 'center' });
-  doc.text(formatCurrency(val2), barsStartX + barWidth + spacing + barWidth/2, bottomY - barHeight2 - 2, { align: 'center' });
+  doc.text(formatCurrency(val1), barsStartX + barWidth / 2, bottomY - barHeight1 - 2, { align: 'center' });
+  doc.text(formatCurrency(val2), barsStartX + barWidth + spacing + barWidth / 2, bottomY - barHeight2 - 2, { align: 'center' });
 
   yPos = bottomY + 15;
 
@@ -270,7 +270,7 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
   doc.setTextColor(COLORS.dark[0], COLORS.dark[1], COLORS.dark[2]);
   doc.setFont('helvetica', 'bold');
   doc.text('Cronograma Anual', margin, yPos);
-  
+
   yPos += 5;
 
   // Table Data
@@ -289,30 +289,30 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
     head: [['Período', 'Parcela', 'Amortização', 'Juros', 'Saldo Dev.']],
     body: tableRows,
     theme: 'plain', // Cleaner theme
-    headStyles: { 
-      fillColor: COLORS.lightBg, 
-      textColor: COLORS.text, 
+    headStyles: {
+      fillColor: COLORS.lightBg as any,
+      textColor: COLORS.text as any,
       fontStyle: 'bold',
       halign: 'center',
       lineWidth: 0
     },
-    styles: { 
-      fontSize: 8, 
+    styles: {
+      fontSize: 8,
       cellPadding: 4,
-      textColor: COLORS.text,
+      textColor: COLORS.text as any,
       halign: 'right',
-      lineColor: COLORS.grid,
+      lineColor: COLORS.grid as any,
       lineWidth: { bottom: 0.1 }
     },
     columnStyles: {
-      0: { halign: 'left', fontStyle: 'bold' } 
+      0: { halign: 'left', fontStyle: 'bold' }
     },
     margin: { left: margin, right: margin },
   });
 
   // --- FOOTER & DISCLAIMER ---
-  const pageCount = doc.internal.getNumberOfPages();
-  for(let i = 1; i <= pageCount; i++) {
+  const pageCount = (doc as any).getNumberOfPages ? (doc as any).getNumberOfPages() : (doc.internal as any).getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     const footerY = height - 20;
 
@@ -322,31 +322,31 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
     doc.line(margin, footerY - 5, width - margin, footerY - 5);
 
     if (user.type === 'CORRETOR') {
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
-        doc.text(user.name, margin, footerY + 5);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+      doc.text(user.name, margin, footerY + 5);
 
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
-        
-        const contacts = [];
-        if (user.phone) contacts.push(user.phone);
-        if (user.email) contacts.push(user.email);
-        
-        doc.text(contacts.join('  •  '), margin, footerY + 10);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
+
+      const contacts = [];
+      if (user.phone) contacts.push(user.phone);
+      if (user.email) contacts.push(user.email);
+
+      doc.text(contacts.join('  •  '), margin, footerY + 10);
     } else {
-        doc.setFontSize(9);
-        doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
-        doc.text('FinanSmart - Inteligência Imobiliária', margin, footerY + 5);
+      doc.setFontSize(9);
+      doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);
+      doc.text('FinanSmart - Inteligência Imobiliária', margin, footerY + 5);
     }
 
     // Page count
     doc.setFontSize(8);
     doc.setTextColor(COLORS.secondary[0], COLORS.secondary[1], COLORS.secondary[2]);
     doc.text(`Página ${i} de ${pageCount}`, width - margin, height - 10, { align: 'right' });
-    
+
     doc.setFontSize(6);
     doc.setTextColor(180);
     doc.text('Simulação de caráter informativo. Valores sujeitos a alteração.', width - margin, footerY + 5, { align: 'right' });
