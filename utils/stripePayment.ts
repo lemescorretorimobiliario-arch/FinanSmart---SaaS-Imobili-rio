@@ -1,4 +1,4 @@
-import { loadStripe } from 'https://esm.sh/@stripe/stripe-js@2.4.0';
+import { loadStripe } from '@stripe/stripe-js';
 import { supabase } from './supabaseClient';
 
 // ============================================================================
