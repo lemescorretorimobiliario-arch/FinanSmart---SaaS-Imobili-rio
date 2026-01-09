@@ -11,8 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS (Script de Build injetará o CSS processado aqui, mas mantemos o CDN para dev rápido se necessário, ou confiamos no PostCSS do Vite) -->
-    <!-- Para produção Vercel/Vite, o CSS é gerado no build. Mantemos este script apenas para garantir estilos caso o PostCSS não esteja configurado no WebContainer -->
+    <!-- Tailwind CSS (Mantido para garantir estilos rápidos caso o build do PostCSS falhe, mas idealmente seria removido em produção pura) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
