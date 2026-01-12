@@ -25,6 +25,8 @@ import { CalculationResult, SimulationData, UserProfile } from '../types';
 import { formatCurrency } from '../utils/finance';
 import { generatePDF } from '../utils/pdfGenerator';
 
+import PaywallModal from './PaywallModal';
+
 interface ResultDashboardProps {
   data: SimulationData;
   result: CalculationResult;
@@ -33,7 +35,7 @@ interface ResultDashboardProps {
   onUpgradeClick?: () => Promise<void> | void;
 }
 
-// Modern Custom Tooltip Component
+// ... existing CustomTooltip ...
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (
@@ -59,30 +61,15 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
 const ResultDashboard: React.FC<ResultDashboardProps> = ({ data, result, user, onSaveLead, onUpgradeClick }) => {
   const [activeTab, setActiveTab] = useState<'SUMMARY' | 'TABLE' | 'CHARTS'>('SUMMARY');
   const [showPaywall, setShowPaywall] = useState(false);
-  const [isUpgrading, setIsUpgrading] = useState(false);
 
   const handleExport = () => {
+    // If requirement says simulation is blocked, then export should likely also be blocked if free limit reached?
+    // Current logic: Free users have limit of 5.
     if (user.plan === 'FREE' && user.simulationsCount >= 5) {
       setShowPaywall(true);
       return;
     }
     generatePDF(data, result, user);
-  };
-
-  const handleUpgradeWrapper = async () => {
-    if (!onUpgradeClick) return;
-    setIsUpgrading(true);
-    try {
-      await onUpgradeClick();
-      // Se for redirecionado, o componente desmonta.
-      // Se for simulação, fechamos o modal.
-      setShowPaywall(false);
-    } catch (e) {
-      console.error(e);
-      toast.error("Erro ao iniciar assinatura. Tente novamente.");
-    } finally {
-      setIsUpgrading(false);
-    }
   };
 
   const handleWhatsAppShare = () => {
@@ -432,45 +419,12 @@ _Gerado por ${user.name}_`;
         )}
       </div>
 
-      {/* Paywall Modal */}
-      {showPaywall && (
-        <div className="fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center animate-scale-in border-4 border-white/10 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
-
-            <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-7 h-7 text-blue-600" />
-            </div>
-
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Exportação Bloqueada</h3>
-            <p className="text-slate-600 mb-6 text-sm">
-              Você atingiu o limite de simulações gratuitas. Exporte relatórios ilimitados com o plano PRO.
-            </p>
-
-            <div className="bg-slate-50 rounded-lg p-3 mb-6">
-              <div className="text-xl font-bold text-slate-800">R$ 19,90 <span className="text-xs text-slate-500 font-normal">/mês</span></div>
-            </div>
-
-            <div className="space-y-2">
-              <button
-                onClick={handleUpgradeWrapper}
-                disabled={isUpgrading}
-                className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {isUpgrading ? (
-                  <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>
-                ) : 'Assinar PRO'}
-              </button>
-              <button
-                onClick={() => setShowPaywall(false)}
-                className="w-full text-slate-400 font-medium py-2 text-sm hover:text-slate-600"
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        onUpgrade={onUpgradeClick || (() => { })}
+        description="Você atingiu o limite de simulações gratuitas. Exporte relatórios ilimitados com o plano PRO."
+      />
     </div>
   );
 };

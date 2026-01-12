@@ -17,6 +17,7 @@ import AgentDashboard from './components/AgentDashboard';
 import ClientDashboard from './components/ClientDashboard';
 import UserProfilePanel from './components/UserProfilePanel';
 import AuthScreen from './components/AuthScreen';
+import PaywallModal from './components/PaywallModal';
 
 // --- SQL SCRIPT (Preserved) ---
 const REQUIRED_SQL_SCRIPT = `
@@ -295,6 +296,12 @@ const App: React.FC = () => {
   };
 
   const handleSimulate = async () => {
+    // 1. Strict Requirement Check: 5 simulations Limit for Free Plan
+    if (user?.plan === 'FREE' && user.simulationsCount >= 5) {
+      setShowLimitModal(true);
+      return; // BLOCK EXECUTION
+    }
+
     // Guest can simulate freely!
     // But if they want to save, they need to log in.
     // We calculate first.
@@ -310,11 +317,7 @@ const App: React.FC = () => {
 
       // If user is logged in, we update their usage count
       if (user) {
-        if (user.plan === 'FREE' && user.simulationsCount >= 5) {
-          setShowLimitModal(true);
-          // We still show result but warn about limit for saving/exporting
-          return;
-        }
+        // Limit checked at start of function
         const newCount = user.simulationsCount + 1;
         const updatedUser = { ...user, simulationsCount: newCount };
         setUser(updatedUser);
@@ -439,18 +442,35 @@ const App: React.FC = () => {
                 )}
               </section>
 
+              <PaywallModal
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                onUpgrade={handleUpgrade}
+                title="Limite de Simulações Atingido"
+                description="Você usou suas 5 simulações gratuitas. Para continuar simulando ilimitadamente, assine o plano PRO."
+              />
+
+
+
               {/* Mobile Bottom Tabs */}
               <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                <button onClick={() => setMobileSimView('FORM')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileSimView === 'FORM' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}>
-                  <Edit3 className={`w-5 h-5 ${mobileSimView === 'FORM' ? 'fill-current' : ''}`} />
-                  <span className="text-[10px] font-bold">Simulador</span>
+                <button
+                  onClick={() => setMobileSimView('FORM')}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'FORM' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  <CalcIcon className="w-6 h-6" />
+                  <span className="text-xs font-medium">Simular</span>
                 </button>
-                <div className="w-px bg-slate-100 h-10 self-center"></div>
-                <button onClick={() => setMobileSimView('RESULT')} disabled={!result} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'} ${!result ? 'opacity-50' : ''}`}>
-                  <PieChart className={`w-5 h-5 ${mobileSimView === 'RESULT' ? 'fill-current' : ''}`} />
-                  <span className="text-[10px] font-bold">Resultado</span>
+                <button
+                  onClick={() => setMobileSimView('RESULT')}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'RESULT' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  <PieChart className="w-6 h-6" />
+                  <span className="text-xs font-medium">Resultado</span>
                 </button>
               </div>
+
+
             </div>
           } />
 
