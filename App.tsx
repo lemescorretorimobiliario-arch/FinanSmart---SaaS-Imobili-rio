@@ -53,6 +53,7 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS updated_at timestamp with t
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_id text;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_status text;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS simulations_count int DEFAULT 0;
 
 -- 2.2 LEADS
 CREATE TABLE IF NOT EXISTS public.leads (
