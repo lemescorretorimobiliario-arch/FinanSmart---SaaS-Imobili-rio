@@ -416,136 +416,134 @@ const App: React.FC = () => {
               </button>
             )}
           </div>
-        </div>
-      </header>
-  )
-}
+        </header>
+      )}
 
 
-{/* --- MAIN CONTENT --- */ }
-<main className="flex-1 overflow-hidden relative">
-  <Routes>
-    <Route path="/" element={<LandingPage />} />
+      {/* --- MAIN CONTENT --- */}
+      <main className="flex-1 overflow-hidden relative">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
 
-    {/* Public Simulator */}
-    <Route path="/simulador" element={
-      <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
+          {/* Public Simulator */}
+          <Route path="/simulador" element={
+            <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
 
-        <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
-          <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
-          <div className="flex-1 overflow-hidden">
-            <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
-          </div>
-        </aside>
+              <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+                <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
+                <div className="flex-1 overflow-hidden">
+                  <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
+                </div>
+              </aside>
 
-        <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
-          {result ? (
-            <ResultDashboard
-              data={data}
-              result={result}
-              user={user || { name: 'Visitante', email: '', type: 'CLIENTE', id: 'guest', plan: 'FREE', simulationsCount: 0 } as any} // Mock user for guest
-              onSaveLead={handleSaveLead}
-              onUpgradeClick={user ? handleUpgrade : () => navigate('/login')}
-            />
-          ) : (
-            <EmptyState />
-          )}
-        </section>
+              <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
+                {result ? (
+                  <ResultDashboard
+                    data={data}
+                    result={result}
+                    user={user || { name: 'Visitante', email: '', type: 'CLIENTE', id: 'guest', plan: 'FREE', simulationsCount: 0 } as any} // Mock user for guest
+                    onSaveLead={handleSaveLead}
+                    onUpgradeClick={user ? handleUpgrade : () => navigate('/login')}
+                  />
+                ) : (
+                  <EmptyState />
+                )}
+              </section>
 
-        <PaywallModal
-          isOpen={showLimitModal}
-          onClose={() => setShowLimitModal(false)}
-          onUpgrade={handleUpgrade}
-          title="Limite de Simulações Atingido"
-          description="Você usou suas 5 simulações gratuitas. Para continuar simulando ilimitadamente, assine o plano PRO."
-        />
+              <PaywallModal
+                isOpen={showLimitModal}
+                onClose={() => setShowLimitModal(false)}
+                onUpgrade={handleUpgrade}
+                title="Limite de Simulações Atingido"
+                description="Você usou suas 5 simulações gratuitas. Para continuar simulando ilimitadamente, assine o plano PRO."
+              />
 
 
 
-        {/* Mobile Bottom Tabs */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-          <button
-            onClick={() => setMobileSimView('FORM')}
-            className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'FORM' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <CalcIcon className="w-6 h-6" />
-            <span className="text-xs font-medium">Simular</span>
-          </button>
-          <button
-            onClick={() => setMobileSimView('RESULT')}
-            className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'RESULT' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <PieChart className="w-6 h-6" />
-            <span className="text-xs font-medium">Resultado</span>
-          </button>
-        </div>
+              {/* Mobile Bottom Tabs */}
+              <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <button
+                  onClick={() => setMobileSimView('FORM')}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'FORM' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  <CalcIcon className="w-6 h-6" />
+                  <span className="text-xs font-medium">Simular</span>
+                </button>
+                <button
+                  onClick={() => setMobileSimView('RESULT')}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'RESULT' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  <PieChart className="w-6 h-6" />
+                  <span className="text-xs font-medium">Resultado</span>
+                </button>
+              </div>
 
 
-      </div>
-    } />
+            </div>
+          } />
 
-    {/* Auth */}
-    <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <AuthScreen onLogin={handleLogin} />} />
+          {/* Auth */}
+          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <AuthScreen onLogin={handleLogin} />} />
 
-    {/* Protected Dashboard */}
-    <Route path="/dashboard" element={
-      <ProtectedRoute>
-        <div className="h-full overflow-y-auto bg-slate-50 pb-16 md:pb-0">
-          {user?.type === 'CORRETOR' ? (
-            <AgentDashboard
-              user={user}
-              onSelectLead={(lead) => {
-                toast.info("Carregando simulação...");
-                // Handling state passing via navigate
-                navigate('/simulador', { state: { loadLead: lead } });
-              }}
-            />
-          ) : (
-            <ClientDashboard
-              user={user!}
-              onNewSimulation={() => navigate('/simulador')}
-              onSelectSimulation={(sim) => {
-                navigate('/simulador', { state: { loadSim: sim } });
-              }}
-            />
-          )}
-        </div>
-      </ProtectedRoute>
-    } />
+          {/* Protected Dashboard */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <div className="h-full overflow-y-auto bg-slate-50 pb-16 md:pb-0">
+                {user?.type === 'CORRETOR' ? (
+                  <AgentDashboard
+                    user={user}
+                    onSelectLead={(lead) => {
+                      toast.info("Carregando simulação...");
+                      // Handling state passing via navigate
+                      navigate('/simulador', { state: { loadLead: lead } });
+                    }}
+                  />
+                ) : (
+                  <ClientDashboard
+                    user={user!}
+                    onNewSimulation={() => navigate('/simulador')}
+                    onSelectSimulation={(sim) => {
+                      navigate('/simulador', { state: { loadSim: sim } });
+                    }}
+                  />
+                )}
+              </div>
+            </ProtectedRoute>
+          } />
 
-    {/* Protected Profile */}
-    <Route path="/profile" element={
-      <ProtectedRoute>
-        <UserProfilePanel user={user!} onUpdate={setUser} onLogout={handleLogout} onUpgrade={handleUpgrade} />
-      </ProtectedRoute>
-    } />
-  </Routes>
-</main>
+          {/* Protected Profile */}
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <UserProfilePanel user={user!} onUpdate={setUser} onLogout={handleLogout} onUpgrade={handleUpgrade} />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </main>
 
-{/* Leads Modal (Shared) */ }
-{
-  showLeadModal && user && (
-    <LeadModal
-      isOpen={showLeadModal}
-      onClose={() => setShowLeadModal(false)}
-      onSubmit={async (leadInfo) => {
-        try {
-          await supabase.from('leads').insert({
-            agent_id: user.id,
-            name: leadInfo.name,
-            email: leadInfo.email,
-            phone: leadInfo.phone,
-            interest: formatCurrency(data.propertyValue),
-            status: 'NOVO',
-            simulation_data: data
-          });
-          toast.success("Lead salvo com sucesso!");
-          setShowLeadModal(false);
-        } catch (e) { toast.error("Erro ao salvar lead."); }
-      }}
-    />
-  )
-}
+      {/* Leads Modal (Shared) */}
+      {
+        showLeadModal && user && (
+          <LeadModal
+            isOpen={showLeadModal}
+            onClose={() => setShowLeadModal(false)}
+            onSubmit={async (leadInfo) => {
+              try {
+                await supabase.from('leads').insert({
+                  agent_id: user.id,
+                  name: leadInfo.name,
+                  email: leadInfo.email,
+                  phone: leadInfo.phone,
+                  interest: formatCurrency(data.propertyValue),
+                  status: 'NOVO',
+                  simulation_data: data
+                });
+                toast.success("Lead salvo com sucesso!");
+                setShowLeadModal(false);
+              } catch (e) { toast.error("Erro ao salvar lead."); }
+            }}
+          />
+        )
+      }
     </div >
   );
 };
