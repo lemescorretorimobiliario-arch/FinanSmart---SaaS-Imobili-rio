@@ -363,8 +363,10 @@ const App: React.FC = () => {
   if (!isConfigured) return <ConfigErrorScreen />;
   if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
 
+  if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
+
   return (
-    <div className="h-screen flex flex-col bg-slate-100 overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-slate-100 overflow-hidden">
       {/* --- HEADER --- */}
       <header className="bg-white border-b border-slate-200 h-14 md:h-16 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-20">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
@@ -414,25 +416,16 @@ const App: React.FC = () => {
         <Routes>
           {/* Public Simulator */}
           <Route path="/" element={
-            <div className="h-full flex flex-col md:flex-row pb-12 md:pb-0">
-              {/* Mobile Tabs */}
-              <div className="md:hidden flex-shrink-0 px-3 py-2 bg-white border-b border-slate-200 flex gap-2">
-                <button onClick={() => setMobileSimView('FORM')} className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${mobileSimView === 'FORM' ? 'bg-slate-100 text-blue-600' : 'text-slate-500'}`}>
-                  <Edit3 className="w-3.5 h-3.5" /> Dados
-                </button>
-                <button onClick={() => setMobileSimView('RESULT')} disabled={!result} className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${mobileSimView === 'RESULT' ? 'bg-slate-100 text-blue-600' : 'text-slate-500'} ${!result ? 'opacity-50' : ''}`}>
-                  <PieChart className="w-3.5 h-3.5" /> Resultado
-                </button>
-              </div>
+            <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
 
-              <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1' : 'hidden md:flex md:h-full'}`}>
+              <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
                 <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
                 <div className="flex-1 overflow-hidden">
                   <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
                 </div>
               </aside>
 
-              <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1' : 'hidden md:block md:flex-1 md:h-full'}`}>
+              <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
                 {result ? (
                   <ResultDashboard
                     data={data}
@@ -445,6 +438,19 @@ const App: React.FC = () => {
                   <EmptyState />
                 )}
               </section>
+
+              {/* Mobile Bottom Tabs */}
+              <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <button onClick={() => setMobileSimView('FORM')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileSimView === 'FORM' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}>
+                  <Edit3 className={`w-5 h-5 ${mobileSimView === 'FORM' ? 'fill-current' : ''}`} />
+                  <span className="text-[10px] font-bold">Simulador</span>
+                </button>
+                <div className="w-px bg-slate-100 h-10 self-center"></div>
+                <button onClick={() => setMobileSimView('RESULT')} disabled={!result} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'} ${!result ? 'opacity-50' : ''}`}>
+                  <PieChart className={`w-5 h-5 ${mobileSimView === 'RESULT' ? 'fill-current' : ''}`} />
+                  <span className="text-[10px] font-bold">Resultado</span>
+                </button>
+              </div>
             </div>
           } />
 

@@ -6,17 +6,20 @@ import { supabase } from './supabaseClient';
 // ============================================================================
 
 // 1. Chave Pública (Publishable Key):
-const STRIPE_PUBLIC_KEY = 'pk_test_51SniWXJLq1IWUOkegwMxZjSHiTDOmVujmbVLOXmvcN7jHeI1u7ZNITVUPPyiTDQrP5nGbhxscXAfiTjiSPaxmHPS000mEgkRCv'; 
+const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY || ''; 
 
 // 2. ID do Preço (Price ID): 
-// IMPORTANTE: Certifique-se que este ID existe no seu Dashboard do Stripe (Modo Teste)
-const STRIPE_PRICE_ID = 'price_1SniauJLq1IWUOkettKQzGtG'; 
+const STRIPE_PRICE_ID = import.meta.env.VITE_STRIPE_PRICE_ID || '';
 
 // ============================================================================
 
 let stripePromise: any;
 
 export const getStripe = () => {
+  if (!STRIPE_PUBLIC_KEY) {
+    console.error("Stripe Public Key is missing in environment variables (VITE_STRIPE_PUBLIC_KEY).");
+    return null;
+  }
   if (!stripePromise) {
     stripePromise = loadStripe(STRIPE_PUBLIC_KEY);
   }

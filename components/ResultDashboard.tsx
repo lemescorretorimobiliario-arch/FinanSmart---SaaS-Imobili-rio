@@ -159,7 +159,7 @@ _Gerado por ${user.name}_`;
         </div>
       </div>
 
-      <div className="p-3 md:p-6 flex-1 overflow-y-visible md:overflow-y-auto custom-scrollbar pb-20 md:pb-6">
+      <div className="p-3 md:p-6 flex-1 overflow-y-visible md:overflow-y-auto custom-scrollbar pb-24 md:pb-6">
 
         {/* SUMMARY TAB */}
         {activeTab === 'SUMMARY' && (
