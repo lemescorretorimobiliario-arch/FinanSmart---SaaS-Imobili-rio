@@ -18,6 +18,7 @@ import ClientDashboard from './components/ClientDashboard';
 import UserProfilePanel from './components/UserProfilePanel';
 import AuthScreen from './components/AuthScreen';
 import PaywallModal from './components/PaywallModal';
+import LandingPage from './components/LandingPage';
 
 // --- SQL SCRIPT (Preserved) ---
 const REQUIRED_SQL_SCRIPT = `
@@ -368,173 +369,184 @@ const App: React.FC = () => {
 
   if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
 
+  const isLanding = location.pathname === '/';
+
   return (
     <div className="h-[100dvh] flex flex-col bg-slate-100 overflow-hidden">
-      {/* --- HEADER --- */}
-      <header className="bg-white border-b border-slate-200 h-14 md:h-16 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-20">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="bg-blue-600 p-1 md:p-1.5 rounded-lg">
-            <Layout className="w-4 h-4 md:w-5 md:h-5 text-white" />
+      {/* --- HEADER (Hidden on Landing) --- */}
+      {!isLanding && (
+        <header className="bg-white border-b border-slate-200 h-14 md:h-16 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-20">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+            <div className="bg-blue-600 p-1 md:p-1.5 rounded-lg">
+              <Layout className="w-4 h-4 md:w-5 md:h-5 text-white" />
+            </div>
+            <span className="font-bold text-base md:text-lg text-slate-900 tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
           </div>
-          <span className="font-bold text-base md:text-lg text-slate-900 tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
-        </div>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex bg-slate-100 p-1 rounded-lg">
-          <button onClick={() => navigate('/')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${location.pathname === '/' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-            <CalcIcon className="w-4 h-4" /> <span>Simulador</span>
-          </button>
-          {user && (
-            <button onClick={() => navigate('/dashboard')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-              <LayoutDashboard className="w-4 h-4" /> <span>Painel</span>
+          {/* Desktop Nav */}
+          <div className="hidden md:flex bg-slate-100 p-1 rounded-lg">
+            <button onClick={() => navigate('/simulador')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+              <CalcIcon className="w-4 h-4" /> <span>Simulador</span>
             </button>
-          )}
-        </div>
-
-        {/* User Actions */}
-        <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              <div className="hidden md:flex flex-col items-end mr-2">
-                <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                  {user.plan === 'PRO' && <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
-                  <span>{user.name}</span>
-                </div>
-              </div>
-              <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs hover:ring-2 hover:ring-blue-200 transition-all">
-                {user.name[0]}
+            {user && (
+              <button onClick={() => navigate('/dashboard')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                <LayoutDashboard className="w-4 h-4" /> <span>Painel</span>
               </button>
-              <button onClick={handleLogout} className="text-slate-400 hover:text-red-500"><LogOut className="w-5 h-5" /></button>
-            </>
-          ) : (
-            <button onClick={() => navigate('/login')} className="text-sm font-bold text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors">
-              Entrar
-            </button>
-          )}
+            )}
+          </div>
+
+          {/* User Actions */}
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <div className="hidden md:flex flex-col items-end mr-2">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                    {user.plan === 'PRO' && <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
+                    <span>{user.name}</span>
+                  </div>
+                </div>
+                <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs hover:ring-2 hover:ring-blue-200 transition-all">
+                  {user.name[0]}
+                </button>
+                <button onClick={handleLogout} className="text-slate-400 hover:text-red-500"><LogOut className="w-5 h-5" /></button>
+              </>
+            ) : (
+              <button onClick={() => navigate('/login')} className="text-sm font-bold text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors">
+                Entrar
+              </button>
+            )}
+          </div>
         </div>
       </header>
-
-      {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 overflow-hidden relative">
-        <Routes>
-          {/* Public Simulator */}
-          <Route path="/" element={
-            <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
-
-              <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
-                <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
-                <div className="flex-1 overflow-hidden">
-                  <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
-                </div>
-              </aside>
-
-              <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
-                {result ? (
-                  <ResultDashboard
-                    data={data}
-                    result={result}
-                    user={user || { name: 'Visitante', email: '', type: 'CLIENTE', id: 'guest', plan: 'FREE', simulationsCount: 0 } as any} // Mock user for guest
-                    onSaveLead={handleSaveLead}
-                    onUpgradeClick={user ? handleUpgrade : () => navigate('/login')}
-                  />
-                ) : (
-                  <EmptyState />
-                )}
-              </section>
-
-              <PaywallModal
-                isOpen={showLimitModal}
-                onClose={() => setShowLimitModal(false)}
-                onUpgrade={handleUpgrade}
-                title="Limite de Simulações Atingido"
-                description="Você usou suas 5 simulações gratuitas. Para continuar simulando ilimitadamente, assine o plano PRO."
-              />
+  )
+}
 
 
+{/* --- MAIN CONTENT --- */ }
+<main className="flex-1 overflow-hidden relative">
+  <Routes>
+    <Route path="/" element={<LandingPage />} />
 
-              {/* Mobile Bottom Tabs */}
-              <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                <button
-                  onClick={() => setMobileSimView('FORM')}
-                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'FORM' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  <CalcIcon className="w-6 h-6" />
-                  <span className="text-xs font-medium">Simular</span>
-                </button>
-                <button
-                  onClick={() => setMobileSimView('RESULT')}
-                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'RESULT' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  <PieChart className="w-6 h-6" />
-                  <span className="text-xs font-medium">Resultado</span>
-                </button>
-              </div>
+    {/* Public Simulator */}
+    <Route path="/simulador" element={
+      <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
 
+        <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+          <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
+          <div className="flex-1 overflow-hidden">
+            <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
+          </div>
+        </aside>
 
-            </div>
-          } />
+        <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
+          {result ? (
+            <ResultDashboard
+              data={data}
+              result={result}
+              user={user || { name: 'Visitante', email: '', type: 'CLIENTE', id: 'guest', plan: 'FREE', simulationsCount: 0 } as any} // Mock user for guest
+              onSaveLead={handleSaveLead}
+              onUpgradeClick={user ? handleUpgrade : () => navigate('/login')}
+            />
+          ) : (
+            <EmptyState />
+          )}
+        </section>
 
-          {/* Auth */}
-          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <AuthScreen onLogin={handleLogin} />} />
-
-          {/* Protected Dashboard */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <div className="h-full overflow-y-auto bg-slate-50 pb-16 md:pb-0">
-                {user?.type === 'CORRETOR' ? (
-                  <AgentDashboard
-                    user={user}
-                    onSelectLead={(lead) => {
-                      toast.info("Carregando simulação...");
-                      // Handling state passing via navigate
-                      navigate('/', { state: { loadLead: lead } });
-                    }}
-                  />
-                ) : (
-                  <ClientDashboard
-                    user={user!}
-                    onNewSimulation={() => navigate('/')}
-                    onSelectSimulation={(sim) => {
-                      navigate('/', { state: { loadSim: sim } });
-                    }}
-                  />
-                )}
-              </div>
-            </ProtectedRoute>
-          } />
-
-          {/* Protected Profile */}
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <UserProfilePanel user={user!} onUpdate={setUser} onLogout={handleLogout} onUpgrade={handleUpgrade} />
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </main>
-
-      {/* Leads Modal (Shared) */}
-      {showLeadModal && user && (
-        <LeadModal
-          isOpen={showLeadModal}
-          onClose={() => setShowLeadModal(false)}
-          onSubmit={async (leadInfo) => {
-            try {
-              await supabase.from('leads').insert({
-                agent_id: user.id,
-                name: leadInfo.name,
-                email: leadInfo.email,
-                phone: leadInfo.phone,
-                interest: formatCurrency(data.propertyValue),
-                status: 'NOVO',
-                simulation_data: data
-              });
-              toast.success("Lead salvo com sucesso!");
-              setShowLeadModal(false);
-            } catch (e) { toast.error("Erro ao salvar lead."); }
-          }}
+        <PaywallModal
+          isOpen={showLimitModal}
+          onClose={() => setShowLimitModal(false)}
+          onUpgrade={handleUpgrade}
+          title="Limite de Simulações Atingido"
+          description="Você usou suas 5 simulações gratuitas. Para continuar simulando ilimitadamente, assine o plano PRO."
         />
-      )}
-    </div>
+
+
+
+        {/* Mobile Bottom Tabs */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+          <button
+            onClick={() => setMobileSimView('FORM')}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'FORM' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            <CalcIcon className="w-6 h-6" />
+            <span className="text-xs font-medium">Simular</span>
+          </button>
+          <button
+            onClick={() => setMobileSimView('RESULT')}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'RESULT' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            <PieChart className="w-6 h-6" />
+            <span className="text-xs font-medium">Resultado</span>
+          </button>
+        </div>
+
+
+      </div>
+    } />
+
+    {/* Auth */}
+    <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <AuthScreen onLogin={handleLogin} />} />
+
+    {/* Protected Dashboard */}
+    <Route path="/dashboard" element={
+      <ProtectedRoute>
+        <div className="h-full overflow-y-auto bg-slate-50 pb-16 md:pb-0">
+          {user?.type === 'CORRETOR' ? (
+            <AgentDashboard
+              user={user}
+              onSelectLead={(lead) => {
+                toast.info("Carregando simulação...");
+                // Handling state passing via navigate
+                navigate('/simulador', { state: { loadLead: lead } });
+              }}
+            />
+          ) : (
+            <ClientDashboard
+              user={user!}
+              onNewSimulation={() => navigate('/simulador')}
+              onSelectSimulation={(sim) => {
+                navigate('/simulador', { state: { loadSim: sim } });
+              }}
+            />
+          )}
+        </div>
+      </ProtectedRoute>
+    } />
+
+    {/* Protected Profile */}
+    <Route path="/profile" element={
+      <ProtectedRoute>
+        <UserProfilePanel user={user!} onUpdate={setUser} onLogout={handleLogout} onUpgrade={handleUpgrade} />
+      </ProtectedRoute>
+    } />
+  </Routes>
+</main>
+
+{/* Leads Modal (Shared) */ }
+{
+  showLeadModal && user && (
+    <LeadModal
+      isOpen={showLeadModal}
+      onClose={() => setShowLeadModal(false)}
+      onSubmit={async (leadInfo) => {
+        try {
+          await supabase.from('leads').insert({
+            agent_id: user.id,
+            name: leadInfo.name,
+            email: leadInfo.email,
+            phone: leadInfo.phone,
+            interest: formatCurrency(data.propertyValue),
+            status: 'NOVO',
+            simulation_data: data
+          });
+          toast.success("Lead salvo com sucesso!");
+          setShowLeadModal(false);
+        } catch (e) { toast.error("Erro ao salvar lead."); }
+      }}
+    />
+  )
+}
+    </div >
   );
 };
 
