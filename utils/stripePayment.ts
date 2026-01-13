@@ -84,27 +84,33 @@ export const subscribeToPro = async (userEmail: string, userId: string) => {
     if (stripeError) throw stripeError;
 
   } catch (error: any) {
-    // Verifica se o erro é de backend ausente para ativar o fallback
-    const isBackendMissing =
-      error.message === "BACKEND_UNAVAILABLE" ||
-      error.message.includes("FunctionsFetchError") ||
-      error.message.includes("Failed to send a request");
+    console.warn("Backend Edge Function falhou, tentando fallback client-side...", error);
 
-    if (!isBackendMissing) {
-      console.error('Erro de Pagamento:', error);
-      // Erro de configuração específico do Stripe (ex: ID errado)
-      if (error.message && error.message.includes("No such price")) {
-        alert(`Erro de Configuração Stripe: O ID do preço '${STRIPE_PRICE_ID}' não foi encontrado na sua conta Stripe.`);
-        return { error: true, simulated: false };
+    // FALLBACK: Tentar iniciar Checkout APENAS com Client-Side (sem sessão do backend)
+    // Isso funciona se a chave pública e o preço estiverem corretos.
+    try {
+      const stripe = await getStripe();
+      if (stripe) {
+        const { error: redirectError } = await stripe.redirectToCheckout({
+          lineItems: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+          mode: 'subscription',
+          successUrl: `${window.location.origin}/?payment_success=true`,
+          cancelUrl: `${window.location.origin}/?payment_cancelled=true`,
+          clientReferenceId: userId, // Importante para o Webhook saber quem pagou
+          customerEmail: userEmail
+        });
+        if (redirectError) throw redirectError;
+        return; // Sucesso no redirect
       }
+    } catch (clientError) {
+      console.error("Fallback Client-side também falhou:", clientError);
     }
 
-    // FALLBACK PARA MODO DE DEMONSTRAÇÃO
-    // Executa sempre que o backend falhar (comum em dev)
+    // Se tudo falhar, oferece simulação
     const confirm = window.confirm(
-      "A conexão com o servidor de pagamentos falhou (Edge Function não detectada).\n\n" +
-      "Isso é normal em ambiente de desenvolvimento local sem deploy.\n" +
-      "Deseja SIMULAR um pagamento aprovado agora?"
+      "Não foi possível conectar ao Stripe (Backend e Client-side falharam).\n\n" +
+      "Isso pode ocorrer por bloqueio de pop-up ou configuração de rede.\n" +
+      "Deseja SIMULAR um pagamento aprovado para testar o sistema?"
     );
 
     return { error: true, simulated: confirm };
