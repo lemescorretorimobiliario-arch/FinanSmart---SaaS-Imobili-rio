@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { UserProfile } from '../types';
-import { Camera, Save, LogOut, Shield, Mail, User, Phone, Image as ImageIcon } from 'lucide-react';
+import { Camera, Save, LogOut, Shield, Mail, User, Phone, Image as ImageIcon, Star, ArrowRight } from 'lucide-react';
 import { updateUserProfile } from '../utils/auth';
 import { uploadImage } from '../utils/storage';
 import { toast } from 'sonner';
@@ -254,29 +254,38 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
         </div>
       </form>
 
-      {/* Banner PRO compactado */}
+      {/* Banner PRO - Premium & Persuasive */}
       {user.plan === 'FREE' && (
-        <div className="mt-4 md:mt-6 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl p-4 md:p-6 text-white flex flex-col md:flex-row items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-3">
-            <div className="p-2 md:p-3 bg-white/10 rounded-lg">
-              <Shield className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
+        <div className="mt-8 md:mt-12 premium-gradient rounded-[2rem] p-6 md:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
+
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="p-4 md:p-5 bg-white/20 backdrop-blur-md rounded-[1.5rem] shadow-xl border border-white/20">
+              <Star className="w-8 h-8 md:w-10 md:h-10 text-yellow-400 fill-yellow-400 animate-pulse" />
             </div>
             <div>
-              <h3 className="font-bold text-sm md:text-lg">Upgrade para PRO</h3>
-              <p className="text-slate-300 text-xs md:text-sm">Relatórios ilimitados + Seus dados no PDF.</p>
+              <h3 className="font-black text-xl md:text-3xl tracking-tight mb-2">Desbloqueie o Poder PRO</h3>
+              <p className="text-blue-100 text-sm md:text-lg font-medium opacity-90 max-w-sm">
+                Simulações ilimitadas, PDFs profissionais e seus dados de contato em destaque.
+              </p>
             </div>
           </div>
+
           <button
             onClick={handleUpgradeClick}
             disabled={isUpgrading}
-            className="w-full md:w-auto bg-white text-slate-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition-colors text-xs md:text-sm disabled:opacity-80 flex justify-center items-center gap-2"
+            className="w-full md:w-auto bg-white text-blue-700 px-8 py-4 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest hover:bg-yellow-400 hover:text-slate-900 transition-all shadow-2xl shadow-blue-900/40 disabled:opacity-80 flex justify-center items-center gap-3 relative z-10 active:scale-95 group"
           >
             {isUpgrading ? (
               <>
-                <div className="w-3 h-3 border-2 border-slate-900/30 border-t-slate-900 rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-blue-700/30 border-t-blue-700 rounded-full animate-spin"></div>
                 Processando...
               </>
-            ) : 'Assinar'}
+            ) : (
+              <>
+                Assinar PRO Agora <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </button>
         </div>
       )}

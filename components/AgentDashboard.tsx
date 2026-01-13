@@ -4,7 +4,7 @@ import {
   Users, TrendingUp, DollarSign, Phone, Mail, Calendar, Search,
   MoreHorizontal, LayoutGrid, List, MessageCircle, ArrowRight,
   CheckCircle2, XCircle, Clock, MapPin, ExternalLink, GripHorizontal,
-  Trash2, Pencil, X, Save, AlertTriangle, RefreshCw, UserPlus
+  Trash2, Pencil, X, Save, AlertTriangle, RefreshCw, UserPlus, Star
 } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import { formatCurrency, parseCurrency } from '../utils/finance';
@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 interface Props {
   user: UserProfile;
   onSelectLead?: (lead: LeadData) => void;
+  onUpgrade?: () => void;
 }
 
 // Configuração do Funil de Vendas (Kanban Columns)
@@ -31,7 +32,7 @@ const PIPELINE_STEPS: {
     { id: 'FECHADO', label: 'Fechados', bg: 'bg-emerald-50/50', headerBg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-200', icon: CheckCircle2 },
   ];
 
-const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
+const AgentDashboard: React.FC<Props> = ({ user, onSelectLead, onUpgrade }) => {
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'LIST' | 'BOARD'>('BOARD');
@@ -232,6 +233,9 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
   const formatBRL = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
+  const usagePercent = Math.min((user.simulationsCount / 5) * 100, 100);
+  const remaining = Math.max(5 - user.simulationsCount, 0);
+
   return (
     <div className="p-4 md:p-10 max-w-[1600px] mx-auto space-y-8 md:space-y-12 animate-fade-in-up pb-24 bg-transparent min-h-full">
 
@@ -298,8 +302,8 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
         </div>
       </div>
 
-      {/* KPI Stats - Compact */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      {/* KPI Stats & Subscription - Premium Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
         <div className="glass-card p-6 rounded-[2rem] flex items-center gap-5 transition-transform hover:-translate-y-1 group">
           <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
             <Users className="w-6 h-6" />
@@ -329,6 +333,51 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Potencial de Venda (VGV)</p>
             <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatBRL(potentialValue)}</p>
           </div>
+        </div>
+
+        {/* Subscription / Plan Widget */}
+        <div className="glass-card rounded-[2rem] p-6 border border-white flex flex-col justify-between relative overflow-hidden group col-span-2 md:col-span-1 lg:col-span-1">
+          {user.plan === 'PRO' ? (
+            <>
+              <div className="absolute top-0 right-0 bg-yellow-400 w-16 h-16 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-yellow-100 text-yellow-600 rounded-xl">
+                  <Star className="w-4 h-4 fill-yellow-600" />
+                </div>
+                <span className="font-black text-slate-900 text-xs tracking-tight uppercase">Plano PRO</span>
+              </div>
+              <div className="flex items-center gap-2 text-emerald-600 text-[10px] font-bold">
+                <TrendingUp className="w-3 h-3" /> Ilimitado Ativo
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-black text-slate-400 text-[10px] tracking-tight uppercase">Plano Free</span>
+                <span className="bg-slate-900 text-white text-[8px] px-2 py-0.5 rounded-full font-black tracking-widest uppercase">Grátis</span>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Simulações</span>
+                  <span className="text-[9px] font-black text-blue-600">{user.simulationsCount}/5</span>
+                </div>
+                <div className="overflow-hidden h-1.5 rounded-full bg-slate-100 border border-slate-200">
+                  <div
+                    style={{ width: `${usagePercent}%` }}
+                    className={`h-full transition-all duration-1000 ease-out ${usagePercent > 80 ? 'bg-amber-500' : 'bg-blue-600'}`}
+                  ></div>
+                </div>
+              </div>
+
+              <button
+                onClick={onUpgrade}
+                className="mt-3 w-full bg-slate-900 text-white py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-1.5 active:scale-95"
+              >
+                Ser PRO <ArrowRight className="w-3 h-3" />
+              </button>
+            </>
+          )}
         </div>
       </div>
 

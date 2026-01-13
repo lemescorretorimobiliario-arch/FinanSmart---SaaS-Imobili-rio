@@ -563,6 +563,7 @@ const App: React.FC = () => {
                       // Handling state passing via navigate
                       navigate('/simulador', { state: { loadLead: lead } });
                     }}
+                    onUpgrade={handleUpgrade}
                   />
                 ) : (
                   <ClientDashboard
