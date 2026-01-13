@@ -243,5 +243,3 @@ const ListItem = ({ children, muted = false, check = true, white = false }: { ch
 );
 
 export default LandingPage;
-
-export default LandingPage;
