@@ -11,7 +11,8 @@ const mapProfileToUser = (profile: any): UserProfile => ({
   coverUrl: profile.cover_url,
   plan: profile.plan as 'FREE' | 'PRO',
   type: profile.user_type as 'CORRETOR' | 'CLIENTE',
-  simulationsCount: profile.simulations_count || 0
+  simulationsCount: profile.simulations_count || 0,
+  setupCompleted: profile.setup_completed || false
 });
 
 export const getStoredUser = async (): Promise<UserProfile | null> => {
@@ -73,7 +74,8 @@ export const registerUser = async (userData: { name: string; email: string; pass
     email: userData.email,
     type: userData.type,
     plan: 'FREE',
-    simulationsCount: 0
+    simulationsCount: 0,
+    setupCompleted: true // Email registration already selects type
   };
 };
 
@@ -101,7 +103,9 @@ export const updateUserProfile = async (user: UserProfile): Promise<UserProfile>
       avatar_url: user.avatarUrl,
       cover_url: user.coverUrl,
       plan: user.plan,
-      simulations_count: user.simulationsCount
+      simulations_count: user.simulationsCount,
+      setup_completed: user.setupCompleted,
+      user_type: user.type
     })
     .eq('id', user.id);
 

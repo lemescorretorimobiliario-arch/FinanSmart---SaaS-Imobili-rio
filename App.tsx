@@ -19,6 +19,7 @@ import UserProfilePanel from './components/UserProfilePanel';
 import AuthScreen from './components/AuthScreen';
 import PaywallModal from './components/PaywallModal';
 import LandingPage from './components/LandingPage';
+import OnboardingScreen from './components/OnboardingScreen';
 
 // --- SQL SCRIPT (Preserved) ---
 const REQUIRED_SQL_SCRIPT = `
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     subscription_status text DEFAULT 'active',
     avatar_url text,
     cover_url text,
+    setup_completed boolean DEFAULT false,
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
     updated_at timestamp with time zone DEFAULT timezone('utc'::text, now())
 );
@@ -54,6 +56,7 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_id text;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_status text;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS simulations_count int DEFAULT 0;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS setup_completed boolean DEFAULT false;
 
 -- 2.2 LEADS
 CREATE TABLE IF NOT EXISTS public.leads (
@@ -293,10 +296,11 @@ const App: React.FC = () => {
       window.history.replaceState({}, document.title);
     } else if (state?.loadLead) {
       const lead = state.loadLead;
-      if (lead.simulation_data) {
-        setData(lead.simulation_data);
+      const simData = lead.simulation_data || lead.simulationData;
+      if (simData) {
+        setData(simData);
         try {
-          const res = calculateSimulation(lead.simulation_data);
+          const res = calculateSimulation(simData);
           setResult(res);
           setMobileSimView('RESULT');
         } catch (err) {
@@ -403,6 +407,12 @@ const App: React.FC = () => {
   const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     if (isLoadingSession) return <div className="h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>;
     if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+
+    // Check if onboarding is needed (especially for Google logins)
+    if (!user.setupCompleted && location.pathname !== '/onboarding') {
+      return <Navigate to="/onboarding" replace />;
+    }
+
     return children;
   };
 
@@ -412,6 +422,7 @@ const App: React.FC = () => {
   if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
 
   const isLanding = location.pathname === '/';
+  const isOnboarding = location.pathname === '/onboarding';
 
   return (
     <div className="h-[100dvh] flex flex-col bg-slate-50 overflow-hidden font-sans">
@@ -426,22 +437,24 @@ const App: React.FC = () => {
           </div>
 
           {/* Desktop Nav - Pill Style */}
-          <div className="hidden md:flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
-            <button
-              onClick={() => navigate('/simulador')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
-            >
-              <CalcIcon className="w-3.5 h-3.5" /> <span>Simulador</span>
-            </button>
-            {user && (
+          {!isOnboarding && (
+            <div className="hidden md:flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
               <button
-                onClick={() => navigate('/dashboard')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                onClick={() => navigate('/simulador')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
               >
-                <LayoutDashboard className="w-3.5 h-3.5" /> <span>Painel</span>
+                <CalcIcon className="w-3.5 h-3.5" /> <span>Simulador</span>
               </button>
-            )}
-          </div>
+              {user && (
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" /> <span>Painel</span>
+                </button>
+              )}
+            </div>
+          )}
 
           {/* User Actions */}
           <div className="flex items-center gap-4">
@@ -583,6 +596,13 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <UserProfilePanel user={user!} onUpdate={setUser} onLogout={handleLogout} onUpgrade={handleUpgrade} />
             </ProtectedRoute>
+          } />
+
+          {/* Onboarding */}
+          <Route path="/onboarding" element={
+            user ? (
+              user.setupCompleted ? <Navigate to="/dashboard" /> : <OnboardingScreen user={user} onComplete={setUser} />
+            ) : <Navigate to="/login" />
           } />
         </Routes>
       </main>

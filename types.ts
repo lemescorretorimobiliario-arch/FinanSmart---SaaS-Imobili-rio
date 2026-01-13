@@ -8,7 +8,7 @@ export interface SimulationData {
   amortizationSystem: AmortizationSystem;
   monthlyIncome: number;
   maxIncomeCommitment: number; // Percentage (default 30)
-  
+
   // Smart Amortization Settings
   extraAmortizationMonthly?: number;
   extraAmortizationStrategy?: 'REDUCE_TERM' | 'REDUCE_INSTALLMENT';
@@ -26,25 +26,25 @@ export interface InstallmentRow {
 export interface CalculationResult {
   financedAmount: number;
   termMonths: number;
-  
+
   // Initial Snapshot
   firstInstallment: number;
   lastInstallment: number;
   averageInstallment: number;
-  
+
   // Totals
   totalPaid: number;
   totalInterest: number;
   totalAmortization: number;
-  
+
   // Analysis
   incomeCommitmentPercent: number;
   requiredMinimumIncome: number;
   isCreditApproved: boolean;
-  
+
   // Detailed Schedule
   schedule: InstallmentRow[];
-  
+
   // Comparison (if smart amortization is active)
   comparison?: {
     isActive: boolean;
@@ -75,6 +75,7 @@ export interface UserProfile {
   plan: 'FREE' | 'PRO';
   type: 'CORRETOR' | 'CLIENTE';
   simulationsCount: number;
+  setupCompleted: boolean;
 }
 
 export type LeadStatus = 'NOVO' | 'EM_ATENDIMENTO' | 'VISITA' | 'PROPOSTA' | 'FECHADO' | 'PERDIDO';

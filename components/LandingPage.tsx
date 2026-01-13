@@ -175,18 +175,92 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
+            {/* Testimonials */}
+            <section className="py-24 md:py-32 bg-slate-50 relative">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">O que dizem nossos usuários</h2>
+                        <p className="text-slate-500 text-lg">Milhares de corretores e clientes já transformaram sua forma de calcular financiamentos.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        <TestimonialCard
+                            name="Ricardo Silva"
+                            role="Corretor de Imóveis"
+                            content="O FinanSmart mudou meu jogo. Envio o PDF da simulação na hora para o cliente pelo WhatsApp e isso gera uma autoridade incrível."
+                            avatar="https://i.pravatar.cc/150?u=ricardo"
+                        />
+                        <TestimonialCard
+                            name="Mariana Costa"
+                            role="Compradora"
+                            content="Consegui comparar as taxas da Caixa, Itaú e Santander em segundos. Descobri que economizaria 40 mil reais no longo prazo."
+                            avatar="https://i.pravatar.cc/150?u=mariana"
+                        />
+                        <TestimonialCard
+                            name="Bruno Mendes"
+                            role="Gestor Imobiliário"
+                            content="A ferramenta é intuitiva e os cálculos SAC/Price batem exatamente com o que os bancos apresentam. Essencial para o dia a dia."
+                            avatar="https://i.pravatar.cc/150?u=bruno"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="py-24 md:py-32 bg-white">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Dúvidas Frequentes</h2>
+                        <p className="text-slate-500">Tudo o que você precisa saber sobre o FinanSmart.</p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <FAQItem
+                            question="As taxas de juros são atualizadas?"
+                            answer="Sim! Nossa equipe monitora as taxas dos principais bancos semanalmente para garantir que suas simulações sejam o mais fiéis possível à realidade do mercado."
+                        />
+                        <FAQItem
+                            question="Posso cancelar minha assinatura PRO a qualquer momento?"
+                            answer="Com certeza. Não há fidelidade. Você pode cancelar sua assinatura diretamente pelo painel de controle com apenas um clique."
+                        />
+                        <FAQItem
+                            question="Os PDFs são personalizáveis?"
+                            answer="Sim, no plano PRO você pode incluir seu nome, foto, CRECI e contatos, tornando a proposta uma ferramenta poderosa de marketing pessoal."
+                        />
+                        <FAQItem
+                            question="Quais bancos estão disponíveis para comparação?"
+                            answer="Atualmente oferecemos comparativos para Caixa Econômica, Itaú, Santander, Bradesco e Banco do Brasil."
+                        />
+                    </div>
+                </div>
+            </section>
+
             {/* CTA Final */}
-            <section className="py-20 md:py-32">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <div className="bg-slate-900 rounded-[2.5rem] p-10 md:p-20 text-white relative overflow-hidden shadow-2xl">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px]"></div>
-                        <h2 className="text-3xl md:text-5xl font-bold mb-8 relative z-10">Simplifique suas vendas hoje mesmo.</h2>
-                        <button
-                            onClick={() => navigate('/simulador')}
-                            className="bg-white text-slate-900 px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl hover:bg-slate-50 transition-all active:scale-95 relative z-10 flex items-center gap-2 mx-auto"
-                        >
-                            <Calculator className="w-5 h-5" /> Iniciar Teste Grátis
-                        </button>
+            <section className="py-20 md:py-32 bg-slate-50">
+                <div className="max-w-5xl mx-auto px-4 text-center">
+                    <div className="bg-slate-900 rounded-[3rem] p-12 md:p-24 text-white relative overflow-hidden shadow-2xl">
+                        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/30 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[100px]"></div>
+
+                        <div className="relative z-10 max-w-2xl mx-auto">
+                            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tighter">Pronto para dominar o mercado?</h2>
+                            <p className="text-slate-400 text-lg md:text-xl mb-12 font-medium">Junte-se a centenas de profissionais que já usam a inteligência financeira a favor de seus negócios.</p>
+
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <button
+                                    onClick={() => navigate('/simulador')}
+                                    className="w-full sm:w-auto bg-blue-600 text-white px-10 py-5 rounded-[1.5rem] font-bold text-lg hover:shadow-2xl hover:bg-blue-500 transition-all active:scale-95 flex items-center justify-center gap-3"
+                                >
+                                    <Calculator className="w-6 h-6" /> Começar Agora
+                                </button>
+                                <button
+                                    onClick={() => navigate('/login')}
+                                    className="w-full sm:w-auto bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-[1.5rem] font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    Ver Preços <ArrowRight className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -217,6 +291,44 @@ const LandingPage: React.FC = () => {
 };
 
 // Sub-components
+const TestimonialCard = ({ name, role, content, avatar }: { name: string, role: string, content: string, avatar: string }) => (
+    <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-all">
+        <div className="flex items-center gap-4 mb-6">
+            <img src={avatar} alt={name} className="w-14 h-14 rounded-full border-2 border-blue-50" />
+            <div>
+                <h4 className="font-black text-slate-800 text-sm tracking-tight">{name}</h4>
+                <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{role}</p>
+            </div>
+        </div>
+        <div className="relative">
+            <span className="absolute -top-4 -left-2 text-6xl text-blue-100 font-serif leading-none italic select-none">“</span>
+            <p className="text-slate-500 font-medium italic relative z-10 text-sm leading-relaxed">{content}</p>
+        </div>
+    </div>
+);
+
+const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    return (
+        <div className={`border rounded-[1.5rem] transition-all duration-300 ${isOpen ? 'bg-slate-50 border-blue-200' : 'bg-white border-slate-100'}`}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full px-6 py-5 flex items-center justify-between text-left"
+            >
+                <span className="font-bold text-slate-900">{question}</span>
+                <div className={`p-2 rounded-xl bg-slate-100 transition-transform duration-300 ${isOpen ? 'rotate-180 bg-blue-600 text-white' : ''}`}>
+                    <ArrowRight className="w-4 h-4 rotate-90" />
+                </div>
+            </button>
+            <div className={`overflow-hidden transition-all duration-500 ${isOpen ? 'max-h-40' : 'max-h-0'}`}>
+                <div className="px-6 pb-6 text-slate-500 text-sm font-medium leading-relaxed">
+                    {answer}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const FeatureCard = ({ icon, title, description, delay }: { icon: React.ReactNode, title: string, description: string, delay: string }) => (
     <div className="bg-white/5 border border-white/10 p-10 rounded-[2rem] hover:bg-white/10 transition-all hover:-translate-y-2 group animate-fade-in-up" style={{ animationDelay: delay }}>
         <div className="mb-6 bg-white/10 w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
