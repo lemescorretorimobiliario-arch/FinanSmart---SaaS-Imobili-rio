@@ -264,6 +264,49 @@ const App: React.FC = () => {
     }
   }, [navigate]);
 
+  // --- EFFECT: HANDLE NAVIGATION STATE (Load History/Lead) ---
+  useEffect(() => {
+    const state = location.state as any;
+    if (state?.loadSim) {
+      const sim = state.loadSim;
+      const loadedData: SimulationData = {
+        propertyValue: sim.propertyValue,
+        downPayment: sim.downPayment,
+        interestRateAnnual: sim.interestRate,
+        termYears: sim.termYears,
+        amortizationSystem: sim.amortizationSystem,
+        monthlyIncome: sim.monthlyIncome,
+        maxIncomeCommitment: 30
+      };
+      setData(loadedData);
+
+      // Auto-calculate
+      try {
+        const res = calculateSimulation(loadedData);
+        setResult(res);
+        setMobileSimView('RESULT');
+      } catch (err) {
+        console.error("Error loading simulation", err);
+      }
+
+      // Clear state to avoid re-triggering on future renders if not navigating
+      window.history.replaceState({}, document.title);
+    } else if (state?.loadLead) {
+      const lead = state.loadLead;
+      if (lead.simulation_data) {
+        setData(lead.simulation_data);
+        try {
+          const res = calculateSimulation(lead.simulation_data);
+          setResult(res);
+          setMobileSimView('RESULT');
+        } catch (err) {
+          console.error("Error loading lead simulation", err);
+        }
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   // --- ACTIONS ---
 
   const handleLogin = (newUser: UserProfile) => {
