@@ -368,51 +368,68 @@ const App: React.FC = () => {
   if (!isConfigured) return <ConfigErrorScreen />;
   if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
 
-  if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
-
   const isLanding = location.pathname === '/';
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-slate-100 overflow-hidden">
-      {/* --- HEADER (Hidden on Landing) --- */}
+    <div className="h-[100dvh] flex flex-col bg-slate-50 overflow-hidden font-sans">
+      {/* --- HEADER - Premium Glassmorphism --- */}
       {!isLanding && (
-        <header className="bg-white border-b border-slate-200 h-14 md:h-16 flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-20">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="bg-blue-600 p-1 md:p-1.5 rounded-lg">
-              <Layout className="w-4 h-4 md:w-5 md:h-5 text-white" />
+        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-16 md:h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 z-40 relative">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
+            <div className="premium-gradient p-2 rounded-2xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+              <Layout className="w-5 h-5 md:w-6 md:h-6 text-white" />
             </div>
-            <span className="font-bold text-base md:text-lg text-slate-900 tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
+            <span className="font-black text-xl md:text-2xl text-slate-900 tracking-tighter">Finan<span className="text-blue-600">Smart</span></span>
           </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex bg-slate-100 p-1 rounded-lg">
-            <button onClick={() => navigate('/simulador')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+          {/* Desktop Nav - Pill Style */}
+          <div className="hidden md:flex bg-slate-100 p-1.5 rounded-[1.25rem] shadow-inner border border-slate-200/50">
+            <button
+              onClick={() => navigate('/simulador')}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+            >
               <CalcIcon className="w-4 h-4" /> <span>Simulador</span>
             </button>
             {user && (
-              <button onClick={() => navigate('/dashboard')} className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+              <button
+                onClick={() => navigate('/dashboard')}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+              >
                 <LayoutDashboard className="w-4 h-4" /> <span>Painel</span>
               </button>
             )}
           </div>
 
           {/* User Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {user ? (
-              <>
-                <div className="hidden md:flex flex-col items-end mr-2">
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                    {user.plan === 'PRO' && <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
-                    <span>{user.name}</span>
+              <div className="flex items-center gap-4">
+                <div className="hidden md:flex flex-col items-end">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Usuário {user.plan}</span>
+                  <div className="flex items-center gap-1.5">
+                    {user.plan === 'PRO' && <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />}
+                    <span className="text-sm font-black text-slate-900">{user.name}</span>
                   </div>
                 </div>
-                <button onClick={() => navigate('/profile')} className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs hover:ring-2 hover:ring-blue-200 transition-all">
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90"
+                >
                   {user.name[0]}
                 </button>
-                <button onClick={handleLogout} className="text-slate-400 hover:text-red-500"><LogOut className="w-5 h-5" /></button>
-              </>
+                <button
+                  onClick={handleLogout}
+                  className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                  title="Sair"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
             ) : (
-              <button onClick={() => navigate('/login')} className="text-sm font-bold text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors">
+              <button
+                onClick={() => navigate('/login')}
+                className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
+              >
                 Entrar
               </button>
             )}
@@ -430,14 +447,18 @@ const App: React.FC = () => {
           <Route path="/simulador" element={
             <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
 
-              <aside className={`w-full md:w-[400px] bg-white border-r border-slate-200 z-10 flex-col overflow-hidden transition-all ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+              <aside className={`w-full md:w-[450px] bg-white z-10 flex-col overflow-hidden transition-all relative border-r border-slate-200/50 ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+                <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
                 <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-hidden relative z-10">
                   <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
                 </div>
               </aside>
 
-              <section ref={resultRef} className={`bg-slate-50 overflow-y-auto relative ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
+              <section ref={resultRef} className={`bg-slate-50/50 backdrop-blur-sm overflow-y-auto relative custom-scrollbar ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
+                {/* Decorative background element */}
+                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-100/30 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+
                 {result ? (
                   <ResultDashboard
                     data={data}
@@ -461,21 +482,22 @@ const App: React.FC = () => {
 
 
 
-              {/* Mobile Bottom Tabs */}
-              <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex z-50 h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+              {/* Mobile Bottom Tabs - Glassy */}
+              <div className="md:hidden fixed bottom-6 left-6 right-6 bg-white/80 backdrop-blur-2xl rounded-[2rem] border border-white/50 flex z-50 h-20 shadow-2xl overflow-hidden ring-1 ring-black/5">
                 <button
                   onClick={() => setMobileSimView('FORM')}
-                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'FORM' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileSimView === 'FORM' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <CalcIcon className="w-6 h-6" />
-                  <span className="text-xs font-medium">Simular</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Simular</span>
                 </button>
+                <div className="w-px h-10 bg-slate-200 self-center"></div>
                 <button
                   onClick={() => setMobileSimView('RESULT')}
-                  className={`flex-1 flex flex-col items-center justify-center gap-1 ${mobileSimView === 'RESULT' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <PieChart className="w-6 h-6" />
-                  <span className="text-xs font-medium">Resultado</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Resultado</span>
                 </button>
               </div>
 

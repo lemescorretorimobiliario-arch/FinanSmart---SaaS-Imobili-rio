@@ -117,31 +117,31 @@ _Gerado por ${user.name}_`;
   ] : [];
 
   return (
-    <div className="h-full flex flex-col bg-slate-50/50">
+    <div className="h-full flex flex-col bg-transparent animate-fade-in-up">
 
-      {/* Header Tabs - Compact */}
-      <div className="sticky top-0 bg-slate-50/95 backdrop-blur-sm z-10 pt-2 px-3 md:px-6 pb-2">
-        <div className="flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-lg w-full md:w-fit shadow-sm overflow-x-auto no-scrollbar">
+      {/* Header Tabs - Premium */}
+      <div className="sticky top-0 bg-white/70 backdrop-blur-lg z-10 pt-4 px-4 md:px-8 pb-4 border-b border-slate-200/50">
+        <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl w-full md:w-fit shadow-inner overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('SUMMARY')}
-            className={`flex-1 md:flex-none px-2 py-1.5 md:px-4 md:py-2 rounded-md text-[10px] md:text-sm font-medium transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'SUMMARY' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'
+            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'SUMMARY' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
               }`}
           >
-            <Activity className="w-3 h-3 md:w-4 md:h-4" /> Resumo
+            <Activity className="w-4 h-4" /> Resumo
           </button>
           <button
             onClick={() => setActiveTab('TABLE')}
-            className={`flex-1 md:flex-none px-2 py-1.5 md:px-4 md:py-2 rounded-md text-[10px] md:text-sm font-medium transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'TABLE' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'
+            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'TABLE' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
               }`}
           >
-            <TableIcon className="w-3 h-3 md:w-4 md:h-4" /> Tabela
+            <TableIcon className="w-4 h-4" /> Tabela
           </button>
           <button
             onClick={() => setActiveTab('CHARTS')}
-            className={`flex-1 md:flex-none px-2 py-1.5 md:px-4 md:py-2 rounded-md text-[10px] md:text-sm font-medium transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${activeTab === 'CHARTS' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'
+            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'CHARTS' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
               }`}
           >
-            <PieIcon className="w-3 h-3 md:w-4 md:h-4" /> Gráficos
+            <PieIcon className="w-4 h-4" /> Gráficos
           </button>
         </div>
       </div>
@@ -150,61 +150,62 @@ _Gerado por ${user.name}_`;
 
         {/* SUMMARY TAB */}
         {activeTab === 'SUMMARY' && (
-          <div className="space-y-3 md:space-y-4 animate-fade-in">
+          <div className="space-y-6 md:space-y-8 animate-fade-in-up">
             {/* Credit Analysis Card */}
-            <div className={`p-3 md:p-6 rounded-xl border-l-4 shadow-sm bg-white ${result.isCreditApproved ? 'border-l-emerald-500' : 'border-l-red-500'}`}>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div className="flex gap-2.5 md:gap-4">
+            <div className={`p-6 md:p-8 rounded-[2.5rem] border shadow-xl bg-white relative overflow-hidden group ${result.isCreditApproved ? 'border-emerald-100' : 'border-red-100'}`}>
+              <div className={`absolute top-0 left-0 w-2 h-full ${result.isCreditApproved ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
+                <div className="flex gap-5 md:gap-6">
                   <div className="flex-shrink-0">
                     {result.isCreditApproved
-                      ? <CheckCircle className="w-8 h-8 md:w-10 md:h-10 text-emerald-500" />
-                      : <XCircle className="w-8 h-8 md:w-10 md:h-10 text-red-500" />
+                      ? <div className="p-4 bg-emerald-50 text-emerald-600 rounded-3xl"><CheckCircle className="w-10 h-10" /></div>
+                      : <div className="p-4 bg-red-50 text-red-600 rounded-3xl"><XCircle className="w-10 h-10" /></div>
                     }
                   </div>
                   <div>
-                    <h3 className="text-base md:text-lg font-bold text-slate-800 leading-tight">
-                      {result.isCreditApproved ? 'Crédito Pré-Aprovado' : 'Renda Insuficiente'}
+                    <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                      {result.isCreditApproved ? 'Crédito Aprovado' : 'Atenção: Limite de Renda'}
                     </h3>
-                    <p className="text-slate-500 text-xs md:text-sm mt-0.5 md:mt-1 leading-relaxed">
+                    <p className="text-slate-500 font-medium text-sm md:text-base mt-1.5 leading-relaxed max-w-sm">
                       {result.isCreditApproved
-                        ? 'Sua renda comporta a parcela.'
-                        : `Compromete ${result.incomeCommitmentPercent.toFixed(1)}% da renda.`}
+                        ? 'Sua renda mensal comporta perfeitamente o valor desta parcela.'
+                        : `A parcela compromete ${result.incomeCommitmentPercent.toFixed(1)}% da renda informada.`}
                     </p>
                     {!result.isCreditApproved && (
-                      <div className="mt-1.5 md:mt-2 text-[10px] md:text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-1 rounded inline-block">
-                        Renda Mín: {formatCurrency(result.requiredMinimumIncome)}
+                      <div className="mt-3 text-[10px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-3 py-1.5 rounded-lg inline-block border border-red-100">
+                        Renda Mín. Sugerida: {formatCurrency(result.requiredMinimumIncome)}
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="flex w-full md:w-auto items-center gap-2">
+                <div className="flex w-full md:w-auto items-center gap-3">
                   {/* Realtor specific: Save Lead Button */}
                   {user.type === 'CORRETOR' && onSaveLead && (
                     <button
                       onClick={onSaveLead}
-                      className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 text-xs md:text-sm font-bold"
+                      className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-500/30 text-sm font-black uppercase tracking-widest active:scale-95"
                       title="Salvar Cliente"
                     >
                       <Save className="w-4 h-4" />
-                      <span className="md:hidden lg:inline">Salvar Lead</span>
+                      <span>Salvar Lead</span>
                     </button>
                   )}
 
                   <button
                     onClick={handleWhatsAppShare}
-                    className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2 rounded-lg transition-colors border border-emerald-100"
+                    className="p-3.5 bg-emerald-50 text-emerald-600 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm active:scale-95"
                     title="Compartilhar WhatsApp"
                   >
-                    <MessageCircle className="w-5 h-5" />
+                    <MessageCircle className="w-6 h-6" />
                   </button>
 
                   <button
                     onClick={handleExport}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-lg transition-colors border border-slate-200"
+                    className="p-3.5 bg-slate-100 text-slate-600 rounded-2xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm active:scale-95"
                     title="Baixar PDF"
                   >
-                    <Download className="w-5 h-5" />
+                    <Download className="w-6 h-6" />
                   </button>
                 </div>
               </div>
@@ -212,27 +213,26 @@ _Gerado por ${user.name}_`;
 
             {/* Smart Amortization Savings Card */}
             {result.comparison?.isActive && (
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 p-3 md:p-5 rounded-xl shadow-sm relative overflow-hidden">
-                <div className="absolute right-0 top-0 w-32 h-32 bg-emerald-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50 pointer-events-none"></div>
-                <div className="flex items-start gap-2.5 md:gap-3 relative z-10">
-                  <div className="p-1.5 md:p-2 bg-emerald-100 rounded-lg text-emerald-600">
-                    <Zap className="w-4 h-4 md:w-6 md:h-6" />
+              <div className="premium-gradient p-8 md:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+                <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50 pointer-events-none group-hover:scale-110 transition-transform duration-1000"></div>
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 relative z-10 text-white">
+                  <div className="p-4 bg-white/10 backdrop-blur-md rounded-3xl text-yellow-300 shadow-xl border border-white/20">
+                    <Zap className="w-8 h-8 md:w-10 md:h-10 fill-yellow-300" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm md:text-lg font-bold text-emerald-900">Economia Projetada</h3>
-                    <p className="text-emerald-700 text-[10px] md:text-sm mt-0.5 mb-2">
-                      Com {formatCurrency(data.extraAmortizationMonthly || 0)} mensais:
+                    <h3 className="text-xl md:text-2xl font-black tracking-tight mb-2">Estratégia Inteligente</h3>
+                    <p className="text-white/70 font-medium text-sm md:text-base mb-6 max-w-lg leading-relaxed">
+                      Ao amortizar <span className="text-white font-bold">{formatCurrency(data.extraAmortizationMonthly || 0)}</span> mensais, você obtém um retorno incrível:
                     </p>
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 md:gap-x-4 md:gap-y-2">
+                    <div className="grid grid-cols-2 gap-6 md:gap-10">
                       <div>
-                        <span className="block text-[9px] md:text-[10px] font-semibold uppercase text-emerald-600">Juros Economizados</span>
-                        <span className="text-base md:text-xl font-bold text-emerald-800">{formatCurrency(result.comparison.savedInterest)}</span>
+                        <span className="block text-[10px] font-black uppercase tracking-widest text-white/50 mb-1">Economia Real</span>
+                        <span className="text-2xl md:text-4xl font-black text-emerald-400 tracking-tighter">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
                       </div>
-                      <div className="w-px bg-emerald-200 hidden md:block"></div>
                       <div>
-                        <span className="block text-[9px] md:text-[10px] font-semibold uppercase text-emerald-600">Tempo Reduzido</span>
-                        <span className="text-base md:text-xl font-bold text-emerald-800">
-                          {Math.floor(result.comparison.savedMonths / 12)}a {result.comparison.savedMonths % 12}m
+                        <span className="block text-[10px] font-black uppercase tracking-widest text-white/50 mb-1">Tempo Reduzido</span>
+                        <span className="text-2xl md:text-4xl font-black text-blue-300 tracking-tighter">
+                          -{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos
                         </span>
                       </div>
                     </div>
@@ -242,29 +242,32 @@ _Gerado por ${user.name}_`;
             )}
 
             {/* Main KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4">
-              <div className="bg-white p-3 md:p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div className="text-slate-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <Calendar className="w-3 h-3" /> Primeira Parcela
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white transition-transform hover:-translate-y-1 group">
+                <div className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-all"><Calendar className="w-3.5 h-3.5" /></div>
+                  Primeira Parcela
                 </div>
-                <div className="text-lg md:text-2xl font-bold text-slate-900">{formatCurrency(result.firstInstallment)}</div>
-                <div className="text-[9px] md:text-[10px] text-slate-400 mt-0.5">Última: {formatCurrency(result.lastInstallment)}</div>
+                <div className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatCurrency(result.firstInstallment)}</div>
+                <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Final: {formatCurrency(result.lastInstallment)}</div>
               </div>
 
-              <div className="bg-white p-3 md:p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div className="text-slate-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <DollarSign className="w-3 h-3" /> Juros Totais
+              <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white transition-transform hover:-translate-y-1 group">
+                <div className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-600 group-hover:text-white transition-all"><DollarSign className="w-3.5 h-3.5" /></div>
+                  Juros Totais
                 </div>
-                <div className="text-lg md:text-2xl font-bold text-amber-500">{formatCurrency(result.totalInterest)}</div>
-                <div className="text-[9px] md:text-[10px] text-slate-400 mt-0.5">Custo do dinheiro</div>
+                <div className="text-2xl md:text-3xl font-black text-amber-500 tracking-tight">{formatCurrency(result.totalInterest)}</div>
+                <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Custo de capital</div>
               </div>
 
-              <div className="bg-white p-3 md:p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div className="text-slate-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <TrendingUp className="w-3 h-3" /> Total Pago
+              <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white transition-transform hover:-translate-y-1 group">
+                <div className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <div className="p-1.5 bg-slate-100 text-slate-600 rounded-lg group-hover:bg-slate-900 group-hover:text-white transition-all"><TrendingUp className="w-3.5 h-3.5" /></div>
+                  Total Pago
                 </div>
-                <div className="text-lg md:text-2xl font-bold text-slate-900">{formatCurrency(result.totalPaid)}</div>
-                <div className="text-[9px] md:text-[10px] text-slate-400 mt-0.5">Em {result.termMonths} meses</div>
+                <div className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatCurrency(result.totalPaid)}</div>
+                <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Em {result.termMonths} meses</div>
               </div>
             </div>
           </div>
@@ -272,14 +275,14 @@ _Gerado por ${user.name}_`;
 
         {/* CHARTS TAB */}
         {activeTab === 'CHARTS' && (
-          <div className="space-y-4 md:space-y-6 animate-fade-in pb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="space-y-6 md:space-y-8 animate-fade-in-up pb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
 
               {/* 1. Area Chart: Balance Evolution */}
-              <div className="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm h-64 md:h-80 flex flex-col">
-                <div className="mb-2 md:mb-4">
-                  <h3 className="text-xs md:text-sm font-bold text-slate-800">Evolução do Saldo Devedor</h3>
-                  <p className="text-[10px] md:text-xs text-slate-400">Decaimento da dívida</p>
+              <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white h-[350px] md:h-[450px] flex flex-col shadow-xl">
+                <div className="mb-6">
+                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Evolução da Dívida</h3>
+                  <p className="text-xs text-slate-400 font-medium font-mono">Decaimento do saldo devedor</p>
                 </div>
                 <div className="flex-1 min-h-0">
                   <ResponsiveContainer width="100%" height="100%">
@@ -290,17 +293,16 @@ _Gerado por ${user.name}_`;
                           <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                       <XAxis
                         dataKey="name"
-                        tick={{ fontSize: 9, fill: '#64748b' }}
+                        tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
                         tickLine={false}
                         axisLine={false}
-                        interval="preserveStartEnd"
                       />
                       <YAxis
                         tickFormatter={(val) => `${val / 1000}k`}
-                        tick={{ fontSize: 9, fill: '#64748b' }}
+                        tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
                         tickLine={false}
                         axisLine={false}
                       />
@@ -309,7 +311,7 @@ _Gerado por ${user.name}_`;
                         type="monotone"
                         dataKey="Saldo"
                         stroke={COLORS.primary}
-                        strokeWidth={2}
+                        strokeWidth={4}
                         fillOpacity={1}
                         fill="url(#colorBalance)"
                       />
@@ -320,24 +322,24 @@ _Gerado por ${user.name}_`;
 
               {/* 2. Bar Chart OR Donut Chart based on State */}
               {result.comparison?.isActive ? (
-                <div className="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm h-64 md:h-80 flex flex-col">
-                  <div className="mb-2 md:mb-4">
-                    <h3 className="text-xs md:text-sm font-bold text-slate-800">Poder da Amortização</h3>
-                    <p className="text-[10px] md:text-xs text-slate-400">Total Pago</p>
+                <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white h-[350px] md:h-[450px] flex flex-col shadow-xl">
+                  <div className="mb-6">
+                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Poder da Amortização</h3>
+                    <p className="text-xs text-slate-400 font-medium font-mono">Diferença no total pago</p>
                   </div>
                   <div className="flex-1 min-h-0">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={comparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                         <XAxis
                           dataKey="name"
-                          tick={{ fontSize: 9, fill: '#64748b' }}
+                          tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
                           tickLine={false}
                           axisLine={false}
                         />
                         <YAxis hide />
                         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                        <Bar dataKey="Total" radius={[6, 6, 0, 0]} barSize={40}>
+                        <Bar dataKey="Total" radius={[12, 12, 0, 0]} barSize={60}>
                           {comparisonData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
@@ -347,19 +349,19 @@ _Gerado por ${user.name}_`;
                   </div>
                 </div>
               ) : (
-                <div className="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm h-64 md:h-80 flex flex-col">
-                  <div className="mb-2 md:mb-4">
-                    <h3 className="text-xs md:text-sm font-bold text-slate-800">Composição do Custo</h3>
-                    <p className="text-[10px] md:text-xs text-slate-400">Imóvel vs. Juros</p>
+                <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white h-[350px] md:h-[450px] flex flex-col shadow-xl">
+                  <div className="mb-6">
+                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Composição do Custo</h3>
+                    <p className="text-xs text-slate-400 font-medium font-mono">Imóvel vs. Juros Totais</p>
                   </div>
                   <div className="flex-1 min-h-0 relative">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
                           data={pieData}
-                          innerRadius={50}
-                          outerRadius={70}
-                          paddingAngle={5}
+                          innerRadius={70}
+                          outerRadius={100}
+                          paddingAngle={8}
                           dataKey="value"
                           stroke="none"
                         >
@@ -372,14 +374,14 @@ _Gerado por ${user.name}_`;
                           verticalAlign="bottom"
                           height={36}
                           iconType="circle"
-                          formatter={(value) => <span className="text-[10px] md:text-xs font-semibold text-slate-600 ml-1">{value}</span>}
+                          formatter={(value) => <span className="text-xs font-black text-slate-600 uppercase tracking-widest ml-2">{value}</span>}
                         />
                       </PieChart>
                     </ResponsiveContainer>
                     {/* Center Label for Donut */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
-                      <span className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Total</span>
-                      <span className="text-xs font-bold text-slate-800">{formatCurrency(result.totalPaid)}</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-12">
+                      <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Total</span>
+                      <span className="text-xl font-black text-slate-900 tracking-tighter">{formatCurrency(result.totalPaid)}</span>
                     </div>
                   </div>
                 </div>
@@ -390,26 +392,26 @@ _Gerado por ${user.name}_`;
 
         {/* TABLE TAB */}
         {activeTab === 'TABLE' && (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in">
+          <div className="glass-card rounded-[2.5rem] border border-white shadow-xl overflow-hidden animate-fade-in-up mb-12">
             <div className="overflow-x-auto">
-              <table className="w-full text-[10px] md:text-sm text-left">
-                <thead className="bg-slate-100 text-slate-600 font-semibold uppercase text-[9px] md:text-xs">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest">
                   <tr>
-                    <th className="px-2 py-2 md:px-3 md:py-3 whitespace-nowrap">Mês</th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 whitespace-nowrap">Parcela</th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 whitespace-nowrap">Amort.</th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 whitespace-nowrap">Juros</th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 text-right whitespace-nowrap">Saldo</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Mês</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Parcela</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Amortização</th>
+                    <th className="px-6 py-5 whitespace-nowrap">Juros</th>
+                    <th className="px-6 py-5 text-right whitespace-nowrap">Saldo Devedor</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {result.schedule.map((row) => (
-                    <tr key={row.month} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-2 py-2 md:px-3 md:py-2.5 font-medium text-slate-900">{row.month}</td>
-                      <td className="px-2 py-2 md:px-3 md:py-2.5 text-slate-700">{formatCurrency(row.payment)}</td>
-                      <td className="px-2 py-2 md:px-3 md:py-2.5 text-emerald-600">{formatCurrency(row.amortization)}</td>
-                      <td className="px-2 py-2 md:px-3 md:py-2.5 text-amber-500">{formatCurrency(row.interest)}</td>
-                      <td className="px-2 py-2 md:px-3 md:py-2.5 text-right text-slate-900 font-medium">{formatCurrency(row.balance)}</td>
+                    <tr key={row.month} className="hover:bg-blue-50/50 transition-colors">
+                      <td className="px-6 py-4 font-black text-slate-400">{row.month}</td>
+                      <td className="px-6 py-4 text-slate-900 font-bold">{formatCurrency(row.payment)}</td>
+                      <td className="px-6 py-4 text-emerald-600 font-bold">{formatCurrency(row.amortization)}</td>
+                      <td className="px-6 py-4 text-amber-500 font-medium">{formatCurrency(row.interest)}</td>
+                      <td className="px-6 py-4 text-right text-slate-900 font-black tracking-tight">{formatCurrency(row.balance)}</td>
                     </tr>
                   ))}
                 </tbody>

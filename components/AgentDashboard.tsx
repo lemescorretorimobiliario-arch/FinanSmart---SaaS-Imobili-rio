@@ -4,7 +4,7 @@ import {
   Users, TrendingUp, DollarSign, Phone, Mail, Calendar, Search,
   MoreHorizontal, LayoutGrid, List, MessageCircle, ArrowRight,
   CheckCircle2, XCircle, Clock, MapPin, ExternalLink, GripHorizontal,
-  Trash2, Pencil, X, Save, AlertTriangle, RefreshCw
+  Trash2, Pencil, X, Save, AlertTriangle, RefreshCw, UserPlus
 } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import { formatCurrency, parseCurrency } from '../utils/finance';
@@ -233,88 +233,101 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
   return (
-    <div className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8 animate-fade-in pb-20 bg-slate-50/50 min-h-full">
+    <div className="p-4 md:p-10 max-w-[1600px] mx-auto space-y-8 md:space-y-12 animate-fade-in-up pb-24 bg-transparent min-h-full">
 
-      {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            Gestão de Leads
-            <button
-              onClick={fetchLeads}
-              disabled={isLoading}
-              className={`p-2 rounded-full hover:bg-slate-200 transition-all ${isLoading ? 'animate-spin text-blue-600' : 'text-slate-400'}`}
-              title="Atualizar lista"
-            >
-              <RefreshCw className="w-5 h-5" />
-            </button>
-          </h1>
-          <p className="text-slate-500 mt-1">Gerencie seu funil de vendas e oportunidades.</p>
+      {/* Header & Controls - Premium */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-500/30">
+              <Users className="w-6 h-6" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+              Gestão de Leads
+              <button
+                onClick={fetchLeads}
+                disabled={isLoading}
+                className={`p-2 rounded-full hover:bg-slate-200 transition-all ${isLoading ? 'animate-spin text-blue-600' : 'text-slate-400'}`}
+                title="Atualizar lista"
+              >
+                <RefreshCw className="w-5 h-5" />
+              </button>
+            </h1>
+          </div>
+          <p className="text-slate-500 font-medium max-w-md">Gerencie seu funil de vendas e acompanhe o progresso das simulações em tempo real.</p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3">
-          {/* Search */}
+        <div className="flex flex-wrap items-center gap-3 bg-white/70 backdrop-blur-md p-2 rounded-[1.5rem] border border-white shadow-xl">
           <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
             <input
               type="text"
               placeholder="Buscar cliente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full md:w-64 pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+              className="pl-10 pr-4 py-2.5 bg-slate-50 border-none rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none w-full md:w-64 transition-all shadow-inner"
             />
           </div>
 
-          {/* View Toggle */}
-          <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm flex items-center">
+          <div className="flex bg-slate-50 p-1 rounded-xl shadow-inner border border-slate-100">
             <button
               onClick={() => setViewMode('BOARD')}
-              className={`p-2 rounded-lg transition-all ${viewMode === 'BOARD' ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'BOARD' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600'}`}
               title="Visualização em Quadro (Kanban)"
             >
-              <LayoutGrid className="w-4 h-4" />
+              <LayoutGrid className="w-5 h-5" />
             </button>
-            <div className="w-px h-4 bg-slate-200 mx-1"></div>
             <button
               onClick={() => setViewMode('LIST')}
-              className={`p-2 rounded-lg transition-all ${viewMode === 'LIST' ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'LIST' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600'}`}
               title="Visualização em Lista"
             >
-              <List className="w-4 h-4" />
+              <List className="w-5 h-5" />
             </button>
           </div>
+
+          <button
+            onClick={() => {
+              setEditingLead({ name: '', email: '', phone: '', interest: '', status: 'NOVO', date: new Date().toISOString() } as any);
+              setIsEditModalOpen(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 active:scale-95"
+          >
+            <UserPlus className="w-4 h-4" /> Novo Lead
+          </button>
         </div>
       </div>
 
       {/* KPI Stats - Compact */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg">
-            <Users className="w-5 h-5" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="glass-card p-6 rounded-[2rem] flex items-center gap-5 transition-transform hover:-translate-y-1 group">
+          <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+            <Users className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-500 uppercase">Total Leads</p>
-            <p className="text-xl font-bold text-slate-900">{totalLeads}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Leads</p>
+            <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{totalLeads}</p>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-2.5 bg-yellow-50 text-yellow-600 rounded-lg">
-            <Clock className="w-5 h-5" />
+        <div className="glass-card p-6 rounded-[2rem] flex items-center gap-5 transition-transform hover:-translate-y-1 group">
+          <div className="p-4 bg-yellow-50 text-yellow-600 rounded-2xl group-hover:bg-yellow-600 group-hover:text-white transition-all shadow-sm">
+            <Clock className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-slate-500 uppercase">Novos</p>
-            <p className="text-xl font-bold text-slate-900">{newLeads}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Novos</p>
+            <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{newLeads}</p>
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4 col-span-2 md:col-span-2">
-          <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg">
-            <TrendingUp className="w-5 h-5" />
+        <div className="md:col-span-2 glass-card p-6 rounded-[2rem] flex items-center gap-5 transition-transform hover:-translate-y-1 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+          <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm relative z-10">
+            <TrendingUp className="w-6 h-6" />
           </div>
-          <div>
-            <p className="text-xs font-medium text-slate-500 uppercase">Potencial de Venda (VGV)</p>
-            <p className="text-xl font-bold text-slate-900">{formatBRL(potentialValue)}</p>
+          <div className="relative z-10">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Potencial de Venda (VGV)</p>
+            <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatBRL(potentialValue)}</p>
           </div>
         </div>
       </div>
@@ -341,44 +354,49 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
               >
 
                 {/* Column Header */}
-                <div className={`p-3 rounded-xl mb-3 flex justify-between items-center border-b ${step.headerBg} ${step.text} ${step.border}`}>
-                  <div className="flex items-center gap-2">
-                    <step.icon className="w-4 h-4" />
-                    <span className="font-bold text-sm">{step.label}</span>
+                <div className={`p-4 rounded-2xl mb-4 flex justify-between items-center border shadow-sm ${step.headerBg} ${step.text} ${step.border}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-white/50 p-1.5 rounded-lg shadow-sm">
+                      <step.icon className="w-4 h-4" />
+                    </div>
+                    <span className="font-black text-xs uppercase tracking-widest">{step.label}</span>
                   </div>
-                  <span className="bg-white/50 px-2 py-0.5 rounded-md text-xs font-bold shadow-sm">
+                  <span className="bg-white px-2 py-0.5 rounded-lg text-[10px] font-black shadow-sm border border-black/5">
                     {stepLeads.length}
                   </span>
                 </div>
 
                 {/* Cards Area */}
-                <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] px-1 custom-scrollbar">
+                <div className="space-y-4 flex-1 overflow-y-auto max-h-[700px] px-1 custom-scrollbar">
                   {stepLeads.map(lead => (
                     <div
                       key={lead.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, lead.id)}
                       onDragEnd={handleDragEnd}
-                      className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:border-blue-300 transition-all group relative"
+                      className="bg-white p-6 rounded-[1.5rem] shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-200 transition-all group relative overflow-hidden"
                     >
+                      {/* Background Accent */}
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50/30 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
                       {/* Grip Handle & Edit Actions */}
-                      <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 p-1 rounded-lg backdrop-blur-sm z-20">
+                      <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1.5 rounded-xl backdrop-blur-sm z-20 shadow-sm border border-slate-100">
                         <button
                           onClick={(e) => handleEditClick(lead, e)}
-                          className="p-1 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded transition-colors"
+                          className="p-1.5 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
                           title="Editar"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={(e) => reqeustDeleteLead(lead.id, e)}
-                          className="p-1 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded transition-colors"
+                          className="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
                           title="Excluir"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
-                        <div className="w-px h-3 bg-slate-200 mx-0.5"></div>
-                        <div className="cursor-grab active:cursor-grabbing text-slate-300 p-1" title="Arrastar">
+                        <div className="w-px h-4 bg-slate-200 mx-1"></div>
+                        <div className="cursor-grab active:cursor-grabbing text-slate-300 p-1.5" title="Arrastar">
                           <GripHorizontal className="w-3.5 h-3.5" />
                         </div>
                       </div>
@@ -391,18 +409,20 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
                         }}
                         className="block pt-1 cursor-pointer"
                       >
-                        <div className="flex justify-between items-start mb-2 pr-14">
-                          <h3 className="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition-colors truncate">{lead.name}</h3>
+                        <div className="flex justify-between items-start mb-3 pr-10">
+                          <h3 className="font-black text-slate-900 text-sm group-hover:text-blue-600 transition-colors truncate tracking-tight">{lead.name}</h3>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-medium bg-slate-50 px-1.5 py-0.5 rounded block w-fit mb-2">
-                          {new Date(lead.date).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit' })}
+                        <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-lg block w-fit mb-4">
+                          {new Date(lead.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
                         </span>
 
-                        <div className="mb-3">
-                          <p className="text-xs font-semibold text-emerald-600 mb-1">{lead.interest}</p>
-                          <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                            <Mail className="w-3 h-3" />
-                            <span className="truncate max-w-[150px]">{lead.email}</span>
+                        <div className="mb-4">
+                          <p className="text-xs font-black text-emerald-600 mb-2">{lead.interest}</p>
+                          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                            <div className="p-1 bg-slate-50 rounded-md">
+                              <Mail className="w-3 h-3 text-slate-400" />
+                            </div>
+                            <span className="truncate opacity-80">{lead.email}</span>
                           </div>
                         </div>
                       </div>

@@ -78,135 +78,166 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
   const remaining = Math.max(5 - user.simulationsCount, 0);
 
   return (
-    <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-6 md:space-y-8 animate-fade-in pb-20">
+    <div className="p-4 md:p-10 max-w-6xl mx-auto space-y-8 md:space-y-12 animate-fade-in-up pb-24">
 
-      {/* LIMIT & WELCOME SECTION */}
-      <div className="grid md:grid-cols-3 gap-6">
+      {/* WELCOME & LIMIT SECTION */}
+      <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
         {/* Welcome Card */}
-        <div className="md:col-span-2 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl md:rounded-2xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="lg:col-span-2 premium-gradient rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[280px]">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"></div>
 
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-1 md:mb-2 relative z-10">Olá, {user.name.split(' ')[0]}!</h1>
-            <p className="text-blue-100 text-sm md:text-lg mb-6 relative z-10">Pronto para realizar o sonho da casa própria?</p>
+          <div className="relative z-10">
+            <h1 className="text-3xl md:text-5xl font-black mb-3 leading-tight tracking-tight">Olá, {user.name.split(' ')[0]}!</h1>
+            <p className="text-blue-100 text-lg md:text-xl font-medium opacity-90 max-w-md">Vamos planejar o próximo grande passo da sua vida hoje?</p>
           </div>
 
           <button
             onClick={onNewSimulation}
-            className="w-fit bg-white text-blue-700 px-4 py-2 md:px-6 md:py-3 rounded-lg font-bold hover:bg-blue-50 transition-colors flex items-center gap-2 shadow-sm text-sm md:text-base relative z-10"
+            className="w-fit bg-white text-blue-700 px-8 py-4 rounded-2xl font-bold hover:bg-blue-50 transition-all flex items-center gap-3 shadow-xl shadow-blue-900/20 relative z-10 group active:scale-95"
           >
-            <Calculator className="w-4 h-4 md:w-5 md:h-5" />
+            <Calculator className="w-5 h-5 group-hover:rotate-12 transition-transform" />
             Nova Simulação
           </button>
         </div>
 
         {/* Usage / Plan Card */}
-        <div className="bg-white rounded-xl md:rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div className="glass-card rounded-3xl p-8 border border-white flex flex-col justify-between relative overflow-hidden group">
           {user.plan === 'PRO' ? (
             <>
-              <div className="absolute top-0 right-0 bg-yellow-400 w-16 h-16 blur-2xl opacity-20"></div>
+              <div className="absolute top-0 right-0 bg-yellow-400 w-24 h-24 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="p-1.5 bg-yellow-100 text-yellow-600 rounded-lg">
-                    <Star className="w-5 h-5 fill-yellow-600" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-yellow-100 text-yellow-600 rounded-2xl shadow-inner">
+                    <Star className="w-6 h-6 fill-yellow-600" />
                   </div>
-                  <span className="font-bold text-slate-900 text-lg">Cliente PRO</span>
+                  <span className="font-black text-slate-900 text-xl tracking-tight uppercase">Assinante PRO</span>
                 </div>
-                <p className="text-slate-500 text-sm">Você tem acesso ilimitado a todas as funcionalidades.</p>
+                <p className="text-slate-500 font-medium text-base leading-relaxed">Você desbloqueou o poder total. Simulações ilimitadas e PDFs profissionais liberados.</p>
               </div>
-              <div className="mt-4 pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
-                  <Zap className="w-4 h-4" /> Simulações Ilimitadas
+              <div className="mt-6 pt-6 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-emerald-600 font-bold">
+                  <Zap className="w-5 h-5 fill-emerald-600 animate-pulse" /> Status: Ativo ilimitado
                 </div>
               </div>
             </>
           ) : (
             <>
               <div>
-                <div className="flex justify-between items-start mb-2">
-                  <span className="font-bold text-slate-900 text-lg">Plano Gratuito</span>
-                  <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full font-bold">Free</span>
+                <div className="flex justify-between items-center mb-6">
+                  <span className="font-black text-slate-900 text-xl tracking-tight uppercase">Plano Free</span>
+                  <span className="bg-slate-900 text-white text-[10px] px-3 py-1 rounded-full font-black tracking-widest uppercase shadow-md">Básico</span>
                 </div>
-                <p className="text-slate-500 text-sm mb-4">Você tem {remaining} simulações restantes este mês.</p>
 
-                {/* Progress Bar */}
-                <div className="w-full bg-slate-100 rounded-full h-3 mb-2 overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full transition-all duration-500" style={{ width: `${usagePercent}%` }}></div>
+                <div className="space-y-4">
+                  <p className="text-slate-500 font-medium">Você ainda tem <span className="text-blue-600 font-black">{remaining}</span> simulações este mês.</p>
+
+                  {/* Premium Progress Bar */}
+                  <div className="relative pt-1">
+                    <div className="flex mb-2 items-center justify-between">
+                      <div>
+                        <span className="text-xs font-black inline-block text-slate-400 uppercase tracking-wider">Uso Mensal</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-black inline-block text-blue-600">
+                          {user.simulationsCount}/5
+                        </span>
+                      </div>
+                    </div>
+                    <div className="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-slate-100 border border-slate-200 shadow-inner">
+                      <div
+                        style={{ width: `${usagePercent}%` }}
+                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-1000 ease-out ${usagePercent > 80 ? 'bg-amber-500' : 'bg-blue-600'}`}
+                      ></div>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-right text-slate-400 font-bold">{user.simulationsCount} / 5 Usadas</p>
               </div>
 
               <button
-                className="mt-4 w-full bg-slate-900 text-white py-2 rounded-lg font-bold text-sm hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+                className="mt-4 w-full premium-gradient text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:shadow-xl hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 group"
                 onClick={handleUpgrade}
               >
-                Assinar PRO <ArrowRight className="w-4 h-4" />
+                Ser PRO Agora <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </>
           )}
         </div>
       </div>
 
-      <h2 className="text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
-        <Clock className="w-5 h-5 text-slate-400" />
-        Histórico de Simulações
-      </h2>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <Clock className="w-8 h-8 text-blue-600" />
+          Minhas Simulações
+        </h2>
+        <div className="text-sm font-medium text-slate-400 italic">
+          {history.length} {history.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {isLoading ? (
-          <div className="col-span-2 text-center py-12">
-            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-            <p className="text-slate-400 text-sm">Carregando histórico...</p>
+          <div className="col-span-full py-20 flex flex-col items-center">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Sincronizando dados...</p>
           </div>
         ) : history.length > 0 ? history.map((sim) => (
           <div
             key={sim.id}
             onClick={() => onSelectSimulation(sim)}
-            className="bg-white p-4 md:p-5 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition-all group cursor-pointer hover:shadow-md hover:translate-y-[-2px] relative"
-            title="Clique para ver os detalhes"
+            className="group bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:border-blue-300 transition-all cursor-pointer hover:shadow-2xl hover:shadow-blue-900/5 hover:-translate-y-2 relative overflow-hidden"
           >
-            <div className="flex justify-between items-start mb-2 md:mb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 md:p-2 bg-blue-50 text-blue-600 rounded-lg">
-                  <Home className="w-4 h-4 md:w-5 md:h-5" />
+            {/* Background Accent */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-100 transition-colors"></div>
+
+            <div className="flex justify-between items-start mb-6 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                  <Home className="w-5 h-5" />
                 </div>
-                <span className="text-[10px] md:text-xs font-medium text-slate-400 bg-slate-50 px-2 py-1 rounded-full">
-                  {new Date(sim.date).toLocaleDateString()}
-                </span>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Registrada em</span>
+                  <span className="text-xs font-bold text-slate-600">
+                    {new Date(sim.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
               </div>
               <button
                 onClick={(e) => handleDeleteSimulation(sim.id, e)}
-                className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                title="Excluir simulação"
+                className="p-2 text-slate-200 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                title="Excluir"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="mb-3 md:mb-4">
-              <p className="text-xs md:text-sm text-slate-500 font-medium">Valor do Imóvel</p>
-              <p className="text-lg md:text-xl font-bold text-slate-800">{formatCurrency(sim.propertyValue)}</p>
+            <div className="mb-8 relative z-10">
+              <p className="text-xs text-slate-400 font-black uppercase tracking-widest mb-1">Valor do Imóvel</p>
+              <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatCurrency(sim.propertyValue)}</p>
             </div>
 
-            <div className="flex items-center justify-between pt-3 md:pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-6 border-t border-slate-100 relative z-10">
               <div>
-                <p className="text-[10px] md:text-xs text-slate-400 font-medium uppercase tracking-wide">Parcela Estimada</p>
-                <p className="text-sm md:text-base font-bold text-emerald-600">{formatCurrency(sim.monthlyPayment)}</p>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Parcela Estimada</p>
+                <p className="text-lg font-black text-emerald-600">{formatCurrency(sim.monthlyPayment)}</p>
               </div>
-              <div className="text-blue-600 group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                <span className="text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Ver Detalhes</span>
-                <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+              <div className="bg-slate-50 p-2 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                <ArrowRight className="w-5 h-5" />
               </div>
             </div>
           </div>
         )) : (
-          <div className="col-span-2 text-center py-8 md:py-16 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-slate-400">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calculator className="w-8 h-8 text-slate-300" />
+          <div className="col-span-full py-20 md:py-32 glass-card rounded-[3rem] border border-dashed border-slate-300 flex flex-col items-center text-center px-6">
+            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-8 border border-white shadow-inner">
+              <Calculator className="w-10 h-10 text-slate-300" />
             </div>
-            <p className="text-sm font-medium">Você ainda não salvou nenhuma simulação.</p>
-            <button onClick={onNewSimulation} className="text-blue-600 text-sm font-bold mt-2 hover:underline">
-              Começar agora
+            <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-2">Histórico Vazio</h3>
+            <p className="text-slate-500 font-medium max-w-sm mb-10">Você ainda não salvou nenhuma simulação. Comece agora e planeje seu futuro.</p>
+            <button
+              onClick={onNewSimulation}
+              className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-slate-800 transition-all shadow-xl active:scale-95"
+            >
+              Criar Primeira Simulação
             </button>
           </div>
         )}
