@@ -236,25 +236,25 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead }) => {
     <div className="p-4 md:p-10 max-w-[1600px] mx-auto space-y-8 md:space-y-12 animate-fade-in-up pb-24 bg-transparent min-h-full">
 
       {/* Header & Controls - Premium */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-500/30">
-              <Users className="w-6 h-6" />
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-500/20">
+              <Users className="w-5 h-5" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter flex items-center gap-4">
+            <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-3">
               Gestão de Leads
               <button
                 onClick={fetchLeads}
                 disabled={isLoading}
-                className={`p-2 rounded-full hover:bg-slate-200 transition-all ${isLoading ? 'animate-spin text-blue-600' : 'text-slate-400'}`}
+                className={`p-1.5 rounded-full hover:bg-slate-200 transition-all ${isLoading ? 'animate-spin text-blue-600' : 'text-slate-400'}`}
                 title="Atualizar lista"
               >
-                <RefreshCw className="w-5 h-5" />
+                <RefreshCw className="w-4 h-4" />
               </button>
             </h1>
           </div>
-          <p className="text-slate-500 font-medium max-w-md">Gerencie seu funil de vendas e acompanhe o progresso das simulações em tempo real.</p>
+          <p className="text-slate-500 font-medium text-sm max-w-md">Gerencie seu funil de vendas e acompanhe o progresso das simulações em tempo real.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 bg-white/70 backdrop-blur-md p-2 rounded-[1.5rem] border border-white shadow-xl">

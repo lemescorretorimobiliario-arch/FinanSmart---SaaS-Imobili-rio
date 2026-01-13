@@ -374,28 +374,28 @@ const App: React.FC = () => {
     <div className="h-[100dvh] flex flex-col bg-slate-50 overflow-hidden font-sans">
       {/* --- HEADER - Premium Glassmorphism --- */}
       {!isLanding && (
-        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-16 md:h-20 flex items-center justify-between px-6 md:px-10 flex-shrink-0 z-40 relative">
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate('/')}>
-            <div className="premium-gradient p-2 rounded-2xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
-              <Layout className="w-5 h-5 md:w-6 md:h-6 text-white" />
+        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-14 md:h-16 flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-40 relative">
+          <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
+            <div className="premium-gradient p-1.5 rounded-xl shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+              <Layout className="w-4 h-4 md:w-5 md:h-5 text-white" />
             </div>
-            <span className="font-black text-xl md:text-2xl text-slate-900 tracking-tighter">Finan<span className="text-blue-600">Smart</span></span>
+            <span className="font-black text-lg md:text-xl text-slate-900 tracking-tighter">Finan<span className="text-blue-600">Smart</span></span>
           </div>
 
           {/* Desktop Nav - Pill Style */}
-          <div className="hidden md:flex bg-slate-100 p-1.5 rounded-[1.25rem] shadow-inner border border-slate-200/50">
+          <div className="hidden md:flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
             <button
               onClick={() => navigate('/simulador')}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
             >
-              <CalcIcon className="w-4 h-4" /> <span>Simulador</span>
+              <CalcIcon className="w-3.5 h-3.5" /> <span>Simulador</span>
             </button>
             {user && (
               <button
                 onClick={() => navigate('/dashboard')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
               >
-                <LayoutDashboard className="w-4 h-4" /> <span>Painel</span>
+                <LayoutDashboard className="w-3.5 h-3.5" /> <span>Painel</span>
               </button>
             )}
           </div>
@@ -413,7 +413,7 @@ const App: React.FC = () => {
                 </div>
                 <button
                   onClick={() => navigate('/profile')}
-                  className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-sm hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90"
+                  className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90"
                 >
                   {user.name[0]}
                 </button>

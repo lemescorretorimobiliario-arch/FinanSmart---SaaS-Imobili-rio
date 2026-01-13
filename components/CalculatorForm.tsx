@@ -117,52 +117,52 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
 
           {/* --- PASSO 1: DADOS FINANCEIROS --- */}
           {currentStep === 1 && (
-            <div className="space-y-6">
-              <div className="glass-card p-6 rounded-[2rem] border border-white shadow-xl group transition-all hover:border-blue-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-all"><Home className="w-5 h-5" /></div>
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">Valor do Imóvel</label>
+            <div className="space-y-4">
+              <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-blue-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all"><Home className="w-4 h-4" /></div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Valor do Imóvel</label>
                 </div>
                 <input
                   type="text"
                   value={formatCurrency(data.propertyValue)}
                   onChange={(e) => handleCurrencyChange('propertyValue', e.target.value)}
-                  className="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-inner"
+                  className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-xl font-black text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-inner"
                 />
               </div>
 
-              <div className="glass-card p-6 rounded-[2rem] border border-white shadow-xl group transition-all hover:border-emerald-200">
-                <div className="flex items-center justify-between mb-4">
+              <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-emerald-200">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-all"><DollarSign className="w-5 h-5" /></div>
-                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Entrada</label>
+                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all"><DollarSign className="w-4 h-4" /></div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Entrada</label>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => updateField('downPayment', data.propertyValue * 0.2)} className="text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm">20%</button>
-                    <button onClick={() => updateField('downPayment', data.propertyValue * 0.5)} className="text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm">50%</button>
+                    <button onClick={() => updateField('downPayment', data.propertyValue * 0.2)} className="text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm">20%</button>
+                    <button onClick={() => updateField('downPayment', data.propertyValue * 0.5)} className="text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-600 hover:text-white transition-all shadow-sm">50%</button>
                   </div>
                 </div>
                 <input
                   type="text"
                   value={formatCurrency(data.downPayment)}
                   onChange={(e) => handleCurrencyChange('downPayment', e.target.value)}
-                  className="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-inner"
+                  className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-xl font-black text-slate-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all shadow-inner"
                 />
               </div>
 
-              <div className="glass-card p-6 rounded-[2rem] border border-white shadow-xl group transition-all hover:border-purple-200">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-purple-50 text-purple-600 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-all"><Briefcase className="w-5 h-5" /></div>
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-400">Renda Familiar</label>
+              <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-purple-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 bg-purple-50 text-purple-600 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-all"><Briefcase className="w-4 h-4" /></div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Renda Familiar</label>
                 </div>
                 <input
                   type="text"
                   value={formatCurrency(data.monthlyIncome)}
                   onChange={(e) => handleCurrencyChange('monthlyIncome', e.target.value)}
-                  className="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 text-2xl font-black text-slate-900 focus:ring-2 focus:ring-purple-500 outline-none transition-all shadow-inner"
+                  className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-xl font-black text-slate-900 focus:ring-2 focus:ring-purple-500 outline-none transition-all shadow-inner"
                 />
-                <div className="mt-4 text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                  <CheckCircle className="w-4 h-4 text-emerald-500" />
+                <div className="mt-4 text-[9px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
                   Sugerido: <span className="text-slate-900">{formatCurrency(estimatedMinIncome)}</span>
                 </div>
               </div>
@@ -171,14 +171,14 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
 
           {/* --- PASSO 2: CONDIÇÕES DO CRÉDITO --- */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="glass-card p-6 rounded-[2rem] border border-white shadow-xl group transition-all hover:border-indigo-200">
-                <div className="flex items-center justify-between mb-6">
+            <div className="space-y-4">
+              <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-indigo-200">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all"><Calendar className="w-5 h-5" /></div>
-                    <label className="text-xs font-black uppercase tracking-widest text-slate-400">Prazo do Financiamento</label>
+                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-all"><Calendar className="w-4 h-4" /></div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Prazo do Financiamento</label>
                   </div>
-                  <span className="text-xl font-black text-indigo-600 tracking-tight bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-100">{data.termYears} Anos</span>
+                  <span className="text-lg font-black text-indigo-600 tracking-tight bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100">{data.termYears} Anos</span>
                 </div>
                 <div className="px-2">
                   <input
@@ -187,42 +187,42 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
                     max="35"
                     value={data.termYears}
                     onChange={(e) => updateField('termYears', Number(e.target.value))}
-                    className="w-full h-3 bg-slate-100 rounded-full appearance-none cursor-pointer accent-indigo-600 shadow-inner"
+                    className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-indigo-600 shadow-inner"
                   />
-                  <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-300 mt-4">
+                  <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-slate-300 mt-3">
                     <span>5 anos</span>
                     <span>35 anos</span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="glass-card p-6 rounded-[2rem] border border-white shadow-xl group transition-all hover:border-blue-200">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">Taxa Anual (%)</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-blue-200">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Taxa Anual (%)</label>
                   <div className="relative">
                     <input
                       type="number"
                       step="0.1"
                       value={data.interestRateAnnual}
                       onChange={(e) => updateField('interestRateAnnual', Number(e.target.value))}
-                      className="w-full pl-5 pr-10 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none font-black text-slate-900 text-xl shadow-inner transition-all"
+                      className="w-full pl-4 pr-10 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-black text-slate-900 text-lg shadow-inner transition-all"
                     />
-                    <Percent className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
+                    <Percent className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                   </div>
                 </div>
 
-                <div className="glass-card p-6 rounded-[2rem] border border-white shadow-xl group transition-all hover:border-blue-200">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block">Sistema Amortiz.</label>
-                  <div className="flex bg-slate-100 p-1.5 rounded-2xl shadow-inner">
+                <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-blue-200">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Sistema Amortiz.</label>
+                  <div className="flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
                     <button
                       onClick={() => updateField('amortizationSystem', 'SAC')}
-                      className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       SAC
                     </button>
                     <button
                       onClick={() => updateField('amortizationSystem', 'PRICE')}
-                      className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       PRICE
                     </button>
@@ -230,7 +230,7 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
                 </div>
               </div>
 
-              <div className="text-[10px] font-black uppercase tracking-widest text-center text-slate-400 bg-white/50 p-4 rounded-[2rem] border-2 border-dashed border-slate-100">
+              <div className="text-[9px] font-black uppercase tracking-widest text-center text-slate-400 bg-white/50 p-3 rounded-[1.5rem] border border-slate-100">
                 💡 Dica: Clique nos bancos no topo para preencher a taxa.
               </div>
             </div>
@@ -238,25 +238,25 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
 
           {/* --- PASSO 3: OTIMIZAÇÃO (EXTRA) --- */}
           {currentStep === 3 && (
-            <div className="space-y-8 animate-fade-in-up">
+            <div className="space-y-6 animate-fade-in-up">
               <div className="text-center group">
-                <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-[2rem] flex items-center justify-center mx-auto mb-4 border border-amber-100 shadow-xl group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
-                  <Zap className="w-10 h-10 fill-amber-300" />
+                <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-amber-100 shadow-lg group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
+                  <Zap className="w-8 h-8 fill-amber-300" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Potencialize sua Economia</h3>
-                <p className="text-slate-500 font-medium text-sm mt-2 max-w-xs mx-auto">Adicionar um valor extra na parcela abate juros de forma estratégica.</p>
+                <h3 className="text-lg font-black text-slate-900 tracking-tight">Potencialize sua Economia</h3>
+                <p className="text-slate-500 font-medium text-xs mt-1.5 max-w-[240px] mx-auto">Adicionar um valor extra na parcela abate juros de forma estratégica.</p>
               </div>
 
-              <div className="glass-card p-8 rounded-[2.5rem] border-2 border-amber-200 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+              <div className="glass-card p-5 md:p-6 rounded-[1.5rem] border-2 border-amber-200 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
 
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Amortização Extra Mensal (Opcional)</label>
-                <div className="relative mb-6">
+                <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-3">Amortização Extra Mensal (Opcional)</label>
+                <div className="relative mb-5">
                   <input
                     type="text"
                     value={formatCurrency(data.extraAmortizationMonthly || 0)}
                     onChange={(e) => handleCurrencyChange('extraAmortizationMonthly', e.target.value)}
-                    className="w-full px-6 py-5 bg-slate-50 border-none rounded-[1.5rem] focus:ring-2 focus:ring-amber-500 outline-none font-black text-slate-900 text-3xl shadow-inner transition-all"
+                    className="w-full px-5 py-4 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500 outline-none font-black text-slate-900 text-2xl shadow-inner transition-all"
                     placeholder="R$ 0,00"
                   />
                 </div>
@@ -299,24 +299,24 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
         </div>
       </div>
 
-      {/* Footer Actions - Premium */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 border-t border-slate-200/50 flex justify-between items-center bg-white/80 backdrop-blur-xl flex-shrink-0 z-30 rounded-b-[2.5rem]">
+      {/* Footer Actions - Premium Scaled Down */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 border-t border-slate-200/50 flex justify-between items-center bg-white/80 backdrop-blur-xl flex-shrink-0 z-30 rounded-b-[1.5rem]">
         <button
           onClick={prevStep}
           disabled={currentStep === 1}
-          className={`group flex items-center gap-2 px-6 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all ${currentStep === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 active:scale-95'
+          className={`group flex items-center gap-2 px-4 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest transition-all ${currentStep === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50 active:scale-95'
             }`}
         >
-          <div className="p-1 bg-slate-100 rounded-lg group-hover:bg-slate-200 transition-all"><ArrowLeft className="w-4 h-4" /></div>
+          <div className="p-1 bg-slate-100 rounded-lg group-hover:bg-slate-200 transition-all"><ArrowLeft className="w-3.5 h-3.5" /></div>
           <span>Voltar</span>
         </button>
 
         <button
           onClick={nextStep}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-2xl shadow-blue-500/40 flex items-center gap-3 transition-all transform hover:-translate-y-1 active:translate-y-0 active:scale-95"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest shadow-xl shadow-blue-500/20 flex items-center gap-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
         >
-          {currentStep === steps.length ? 'Gerar Análise Completa' : 'Próximo Passo'}
-          <ArrowRight className="w-5 h-5 shadow-sm" />
+          {currentStep === steps.length ? 'Gerar Análise' : 'Próximo Passo'}
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
     </div>

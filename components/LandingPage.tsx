@@ -11,10 +11,10 @@ const LandingPage: React.FC = () => {
             <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-lg border-b border-slate-200/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/')}>
-                        <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform">
-                            <Layout className="w-5 h-5 text-white" />
+                        <div className="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
+                            <Layout className="w-4 h-4 text-white" />
                         </div>
-                        <span className="font-bold text-xl md:text-2xl tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
+                        <span className="font-bold text-lg md:text-xl tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
                     </div>
                     <div className="flex items-center gap-3 md:gap-6">
                         <button
@@ -47,39 +47,39 @@ const LandingPage: React.FC = () => {
                         <span>A ferramenta nº 1 para Corretores e Compradores</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8 leading-[1.1] max-w-5xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                    <h1 className="text-3xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-[1.1] max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                         Financiamento Imobiliário <br className="hidden md:block" />
                         <span className="text-gradient">Simplificado e Inteligente</span>
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-slate-500 max-w-3xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <p className="text-base md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         Simule cenários reais, compare taxas de todos os bancos e tome a melhor decisão para o seu futuro.
                         Dados precisos que geram confiança e fecham negócios.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                         <button
                             onClick={() => navigate('/simulador')}
-                            className="w-full sm:w-auto px-10 py-5 premium-gradient text-white rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-blue-500/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full sm:w-auto px-8 py-4 premium-gradient text-white rounded-xl font-bold text-base hover:shadow-xl hover:shadow-blue-500/20 transition-all hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2"
                         >
                             <Calculator className="w-5 h-5" />
                             Fazer Simulação Grátis
                         </button>
                         <button
                             onClick={() => navigate('/login')}
-                            className="w-full sm:w-auto px-10 py-5 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center gap-2"
+                            className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-base hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center gap-2"
                         >
                             Já tenho conta <ArrowRight className="w-5 h-5" />
                         </button>
                     </div>
 
-                    {/* Mockup Preview Container */}
-                    <div className="mt-20 md:mt-28 glass-card rounded-3xl p-2 md:p-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                        <div className="bg-slate-900 rounded-[1.4rem] overflow-hidden shadow-2xl aspect-video md:aspect-[21/9] relative flex items-center justify-center border border-slate-800">
+                    {/* Mockup Preview Container - Scaled Down */}
+                    <div className="mt-16 md:mt-20 glass-card rounded-2xl p-1.5 md:p-2 animate-fade-in-up max-w-4xl mx-auto" style={{ animationDelay: '0.4s' }}>
+                        <div className="bg-slate-900 rounded-[0.9rem] overflow-hidden shadow-2xl aspect-video relative flex items-center justify-center border border-slate-800">
                             <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/40 to-transparent"></div>
-                            <div className="text-white text-center p-8">
-                                <Calculator className="w-16 h-16 mx-auto mb-4 text-blue-400 opacity-50" />
-                                <p className="text-slate-400 font-mono text-sm">[ Interface do Simulador Inteligente ]</p>
+                            <div className="text-white text-center p-6">
+                                <Calculator className="w-12 h-12 mx-auto mb-3 text-blue-400 opacity-50" />
+                                <p className="text-slate-500 font-mono text-[10px] uppercase tracking-widest">[ Interface do Simulador ]</p>
                             </div>
                         </div>
                     </div>
