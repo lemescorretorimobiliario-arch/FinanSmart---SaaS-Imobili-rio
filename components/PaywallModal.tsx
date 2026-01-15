@@ -41,12 +41,35 @@ const PaywallModal: React.FC<PaywallModalProps> = ({
                 </div>
 
                 <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
-                <p className="text-slate-600 mb-6 text-sm">
+                <p className="text-slate-600 mb-6 text-sm text-center">
                     {description}
                 </p>
 
-                <div className="bg-slate-50 rounded-lg p-3 mb-6">
-                    <div className="text-xl font-bold text-slate-800">R$ 19,90 <span className="text-xs text-slate-500 font-normal">/mês</span></div>
+                <div className="bg-slate-50 rounded-2xl p-5 mb-6 text-left border border-slate-100">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Vantagens do Plano PRO</h4>
+                    <ul className="space-y-2.5">
+                        <li className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Simulações Ilimitadas
+                        </li>
+                        <li className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Histórico Completo
+                        </li>
+                        <li className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Personalização com sua Foto/Logo
+                        </li>
+                        <li className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            Exportação de PDF Ilimitada
+                        </li>
+                    </ul>
+                </div>
+
+                <div className="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-100 flex items-center justify-between">
+                    <span className="text-xs font-black text-blue-600 uppercase tracking-widest">Acesso Ilimitado</span>
+                    <div className="text-lg font-black text-slate-800 tracking-tighter">R$ 19,90<span className="text-[10px] text-slate-400 font-normal">/mês</span></div>
                 </div>
 
                 <div className="space-y-2">

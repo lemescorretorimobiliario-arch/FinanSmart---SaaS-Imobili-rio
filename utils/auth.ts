@@ -12,7 +12,10 @@ const mapProfileToUser = (profile: any): UserProfile => ({
   plan: profile.plan as 'FREE' | 'PRO',
   type: profile.user_type as 'CORRETOR' | 'CLIENTE',
   simulationsCount: profile.simulations_count || 0,
-  setupCompleted: profile.setup_completed || false
+  setupCompleted: profile.setup_completed || false,
+  stripeCustomerId: profile.stripe_customer_id,
+  subscriptionId: profile.subscription_id,
+  subscriptionStatus: profile.subscription_status
 });
 
 export const getStoredUser = async (): Promise<UserProfile | null> => {
@@ -105,7 +108,10 @@ export const updateUserProfile = async (user: UserProfile): Promise<UserProfile>
       plan: user.plan,
       simulations_count: user.simulationsCount,
       setup_completed: user.setupCompleted,
-      user_type: user.type
+      user_type: user.type,
+      stripe_customer_id: user.stripeCustomerId,
+      subscription_id: user.subscriptionId,
+      subscription_status: user.subscriptionStatus
     })
     .eq('id', user.id);
 

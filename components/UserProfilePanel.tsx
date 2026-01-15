@@ -3,12 +3,14 @@ import { UserProfile } from '../types';
 import {
   Camera, Save, LogOut, Shield, Mail, User, Phone,
   Image as ImageIcon, Star, ArrowRight, LayoutDashboard,
-  Settings, Calculator, Clock, CheckCircle2, Zap
+  Settings, Calculator, Clock, CheckCircle2, Zap, Home, ChevronRight
 } from 'lucide-react';
 import { updateUserProfile } from '../utils/auth';
 import { uploadImage } from '../utils/storage';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../utils/supabaseClient';
+import { formatCurrency } from '../utils/finance';
 
 interface Props {
   user: UserProfile;
@@ -28,6 +30,47 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const [recentHistory, setRecentHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+  React.useEffect(() => {
+    if (activeTab === 'OVERVIEW') {
+      fetchRecentHistory();
+    }
+  }, [activeTab, user.id]);
+
+  const fetchRecentHistory = async () => {
+    setIsLoadingHistory(true);
+    try {
+      const { data, error } = await supabase
+        .from('saved_simulations')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
+      if (error) throw error;
+      setRecentHistory(data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const handleSimClick = (sim: any) => {
+    const mapped = {
+      id: sim.id,
+      date: sim.created_at,
+      propertyValue: sim.property_value,
+      downPayment: sim.down_payment,
+      termYears: sim.term_years,
+      monthlyPayment: sim.monthly_payment,
+      interestRate: sim.interest_rate_annual,
+      amortizationSystem: sim.amortization_system,
+      monthlyIncome: sim.monthly_income
+    };
+    navigate('/simulador', { state: { loadSim: mapped } });
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -209,7 +252,7 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                       </div>
                     </div>
                     <p className="text-slate-500 text-sm font-medium">
-                      Você ainda possui <span className="font-black text-slate-900">{remainingCount} simulações</span> gratuitas.
+                      Simulações restantes: <span className="font-black text-slate-900">{remainingCount}</span>
                     </p>
                     <button
                       onClick={handleUpgradeClick}
@@ -223,23 +266,53 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                   <div className="space-y-6 relative z-10">
                     <div className="flex items-center gap-3 text-emerald-600 bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
                       <CheckCircle2 className="w-6 h-6" />
-                      <span className="font-bold">Acesso ilimitado ativo. Aproveite todos os recursos!</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-slate-50 rounded-2xl">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Salvo</p>
-                        <p className="text-xl font-black text-slate-800">{user.simulationsCount}</p>
-                      </div>
-                      <div className="p-4 bg-slate-50 rounded-2xl">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Vencimento</p>
-                        <p className="text-xl font-black text-slate-800">Mensal</p>
-                      </div>
+                      <span className="font-bold">Acesso ilimitado ativo.</span>
                     </div>
                   </div>
                 )}
 
                 {/* Decorative background element */}
                 <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-50 group-hover:bg-blue-100 transition-colors"></div>
+              </div>
+
+              {/* RECENT HISTORY LIST */}
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">Atividade Recente</h3>
+                  <button onClick={() => navigate('/dashboard')} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Ver tudo</button>
+                </div>
+
+                <div className="space-y-4">
+                  {isLoadingHistory ? (
+                    <div className="py-4 animate-pulse space-y-3">
+                      <div className="h-12 bg-slate-50 rounded-xl"></div>
+                      <div className="h-12 bg-slate-50 rounded-xl"></div>
+                    </div>
+                  ) : recentHistory.length > 0 ? (
+                    recentHistory.map((sim, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleSimClick(sim)}
+                        className="w-full flex items-center justify-between p-4 bg-slate-50/50 hover:bg-blue-50 rounded-[1.5rem] transition-all group border border-transparent hover:border-blue-100"
+                      >
+                        <div className="flex items-center gap-4 text-left">
+                          <div className="p-2 bg-white rounded-xl shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <Home className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-slate-800">{formatCurrency(sim.property_value)}</p>
+                            <p className="text-[10px] font-medium text-slate-400">{new Date(sim.created_at).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-600 transition-all" />
+                      </button>
+                    ))
+                  ) : (
+                    <div className="py-8 text-center bg-slate-50/30 rounded-3xl border border-dashed border-slate-200">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nenhuma simulação recente</p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* QUICK NAV */}

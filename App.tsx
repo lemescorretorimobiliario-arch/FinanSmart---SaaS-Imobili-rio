@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-
 import { Layout, LogOut, LayoutDashboard, Calculator as CalcIcon, UserCircle, Star, Settings, Database, AlertTriangle, CheckCircle, Copy, Edit3, PieChart, Key } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { SimulationData, CalculationResult, UserProfile, LeadData, SavedSimulation } from './types';
+import { SimulationData, CalculationResult, UserProfile, LeadData, SavedSimulation, MAX_FREE_SIMULATIONS } from './types';
 import { calculateSimulation, formatCurrency, parseCurrency } from './utils/finance';
 import { logout, getStoredUser, updateUserProfile } from './utils/auth';
 import { supabase, isSupabaseConfigured } from './utils/supabaseClient';
@@ -21,163 +21,6 @@ import PaywallModal from './components/PaywallModal';
 import LandingPage from './components/LandingPage';
 import OnboardingScreen from './components/OnboardingScreen';
 
-// --- SQL SCRIPT (Preserved) ---
-const REQUIRED_SQL_SCRIPT = `
--- ==============================================================================
--- SCRIPT MESTRE FINANSMART (CORREÇÃO & MIGRAÇÃO)
--- ==============================================================================
-
--- 1. EXTENSÕES
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- 2. TABELAS E MIGRAÇÕES
-
--- 2.1 PERFIS (PROFILES)
-CREATE TABLE IF NOT EXISTS public.profiles (
-    id uuid REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-    email text UNIQUE,
-    full_name text,
-    phone text,
-    user_type text CHECK (user_type IN ('CORRETOR', 'CLIENTE', 'ADMIN')),
-    plan text DEFAULT 'FREE',
-    simulations_count int DEFAULT 0,
-    stripe_customer_id text,
-    subscription_id text,
-    subscription_status text DEFAULT 'active',
-    avatar_url text,
-    cover_url text,
-    setup_completed boolean DEFAULT false,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
-    updated_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
--- Migração para tabelas antigas
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone DEFAULT timezone('utc'::text, now());
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS stripe_customer_id text;
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_id text;
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_status text;
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS simulations_count int DEFAULT 0;
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS setup_completed boolean DEFAULT false;
-
--- 2.2 LEADS
-CREATE TABLE IF NOT EXISTS public.leads (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    agent_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    name text NOT NULL,
-    email text,
-    phone text,
-    status text DEFAULT 'NOVO',
-    interest text,
-    source text DEFAULT 'MANUAL',
-    temperature text DEFAULT 'MORNO',
-    simulation_data jsonb,
-    notes text,
-    last_contacted_at timestamp with time zone,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
-    updated_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
--- Migração para tabelas antigas
-ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone DEFAULT timezone('utc'::text, now());
-ALTER TABLE public.leads ADD COLUMN IF NOT EXISTS simulation_data jsonb;
-
--- 2.3 SIMULAÇÕES SALVAS
-CREATE TABLE IF NOT EXISTS public.saved_simulations (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    property_value numeric,
-    down_payment numeric,
-    term_years int,
-    monthly_payment numeric,
-    interest_rate_annual numeric,
-    amortization_system text,
-    monthly_income numeric,
-    title text,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
-
--- 2.4 TAREFAS
-CREATE TABLE IF NOT EXISTS public.tasks (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    agent_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    title text NOT NULL,
-    description text,
-    due_date timestamp with time zone,
-    is_completed boolean DEFAULT false,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
-
--- 2.5 WEBHOOK LOGS (Para debug do Stripe)
-CREATE TABLE IF NOT EXISTS public.stripe_events (
-    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    event_id text UNIQUE,
-    event_type text,
-    payload jsonb,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
-
--- 3. STORAGE
-INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true) ON CONFLICT (id) DO NOTHING;
-INSERT INTO storage.buckets (id, name, public) VALUES ('covers', 'covers', true) ON CONFLICT (id) DO NOTHING;
-
--- 4. SEGURANÇA (RLS)
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.saved_simulations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
-
--- Reset Policies
-DROP POLICY IF EXISTS "Public profiles" ON profiles;
-CREATE POLICY "Public profiles" ON profiles FOR SELECT USING (true);
-DROP POLICY IF EXISTS "Self update profiles" ON profiles;
-CREATE POLICY "Self update profiles" ON profiles FOR UPDATE USING (auth.uid() = id);
-DROP POLICY IF EXISTS "Users insert own profile" ON profiles;
-CREATE POLICY "Users insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
-
-DROP POLICY IF EXISTS "Agents all leads" ON leads;
-CREATE POLICY "Agents all leads" ON leads FOR ALL USING (auth.uid() = agent_id);
-
-DROP POLICY IF EXISTS "Users all sims" ON saved_simulations;
-CREATE POLICY "Users all sims" ON saved_simulations FOR ALL USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Public Storage" ON storage.objects;
-CREATE POLICY "Public Storage" ON storage.objects FOR SELECT USING (bucket_id IN ('avatars', 'covers'));
-DROP POLICY IF EXISTS "Auth Upload" ON storage.objects;
-CREATE POLICY "Auth Upload" ON storage.objects FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-DROP POLICY IF EXISTS "Owner Update" ON storage.objects;
-CREATE POLICY "Owner Update" ON storage.objects FOR UPDATE USING (auth.uid() = owner);
-
-
--- 5. GATILHOS E FUNÇÕES (TRIGGERS)
-
--- Função para atualizar timestamp 'updated_at'
-CREATE OR REPLACE FUNCTION update_modified_column() 
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = now();
-    RETURN NEW; 
-END;
-$$ language 'plpgsql';
-
-DROP TRIGGER IF EXISTS update_leads_modtime ON leads;
-CREATE TRIGGER update_leads_modtime BEFORE UPDATE ON leads FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
-
-DROP TRIGGER IF EXISTS update_profiles_modtime ON profiles;
-CREATE TRIGGER update_profiles_modtime BEFORE UPDATE ON profiles FOR EACH ROW EXECUTE PROCEDURE update_modified_column();
-
--- Função para criar perfil automaticamente no cadastro
-CREATE OR REPLACE FUNCTION public.handle_new_user() 
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO public.profiles (id, email, full_name, user_type)
-  VALUES (new.id, new.email, COALESCE(new.raw_user_meta_data->>'full_name', 'Usuário'), COALESCE(new.raw_user_meta_data->>'user_type', 'CLIENTE'));
-  RETURN new;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
-`;
-
-// --- COMPONENT ---
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -186,17 +29,17 @@ const App: React.FC = () => {
   // --- GLOBAL DATA STATE ---
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoadingSession, setIsLoadingSession] = useState(true);
-  const [isConfigured, setIsConfigured] = useState(true);
+  const [isConfigured] = useState(isSupabaseConfigured());
   const [dbError, setDbError] = useState(false);
 
   // Simulation state (Shared across routes for simplicity)
   const [data, setData] = useState<SimulationData>({
     propertyValue: 500000,
     downPayment: 100000,
-    interestRateAnnual: 11.63,
     termYears: 30,
+    interestRateAnnual: 11.0,
     amortizationSystem: 'SAC',
-    monthlyIncome: 15000,
+    monthlyIncome: 12000,
     maxIncomeCommitment: 30,
     extraAmortizationMonthly: 0,
     extraAmortizationStrategy: 'REDUCE_TERM'
@@ -205,16 +48,16 @@ const App: React.FC = () => {
   const [result, setResult] = useState<CalculationResult | null>(null);
 
   // Mobile View State
-  const [mobileSimView, setMobileSimView] = useState<'FORM' | 'RESULT'>('FORM');
+  const [mobileSimView, setMobileSimView] = useState<'INPUT' | 'RESULT'>('INPUT');
   const resultRef = useRef<HTMLDivElement>(null);
   const [showLeadModal, setShowLeadModal] = useState(false); // For Reator saving leads
   const [showLimitModal, setShowLimitModal] = useState(false); // For Free plan limit
+  const [isSimulating, setIsSimulating] = useState(false);
 
   // --- EFFECT: INIT & AUTH ---
   useEffect(() => {
     const checkConfigAndInit = async () => {
       if (!isSupabaseConfigured()) {
-        setIsConfigured(false);
         setIsLoadingSession(false);
         return;
       }
@@ -225,11 +68,18 @@ const App: React.FC = () => {
         // CHECK PAYMENT SUCCESS
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('payment_success') === 'true') {
-          toast.success("Pagamento confirmado! Plano PRO ativado.");
           if (currentUser && currentUser.plan !== 'PRO') {
             const updatedUser = { ...currentUser, plan: 'PRO' as const };
-            setUser(updatedUser);
-            updateUserProfile(updatedUser);
+            try {
+              await updateUserProfile(updatedUser);
+              setUser(updatedUser);
+              toast.success("Pagamento confirmado! Plano PRO ativado.");
+            } catch (err) {
+              console.error("Failed to update plan status", err);
+              toast.error("Pagamento processado, mas houve um erro ao atualizar seu status. Recarregue a página.");
+            }
+          } else {
+            toast.success("Bem-vindo de volta! Seu plano PRO está ativo.");
           }
           // Clean URL
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -245,6 +95,10 @@ const App: React.FC = () => {
 
         if (currentUser) {
           setUser(currentUser);
+          // TRIGGER LIMIT MODAL ON ENTRY IF ZEROTED
+          if (currentUser.plan === 'FREE' && currentUser.simulationsCount >= MAX_FREE_SIMULATIONS) {
+            setShowLimitModal(true);
+          }
         }
       } catch (e) {
         console.error("Session/DB error", e);
@@ -266,6 +120,13 @@ const App: React.FC = () => {
       return () => { authListener.subscription.unsubscribe(); };
     }
   }, [navigate]);
+
+  // MANDATORY ONBOARDING REDIRECT
+  useEffect(() => {
+    if (!isLoadingSession && user && !user.setupCompleted && location.pathname !== '/onboarding') {
+      navigate('/onboarding', { replace: true });
+    }
+  }, [user, location.pathname, isLoadingSession, navigate]);
 
   // --- EFFECT: HANDLE NAVIGATION STATE (Load History/Lead) ---
   useEffect(() => {
@@ -315,7 +176,7 @@ const App: React.FC = () => {
 
   const handleLogin = (newUser: UserProfile) => {
     setUser(newUser);
-    toast.success(`Bem-vindo, ${newUser.name}!`);
+    toast.success(`Bem - vindo, ${newUser.name} !`);
     // Navigate to where they were coming from, or dashboard
     const origin = (location.state as any)?.from?.pathname || '/dashboard';
     navigate(origin);
@@ -345,36 +206,29 @@ const App: React.FC = () => {
   };
 
   const handleSimulate = async () => {
-    // 1. Strict Requirement Check: 5 simulations Limit for Free Plan
-    if (user?.plan === 'FREE' && user.simulationsCount >= 5) {
+    if (user?.plan === 'FREE' && user.simulationsCount >= MAX_FREE_SIMULATIONS) {
       setShowLimitModal(true);
-      return; // BLOCK EXECUTION
+      return;
     }
 
-    // Guest can simulate freely!
-    // But if they want to save, they need to log in.
-    // We calculate first.
+    setIsSimulating(true);
     try {
       const res = calculateSimulation(data);
       setResult(res);
       setMobileSimView('RESULT');
 
-      // Auto scroll to result
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
 
-      // If user is logged in, we update their usage count
       if (user) {
-        // Limit checked at start of function
         const newCount = user.simulationsCount + 1;
         const updatedUser = { ...user, simulationsCount: newCount };
-        setUser(updatedUser);
-        updateUserProfile(updatedUser);
 
-        // If it's a CLIENT, auto-save to history
-        if (user.type === 'CLIENTE') {
-          await supabase.from('saved_simulations').insert({
+        // Attempting to sync both
+        const [profileRes, historyRes] = await Promise.allSettled([
+          updateUserProfile(updatedUser),
+          supabase.from('saved_simulations').insert({
             user_id: user.id,
             property_value: data.propertyValue,
             down_payment: data.downPayment,
@@ -383,12 +237,23 @@ const App: React.FC = () => {
             interest_rate_annual: data.interestRateAnnual,
             amortization_system: data.amortizationSystem,
             monthly_income: data.monthlyIncome
-          });
+          })
+        ]);
+
+        if (profileRes.status === 'fulfilled') {
+          setUser(updatedUser);
+        }
+
+        if (historyRes.status === 'rejected') {
+          console.error("History save failed:", historyRes.reason);
+          toast.error("Resultado gerado, mas não pôde ser salvo no histórico.");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("Erro ao calcular. Verifique os valores.");
+      toast.error(`Erro ao calcular: ${error.message || 'Verifique os valores'} `);
+    } finally {
+      setIsSimulating(false);
     }
   };
 
@@ -419,7 +284,12 @@ const App: React.FC = () => {
   // --- RENDER HELPERS ---
 
   if (!isConfigured) return <ConfigErrorScreen />;
-  if (dbError) return <DbErrorScreen sql={REQUIRED_SQL_SCRIPT} />;
+  if (dbError) return <div className="h-screen flex flex-col items-center justify-center p-6 text-center">
+    <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+    <h1 className="text-xl font-bold">Erro de Conexão</h1>
+    <p className="text-slate-500 mt-2">Não foi possível conectar ao banco de dados.</p>
+    <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl">Tentar Novamente</button>
+  </div>;
 
   const isLanding = location.pathname === '/';
   const isOnboarding = location.pathname === '/onboarding';
@@ -441,19 +311,30 @@ const App: React.FC = () => {
             <div className="hidden md:flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
               <button
                 onClick={() => navigate('/simulador')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg text - [10px] font - black uppercase tracking - wider transition - all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'} `}
               >
                 <CalcIcon className="w-3.5 h-3.5" /> <span>Simulador</span>
               </button>
               {user && (
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                  className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg text - [10px] font - black uppercase tracking - wider transition - all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'} `}
                 >
                   <LayoutDashboard className="w-3.5 h-3.5" /> <span>Painel</span>
                 </button>
               )}
             </div>
+          )}
+
+          {/* CTA UPGRADE - HEADER */}
+          {!isOnboarding && user && user.plan === 'FREE' && (
+            <button
+              onClick={handleUpgrade}
+              className="hidden lg:flex items-center gap-2 px-5 py-2.5 bg-amber-50 text-amber-600 rounded-xl font-black text-[10px] uppercase tracking-widest border border-amber-200 hover:bg-amber-600 hover:text-white transition-all shadow-sm active:scale-95"
+            >
+              <Star className="w-3.5 h-3.5 fill-amber-500" />
+              Assinar Plano PRO
+            </button>
           )}
 
           {/* User Actions */}
@@ -465,6 +346,11 @@ const App: React.FC = () => {
                   <div className="flex items-center gap-1.5">
                     {user.plan === 'PRO' && <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />}
                     <span className="text-sm font-black text-slate-900">{user.name}</span>
+                    {user.plan === 'FREE' && (
+                      <span className="ml-1 text-[9px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100 font-bold">
+                        {user.simulationsCount}/{MAX_FREE_SIMULATIONS}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <button
@@ -503,15 +389,15 @@ const App: React.FC = () => {
           <Route path="/simulador" element={
             <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
 
-              <aside className={`w-full md:w-[450px] bg-white z-10 flex-col overflow-hidden transition-all relative border-r border-slate-200/50 ${mobileSimView === 'FORM' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+              <aside className={`w - full md: w - [450px] bg - white z - 10 flex - col overflow - hidden transition - all relative border - r border - slate - 200 / 50 ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'} `}>
                 <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
                 <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
                 <div className="flex-1 overflow-hidden relative z-10">
-                  <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} />
+                  <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} user={user} />
                 </div>
               </aside>
 
-              <section ref={resultRef} className={`bg-slate-50/50 backdrop-blur-sm overflow-y-auto relative custom-scrollbar ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
+              <section ref={resultRef} className={`bg - slate - 50 / 50 backdrop - blur - sm overflow - y - auto relative custom - scrollbar ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'} `}>
                 {/* Decorative background element */}
                 <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-100/30 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
 
@@ -541,8 +427,8 @@ const App: React.FC = () => {
               {/* Mobile Bottom Tabs - Glassy */}
               <div className="md:hidden fixed bottom-6 left-6 right-6 bg-white/80 backdrop-blur-2xl rounded-[2rem] border border-white/50 flex z-50 h-20 shadow-2xl overflow-hidden ring-1 ring-black/5">
                 <button
-                  onClick={() => setMobileSimView('FORM')}
-                  className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileSimView === 'FORM' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}
+                  onClick={() => setMobileSimView('INPUT')}
+                  className={`flex - 1 flex flex - col items - center justify - center gap - 1.5 transition - all ${mobileSimView === 'INPUT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'} `}
                 >
                   <CalcIcon className="w-6 h-6" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Simular</span>
@@ -550,7 +436,7 @@ const App: React.FC = () => {
                 <div className="w-px h-10 bg-slate-200 self-center"></div>
                 <button
                   onClick={() => setMobileSimView('RESULT')}
-                  className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`flex - 1 flex flex - col items - center justify - center gap - 1.5 transition - all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'} `}
                 >
                   <PieChart className="w-6 h-6" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Resultado</span>
@@ -615,7 +501,7 @@ const App: React.FC = () => {
             onClose={() => setShowLeadModal(false)}
             onSubmit={async (leadInfo) => {
               try {
-                await supabase.from('leads').insert({
+                const { error } = await supabase.from('leads').insert({
                   agent_id: user.id,
                   name: leadInfo.name,
                   email: leadInfo.email,
@@ -624,9 +510,15 @@ const App: React.FC = () => {
                   status: 'NOVO',
                   simulation_data: data
                 });
+
+                if (error) throw error;
+
                 toast.success("Lead salvo com sucesso!");
                 setShowLeadModal(false);
-              } catch (e) { toast.error("Erro ao salvar lead."); }
+              } catch (e: any) {
+                console.error("Save Lead Error:", e);
+                toast.error(`Erro ao salvar lead: ${e.message || 'Tente novamente.'} `);
+              }
             }}
           />
         )
@@ -659,15 +551,5 @@ const ConfigErrorScreen = () => (
   </div>
 );
 
-const DbErrorScreen = ({ sql }: { sql: string }) => (
-  <div className="min-h-screen bg-white p-8 flex flex-col items-center justify-center">
-    <Database className="w-16 h-16 text-amber-500 mb-4" />
-    <h1 className="text-2xl font-bold text-slate-800">Banco de Dados não Inicializado</h1>
-    <p className="text-slate-500 mb-6">Copie o script abaixo e rode no SQL Editor do Supabase.</p>
-    <button onClick={() => { navigator.clipboard.writeText(sql); toast.success("Copiado!"); }} className="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold mb-4">
-      Copiar Script SQL
-    </button>
-  </div>
-);
 
 export default App;

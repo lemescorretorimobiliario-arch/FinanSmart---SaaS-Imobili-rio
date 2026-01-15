@@ -40,14 +40,15 @@ serve(async (req) => {
     try {
         console.log(`Processing event: ${event.type}`);
 
-        if (event.type === 'checkout.session.completed') {
-            const session = event.data.object;
-            const userId = session.metadata?.userId || session.client_reference_id;
-            const subscriptionId = session.subscription;
+        if (event.type === 'checkout.session.completed' || event.type === 'invoice.payment_succeeded') {
+            const data = event.data.object;
+            const customerId = data.customer;
+            // For checkout session, we use metadata. For invoice, we need to find the user by customerId
+            const userId = data.metadata?.userId || data.client_reference_id;
+            const subscriptionId = data.subscription;
 
             if (userId) {
-                console.log(`Upgrading user ${userId} to PRO. Sub ID: ${subscriptionId}`);
-
+                console.log(`Activating plan for user ${userId}. Sub ID: ${subscriptionId}`);
                 await supabase
                     .from('profiles')
                     .update({
@@ -57,6 +58,17 @@ serve(async (req) => {
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', userId);
+            } else if (customerId) {
+                console.log(`Activating plan for customer ${customerId}. Sub ID: ${subscriptionId}`);
+                await supabase
+                    .from('profiles')
+                    .update({
+                        plan: 'PRO',
+                        subscription_id: subscriptionId,
+                        subscription_status: 'active',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('stripe_customer_id', customerId);
             }
         }
 

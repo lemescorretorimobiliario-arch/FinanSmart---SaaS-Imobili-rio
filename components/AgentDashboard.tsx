@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LeadData, UserProfile, LeadStatus } from '../types';
+import { LeadData, UserProfile, LeadStatus, MAX_FREE_SIMULATIONS } from '../types';
 import {
   Users, TrendingUp, DollarSign, Phone, Mail, Calendar, Search,
   MoreHorizontal, LayoutGrid, List, MessageCircle, ArrowRight,
@@ -169,8 +169,8 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead, onUpgrade }) => {
   const formatBRL = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
 
-  const usagePercent = Math.min((user.simulationsCount / 5) * 100, 100);
-  const remaining = Math.max(5 - user.simulationsCount, 0);
+  const usagePercent = Math.min((user.simulationsCount / MAX_FREE_SIMULATIONS) * 100, 100);
+  const remaining = Math.max(MAX_FREE_SIMULATIONS - user.simulationsCount, 0);
 
   return (
     <div className="p-4 md:p-10 max-w-[1600px] mx-auto space-y-10 animate-fade-in pb-24 font-sans">

@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { SimulationData } from '../types';
+import { SimulationData, UserProfile } from '../types';
 import { formatCurrency, parseCurrency, calculateEstimatedMinimumIncome } from '../utils/finance';
 import {
   Calculator, DollarSign, Percent, Calendar, Home, Briefcase,
   Landmark, Zap, ArrowRight, ArrowLeft, CheckCircle, HelpCircle,
-  TrendingDown
+  TrendingDown, Star, ChevronRight
 } from 'lucide-react';
 
 interface Props {
   data: SimulationData;
   onChange: (data: SimulationData) => void;
   onSimulate: () => void;
+  user?: UserProfile | null;
 }
 
 // Condensed steps for better UX
@@ -45,19 +46,13 @@ const InfoTooltip = ({ text }: { text: string }) => {
   );
 };
 
-const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
+const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate, user }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Focus first input of the step
-    setTimeout(() => {
-      const inputs = document.querySelectorAll('input:not([type="hidden"]):not([disabled])');
-      if (inputs.length > 0) {
-        (inputs[0] as HTMLElement).focus();
-      }
-    }, 100);
-  }, [currentStep]);
+    // Check if configured
+  }, []);
 
   const updateField = (field: keyof SimulationData, value: any) => {
     onChange({ ...data, [field]: value });
@@ -198,7 +193,7 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-blue-200">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Taxa Anual (%)</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Juros do Banco (% a.a.)</label>
                   <div className="relative">
                     <input
                       type="number"
@@ -212,19 +207,21 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
                 </div>
 
                 <div className="glass-card p-5 rounded-[1.5rem] border border-white shadow-lg group transition-all hover:border-blue-200">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Sistema Amortiz.</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block">Tipo de Parcela</label>
                   <div className="flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
                     <button
                       onClick={() => updateField('amortizationSystem', 'SAC')}
                       className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      title="Parcelas começam maiores e diminuem com o tempo."
                     >
-                      SAC
+                      Decrescente (SAC)
                     </button>
                     <button
                       onClick={() => updateField('amortizationSystem', 'PRICE')}
                       className={`flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      title="Parcelas fixas do início ao fim."
                     >
-                      PRICE
+                      Fixas (PRICE)
                     </button>
                   </div>
                 </div>
@@ -250,7 +247,7 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
               <div className="glass-card p-5 md:p-6 rounded-[1.5rem] border-2 border-amber-200 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
 
-                <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-3">Amortização Extra Mensal (Opcional)</label>
+                <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-3">Pagamento Extra Mensal (Economia)</label>
                 <div className="relative mb-5">
                   <input
                     type="text"
@@ -315,10 +312,20 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate }) => {
           onClick={nextStep}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-black uppercase text-[9px] tracking-widest shadow-xl shadow-blue-500/20 flex items-center gap-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
         >
-          {currentStep === steps.length ? 'Gerar Análise' : 'Próximo Passo'}
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Subtle PRO CTA for Free Users */}
+      {user && user.plan === 'FREE' && (
+        <div className="px-6 py-3 bg-amber-50/50 border-t border-amber-100 flex items-center justify-between group cursor-pointer hover:bg-amber-100 transition-all">
+          <div className="flex items-center gap-2">
+            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-amber-600">Simule sem limites com o Plano PRO</span>
+          </div>
+          <ChevronRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-1 transition-transform" />
+        </div>
+      )}
     </div>
   );
 };

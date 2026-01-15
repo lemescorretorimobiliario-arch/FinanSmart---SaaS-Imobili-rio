@@ -37,9 +37,17 @@
   background: #94a3b8;
 }
 
-/* Smooth transitions */
-* {
+/* Smooth transitions - Targeted instead of global for performance */
+.transition-standard {
   @apply transition-all duration-300 ease-in-out;
+}
+
+.hover-lift {
+  @apply hover:-translate-y-1 hover:shadow-2xl transition-all duration-300;
+}
+
+.button-press {
+  @apply active:scale-95 transition-transform duration-100;
 }
 
 /* Prevent layout shift on scrollbar appearance */

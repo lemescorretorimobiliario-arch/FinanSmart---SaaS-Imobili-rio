@@ -14,14 +14,15 @@ import {
   UserPlus,
   MessageCircle,
   Share2,
-  Save
+  Save,
+  Star
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, BarChart, Bar, TooltipProps
 } from 'recharts';
-import { CalculationResult, SimulationData, UserProfile } from '../types';
+import { CalculationResult, SimulationData, UserProfile, MAX_FREE_SIMULATIONS } from '../types';
 import { formatCurrency } from '../utils/finance';
 import { generatePDF } from '../utils/pdfGenerator';
 
@@ -65,7 +66,7 @@ const ResultDashboard: React.FC<ResultDashboardProps> = ({ data, result, user, o
   const handleExport = () => {
     // If requirement says simulation is blocked, then export should likely also be blocked if free limit reached?
     // Current logic: Free users have limit of 5.
-    if (user.plan === 'FREE' && user.simulationsCount >= 5) {
+    if (user.plan === 'FREE' && user.simulationsCount >= MAX_FREE_SIMULATIONS) {
       setShowPaywall(true);
       return;
     }
@@ -270,6 +271,31 @@ _Gerado por ${user.name}_`;
                 <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Em {result.termMonths} meses</div>
               </div>
             </div>
+
+            {/* Upgrade PRO Banner for Free Users */}
+            {user.plan === 'FREE' && (
+              <div className="bg-slate-900 rounded-[2.5rem] p-8 md:p-10 text-white relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+                  <div className="space-y-4 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/30 border border-blue-500/30 rounded-full text-[10px] font-black uppercase tracking-widest text-blue-400">
+                      <Star className="w-3 h-3 fill-blue-400" /> Oferta PRO
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black tracking-tight">Desbloqueie o Poder Total</h3>
+                    <p className="text-slate-400 font-medium max-w-md">
+                      Simulações ilimitadas, PDFs personalizados com sua marca e gestão completa de leads. Tudo por um preço único.
+                    </p>
+                  </div>
+                  <button
+                    onClick={onUpgradeClick}
+                    className="w-full md:w-auto px-10 py-5 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-600 hover:text-white transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
+                  >
+                    Assinar PRO <Zap className="w-4 h-4 fill-current" />
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
 

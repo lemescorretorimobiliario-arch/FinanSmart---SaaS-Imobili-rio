@@ -26,9 +26,10 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
             await updateUserProfile(updatedUser);
             onComplete(updatedUser);
             toast.success("Perfil configurado com sucesso!");
-        } catch (error) {
-            console.error(error);
-            toast.error("Erro ao salvar sua escolha. Tente novamente.");
+        } catch (error: any) {
+            console.error("Onboarding Error Details:", error);
+            const msg = error.message || "Erro desconhecido";
+            toast.error(`Erro ao salvar sua escolha: ${msg}. Verifique o console.`);
         } finally {
             setIsSubmitting(false);
         }
@@ -60,8 +61,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
                     <button
                         onClick={() => setSelectedType('CLIENTE')}
                         className={`group relative p-8 rounded-[2.5rem] bg-white border-2 transition-all duration-500 flex flex-col items-center text-center gap-6 shadow-sm hover:shadow-2xl hover:-translate-y-2 ${selectedType === 'CLIENTE'
-                                ? 'border-blue-600 ring-4 ring-blue-50'
-                                : 'border-slate-100'
+                            ? 'border-blue-600 ring-4 ring-blue-50'
+                            : 'border-slate-100'
                             }`}
                     >
                         <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${selectedType === 'CLIENTE' ? 'bg-blue-600 text-white rotate-6' : 'bg-slate-50 text-slate-400'
@@ -89,8 +90,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
                     <button
                         onClick={() => setSelectedType('CORRETOR')}
                         className={`group relative p-8 rounded-[2.5rem] bg-white border-2 transition-all duration-500 flex flex-col items-center text-center gap-6 shadow-sm hover:shadow-2xl hover:-translate-y-2 ${selectedType === 'CORRETOR'
-                                ? 'border-indigo-600 ring-4 ring-indigo-50'
-                                : 'border-slate-100'
+                            ? 'border-indigo-600 ring-4 ring-indigo-50'
+                            : 'border-slate-100'
                             }`}
                     >
                         <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${selectedType === 'CORRETOR' ? 'bg-indigo-600 text-white -rotate-6' : 'bg-slate-50 text-slate-400'
@@ -120,8 +121,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
                         onClick={handleFinish}
                         disabled={!selectedType || isSubmitting}
                         className={`w-full max-w-xs py-5 rounded-2xl font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-2xl active:scale-95 text-xs ${selectedType
-                                ? 'bg-slate-900 text-white hover:bg-blue-600 shadow-blue-500/20'
-                                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                            ? 'bg-slate-900 text-white hover:bg-blue-600 shadow-blue-500/20'
+                            : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                             }`}
                     >
                         {isSubmitting ? (

@@ -65,6 +65,9 @@ export interface BankRate {
   updateDate: string;
 }
 
+export type UserPlan = 'FREE' | 'PRO';
+export const MAX_FREE_SIMULATIONS = 5;
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -72,10 +75,13 @@ export interface UserProfile {
   phone?: string; // Added for PDF contact info
   avatarUrl?: string; // Public URL from Supabase Storage
   coverUrl?: string; // Public URL from Supabase Storage
-  plan: 'FREE' | 'PRO';
+  plan: UserPlan;
   type: 'CORRETOR' | 'CLIENTE';
   simulationsCount: number;
   setupCompleted: boolean;
+  stripeCustomerId?: string;
+  subscriptionId?: string;
+  subscriptionStatus?: string;
 }
 
 export type LeadStatus = 'NOVO' | 'EM_ATENDIMENTO' | 'VISITA' | 'PROPOSTA' | 'FECHADO' | 'PERDIDO';
