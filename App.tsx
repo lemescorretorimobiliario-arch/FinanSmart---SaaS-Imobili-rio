@@ -311,14 +311,14 @@ const App: React.FC = () => {
             <div className="hidden md:flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
               <button
                 onClick={() => navigate('/simulador')}
-                className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg text - [10px] font - black uppercase tracking - wider transition - all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'} `}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
               >
                 <CalcIcon className="w-3.5 h-3.5" /> <span>Simulador</span>
               </button>
               {user && (
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className={`flex items - center gap - 2 px - 4 py - 2 rounded - lg text - [10px] font - black uppercase tracking - wider transition - all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'} `}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
                 >
                   <LayoutDashboard className="w-3.5 h-3.5" /> <span>Painel</span>
                 </button>
@@ -389,7 +389,7 @@ const App: React.FC = () => {
           <Route path="/simulador" element={
             <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
 
-              <aside className={`w - full md: w - [450px] bg - white z - 10 flex - col overflow - hidden transition - all relative border - r border - slate - 200 / 50 ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'} `}>
+              <aside className={`w-full md:w-[450px] bg-white z-10 flex-col overflow-hidden transition-all relative border-r border-slate-200/50 ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
                 <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent pointer-events-none"></div>
                 <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
                 <div className="flex-1 overflow-hidden relative z-10">
@@ -397,7 +397,7 @@ const App: React.FC = () => {
                 </div>
               </aside>
 
-              <section ref={resultRef} className={`bg - slate - 50 / 50 backdrop - blur - sm overflow - y - auto relative custom - scrollbar ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'} `}>
+              <section ref={resultRef} className={`bg-slate-50/50 backdrop-blur-sm overflow-y-auto relative custom-scrollbar ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
                 {/* Decorative background element */}
                 <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-100/30 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
 
@@ -428,7 +428,7 @@ const App: React.FC = () => {
               <div className="md:hidden fixed bottom-6 left-6 right-6 bg-white/80 backdrop-blur-2xl rounded-[2rem] border border-white/50 flex z-50 h-20 shadow-2xl overflow-hidden ring-1 ring-black/5">
                 <button
                   onClick={() => setMobileSimView('INPUT')}
-                  className={`flex - 1 flex flex - col items - center justify - center gap - 1.5 transition - all ${mobileSimView === 'INPUT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'} `}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileSimView === 'INPUT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <CalcIcon className="w-6 h-6" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Simular</span>
@@ -436,7 +436,7 @@ const App: React.FC = () => {
                 <div className="w-px h-10 bg-slate-200 self-center"></div>
                 <button
                   onClick={() => setMobileSimView('RESULT')}
-                  className={`flex - 1 flex flex - col items - center justify - center gap - 1.5 transition - all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'} `}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <PieChart className="w-6 h-6" />
                   <span className="text-[10px] font-black uppercase tracking-widest">Resultado</span>
