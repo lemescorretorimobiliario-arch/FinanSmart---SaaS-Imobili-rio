@@ -28,7 +28,36 @@ export const getStoredUser = async (): Promise<UserProfile | null> => {
     .eq('id', session.user.id)
     .single();
 
-  if (error || !profile) return null;
+  if (error || !profile) {
+    // FALLBACK: Se o perfil não existe (trigger falhou?), cria agora para não bloquear o usuário.
+    console.warn("Perfil não encontrado. Tentando criar automaticamente...");
+    
+    // Obter dados meta da sessão
+    const meta = session.user.user_metadata || {};
+    
+    const { data: newProfile, error: createError } = await supabase
+      .from('profiles')
+      .insert({
+        id: session.user.id,
+        email: session.user.email,
+        full_name: meta.full_name || meta.name || 'Usuário',
+        avatar_url: meta.avatar_url || meta.picture,
+        user_type: 'CLIENTE', // Padrão seguro, muda no onboarding
+        plan: 'FREE',
+        simulations_count: 0,
+        setup_completed: false
+      })
+      .select()
+      .single();
+
+    if (createError || !newProfile) {
+      console.error("ERRO CRÍTICO: Falha ao auto-criar perfil.", createError);
+      return null;
+    }
+    
+    return mapProfileToUser(newProfile);
+  }
+  
   return mapProfileToUser(profile);
 };
 
@@ -41,16 +70,11 @@ export const loginWithEmail = async (email: string, password: string): Promise<U
   if (error) throw new Error(error.message);
   if (!data.session) throw new Error('Erro ao iniciar sessão.');
 
-  // Fetch Profile Data
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', data.session.user.id)
-    .single();
+  // Reuse getStoredUser logic to handle profile check/auto-create
+  const user = await getStoredUser();
+  if (!user) throw new Error('Sessão criada, mas perfil inacessível.');
 
-  if (profileError || !profile) throw new Error('Perfil de usuário não encontrado.');
-
-  return mapProfileToUser(profile);
+  return user;
 };
 
 export const registerUser = async (userData: { name: string; email: string; password: string; type: 'CORRETOR' | 'CLIENTE' }): Promise<UserProfile> => {
