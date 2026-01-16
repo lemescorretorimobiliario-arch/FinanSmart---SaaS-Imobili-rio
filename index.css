@@ -39,7 +39,7 @@
   }
 
   .finan-card-premium {
-    @apply bg-white border border-slate-200/80 rounded-2xl shadow-[0_2px_15px_-3px_rgba(0, 0, 0, 0.07), 0_10px_20px_-2px_rgba(0, 0, 0, 0.04)];
+    @apply bg-white border border-slate-200/80 rounded-2xl shadow-lg;
   }
 
   /* BUTTON SYSTEM */

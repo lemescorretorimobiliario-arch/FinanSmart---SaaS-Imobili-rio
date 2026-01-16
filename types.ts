@@ -1,4 +1,5 @@
 import { UserRole, UserPlan } from './core/system';
+export { UserRole, UserPlan };
 
 export type AmortizationSystem = 'SAC' | 'PRICE';
 

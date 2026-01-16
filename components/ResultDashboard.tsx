@@ -56,8 +56,7 @@ const ResultDashboard: React.FC<ResultDashboardProps> = ({ result, data, user, o
 
     const toastId = toast.loading("Gerando relatório profissional...");
     try {
-      // @ts-ignore - generatePDF expected CalculationResult but might have slight mismatch
-      await generatePDF(result, data, user);
+      await generatePDF(data, result, user);
       toast.success("Relatório gerado com sucesso!", { id: toastId });
     } catch (error) {
       toast.error("Erro ao gerar PDF", { id: toastId });
