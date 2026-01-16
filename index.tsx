@@ -3,9 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import App from './App';
+import { AuthProvider } from './context/AuthContext';
 import './index.css';
-
-
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -16,8 +15,10 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
-      <Toaster richColors position="top-right" />
+      <AuthProvider>
+        <App />
+        <Toaster richColors position="top-right" />
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

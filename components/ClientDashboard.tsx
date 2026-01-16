@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { SavedSimulation, UserProfile, MAX_FREE_SIMULATIONS } from '../types';
-import { Clock, ArrowRight, Home, Calculator, Trash2, Zap, Star, Eye, RefreshCw, ChevronRight, CheckCircle2, Lock } from 'lucide-react';
+import { SavedSimulation, UserProfile } from '../types';
+import { Clock, Calculator, Trash2, Zap, Star, RefreshCw, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { formatCurrency } from '../utils/finance';
 import { supabase } from '../utils/supabaseClient';
 import { toast } from 'sonner';
 import { subscribeToPro } from '../utils/stripePayment';
+import { simulationService } from '../services/simulationService';
+import { SYSTEM_LIMITS } from '../core/system';
 
 interface Props {
   user: UserProfile;
@@ -23,28 +25,8 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
   const fetchHistory = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('saved_simulations')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      if (data) {
-        const mapped = data.map((item: any) => ({
-          id: item.id,
-          date: item.created_at,
-          propertyValue: item.property_value,
-          downPayment: item.down_payment || item.property_value * 0.2,
-          termYears: item.term_years,
-          monthlyPayment: item.monthly_payment,
-          interestRate: item.interest_rate_annual || 11.0,
-          amortizationSystem: item.amortization_system || 'SAC',
-          monthlyIncome: item.monthly_income || 0
-        }));
-        setHistory(mapped);
-      }
+      const data = await simulationService.getHistory(user.id);
+      setHistory(data);
     } catch (err) {
       console.error(err);
       toast.error("Erro ao carregar histórico.");
@@ -70,79 +52,71 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
 
   const handleUpgrade = async () => {
     try {
-      if (!user.email) {
-        toast.error("Email do usuário não encontrado.");
-        return;
-      }
-      toast.info("Iniciando checkout...");
+      if (!user.email) return;
       await subscribeToPro(user.email, user.id);
     } catch (error) {
-      console.error(error);
       toast.error("Erro ao iniciar pagamento.");
     }
   };
 
-  const usagePercent = Math.min((user.simulationsCount / MAX_FREE_SIMULATIONS) * 100, 100);
-  const remaining = Math.max(MAX_FREE_SIMULATIONS - user.simulationsCount, 0);
+  const usagePercent = Math.min((user.simulationsCount / SYSTEM_LIMITS.FREE_SIMULATIONS) * 100, 100);
 
   return (
     <div className="p-3 md:p-6 max-w-6xl mx-auto space-y-4 md:space-y-6 animate-fade-in pb-20 md:pb-8 font-sans">
 
-      {/* HEADER SECTION - Compact */}
+      {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-            Painel do Cliente
+            Seja bem-vindo, <span className="text-blue-600">{user.name.split(' ')[0]}</span>
           </h1>
-          <p className="text-slate-500 font-medium text-xs mt-0.5">Gerencie suas simulações e assinaturas.</p>
+          <p className="text-slate-500 font-medium text-xs mt-0.5">Visão geral do seu planejamento imobiliário.</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onNewSimulation}
-            className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
-          >
-            <Calculator className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-            Nova Simulação
-          </button>
-        </div>
+        <button
+          onClick={onNewSimulation}
+          className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
+        >
+          <Calculator className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+          Nova Simulação
+        </button>
       </div>
 
-      {/* PLAN & USAGE WIDGET - Compact Grid */}
+      {/* PLAN & USAGE WIDGET */}
       <div className="grid md:grid-cols-2 gap-4">
         {/* Card 1: Status */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between relative overflow-hidden group">
-          <div className="relative z-10 flex items-center gap-4">
-            <div className={`p-3 rounded-xl shadow-sm ${user.plan === 'PRO' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between group">
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-xl ${user.plan === 'PRO' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
               {user.plan === 'PRO' ? <Star className="w-6 h-6 fill-emerald-600" /> : <Zap className="w-6 h-6 fill-blue-600" />}
             </div>
             <div>
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Seu Plano Atual</div>
-              <div className="text-xl font-black text-slate-900">{user.plan}</div>
+              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status da Conta</div>
+              <div className="text-xl font-black text-slate-900 uppercase">{user.plan}</div>
             </div>
           </div>
           {user.plan === 'FREE' && (
             <button
               onClick={handleUpgrade}
-              className="px-4 py-2 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-100 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
             >
-              Fazer Upgrade
+              Liberar Ilimitado
             </button>
           )}
         </div>
 
         {/* Card 2: Usage */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-center relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-center">
           {user.plan === 'PRO' ? (
             <div className="flex items-center gap-3 text-emerald-600">
               <CheckCircle2 className="w-5 h-5" />
-              <span className="font-bold text-sm">Simulações Ilimitadas Ativas</span>
+              <span className="font-black text-xs uppercase tracking-widest">Acesso Ilimitado Liberado</span>
             </div>
           ) : (
             <div className="space-y-2 w-full">
               <div className="flex justify-between items-end">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Uso de Simulações</span>
-                <span className="text-xs font-black text-slate-900">{user.simulationsCount} / {MAX_FREE_SIMULATIONS}</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Simulações Realizadas</span>
+                <span className="text-xs font-black text-slate-900">{user.simulationsCount} / {SYSTEM_LIMITS.FREE_SIMULATIONS}</span>
               </div>
               <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
                 <div
@@ -156,12 +130,12 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
       </div>
 
       {/* HISTORY SECTION */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[1.5rem] shadow-sm border border-slate-100 overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-slate-400" /> Histórico Recente
+            <Clock className="w-4 h-4 text-slate-400" /> Seu Histórico
           </h2>
-          <button onClick={fetchHistory} className="p-2 hover:bg-slate-200 rounded-lg transition-colors" title="Atualizar">
+          <button onClick={fetchHistory} className="p-2 hover:bg-slate-200 rounded-lg transition-colors">
             <RefreshCw className={`w-4 h-4 text-slate-400 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
         </div>
@@ -170,14 +144,14 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
           {isLoading ? (
             <div className="p-8 text-center text-slate-400 text-sm">Carregando histórico...</div>
           ) : history.length === 0 ? (
-            <div className="p-10 text-center">
-              <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Clock className="w-6 h-6 text-slate-300" />
+            <div className="p-12 text-center">
+              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calculator className="w-8 h-8 text-slate-300" />
               </div>
-              <h3 className="text-slate-900 font-bold mb-1 text-sm">Nenhuma simulação salva</h3>
-              <p className="text-slate-500 text-xs mb-4">Suas simulações aparecerão aqui.</p>
-              <button onClick={onNewSimulation} className="text-blue-600 font-bold text-xs hover:underline uppercase tracking-wide">
-                Criar primeira simulação
+              <h3 className="text-slate-900 font-bold mb-1">Sem simulações</h3>
+              <p className="text-slate-500 text-xs mb-6">Comece agora para salvar seu primeiro histórico.</p>
+              <button onClick={onNewSimulation} className="bg-blue-50 text-blue-600 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">
+                Criar Simulação
               </button>
             </div>
           ) : (
@@ -185,15 +159,15 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
               <div
                 key={sim.id}
                 onClick={() => onSelectSimulation(sim)}
-                className="group p-4 hover:bg-blue-50/30 transition-colors cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="group p-4 hover:bg-blue-50/30 transition-colors cursor-pointer flex items-center justify-between gap-4"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
-                    <Home className="w-5 h-5" />
+                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-white group-hover:text-blue-600 group-hover:shadow-sm transition-all border border-transparent group-hover:border-blue-100">
+                    <Calculator className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="font-bold text-slate-900 text-sm">{formatCurrency(sim.propertyValue)}</div>
-                    <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                    <div className="font-black text-slate-900 text-sm">{formatCurrency(sim.propertyValue)}</div>
+                    <div className="text-[10px] text-slate-500 flex items-center gap-2 mt-0.5 font-bold uppercase tracking-wider">
                       <span>{new Date(sim.date).toLocaleDateString('pt-BR')}</span>
                       <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                       <span>{sim.amortizationSystem}</span>
@@ -201,27 +175,33 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pl-14 sm:pl-0">
-                  <div className="text-left sm:text-right">
-                    <div className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Parcela Inicial</div>
-                    <div className="font-bold text-slate-900 text-sm">{formatCurrency(sim.monthlyPayment)}</div>
+                <div className="flex items-center gap-6">
+                  <div className="hidden sm:block text-right">
+                    <div className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Parcela</div>
+                    <div className="font-black text-slate-900 text-sm">{formatCurrency(sim.monthlyPayment)}</div>
                   </div>
-
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={(e) => handleDeleteSimulation(sim.id, e)}
                       className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                      title="Excluir"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
-                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+                    <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
                   </div>
                 </div>
               </div>
             ))
           )}
         </div>
+
+        {history.length > 0 && (
+          <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+            <button onClick={() => navigate('/simulador')} className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-blue-600 transition-colors">
+              Ver Histórico Completo em PDF
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

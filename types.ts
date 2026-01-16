@@ -1,14 +1,15 @@
+import { UserRole, UserPlan } from './core/system';
+
 export type AmortizationSystem = 'SAC' | 'PRICE';
 
 export interface SimulationData {
   propertyValue: number;
   downPayment: number;
-  interestRateAnnual: number; // Percentage
+  interestRateAnnual: number;
   termYears: number;
   amortizationSystem: AmortizationSystem;
   monthlyIncome: number;
-  maxIncomeCommitment: number; // Percentage (default 30)
-
+  maxIncomeCommitment: number;
   // Smart Amortization Settings
   extraAmortizationMonthly?: number;
   extraAmortizationStrategy?: 'REDUCE_TERM' | 'REDUCE_INSTALLMENT';
@@ -26,26 +27,16 @@ export interface InstallmentRow {
 export interface CalculationResult {
   financedAmount: number;
   termMonths: number;
-
-  // Initial Snapshot
   firstInstallment: number;
   lastInstallment: number;
   averageInstallment: number;
-
-  // Totals
   totalPaid: number;
   totalInterest: number;
   totalAmortization: number;
-
-  // Analysis
   incomeCommitmentPercent: number;
   requiredMinimumIncome: number;
   isCreditApproved: boolean;
-
-  // Detailed Schedule
   schedule: InstallmentRow[];
-
-  // Comparison (if smart amortization is active)
   comparison?: {
     isActive: boolean;
     originalTermMonths: number;
@@ -65,18 +56,15 @@ export interface BankRate {
   updateDate: string;
 }
 
-export type UserPlan = 'FREE' | 'PRO';
-export const MAX_FREE_SIMULATIONS = 5;
-
 export interface UserProfile {
   id: string;
   name: string;
   email: string;
-  phone?: string; // Added for PDF contact info
-  avatarUrl?: string; // Public URL from Supabase Storage
-  coverUrl?: string; // Public URL from Supabase Storage
+  phone?: string;
+  avatarUrl?: string;
+  coverUrl?: string;
   plan: UserPlan;
-  type: 'CORRETOR' | 'CLIENTE';
+  type: UserRole;
   simulationsCount: number;
   setupCompleted: boolean;
   stripeCustomerId?: string;
@@ -93,8 +81,8 @@ export interface LeadData {
   phone: string;
   date: string;
   status: LeadStatus;
-  interest: string; // Valor do imóvel simulado
-  simulationData?: SimulationData; // Dados completos da simulação
+  interest: string;
+  simulationData?: SimulationData;
 }
 
 export interface SavedSimulation {
