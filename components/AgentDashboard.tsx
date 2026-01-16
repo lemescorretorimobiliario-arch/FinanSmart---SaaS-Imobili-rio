@@ -137,7 +137,9 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead, onUpgrade }) => {
             onClick={() => { setEditingLead({ name: '', email: '', phone: '', interest: '', status: 'NOVO', date: new Date().toISOString() } as any); setIsEditModalOpen(true); }}
             className="bg-slate-900 text-white px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-black uppercase text-[9px] sm:text-[10px] tracking-widest hover:bg-blue-600 transition-all flex items-center gap-1.5 sm:gap-2 shadow-lg whitespace-nowrap"
           >
-            <UserPlus className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> <span className="hidden sm:inline">Novo Lead</span><span className="sm:hidden">Novo</span>
+            <UserPlus className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+            <span className="hidden sm:inline">Novo Lead</span>
+            <span className="sm:hidden">Novo</span>
           </button>
         </div>
       </div>

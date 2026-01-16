@@ -266,42 +266,176 @@ Simule grátis em: ${window.location.origin}`;
           </div>
         )}
 
-        {/* CHARTS TAB - Compact version */}
+        {/* CHARTS TAB - Enhanced version */}
         {activeTab === 'CHARTS' && (
-          <div className="space-y-4 sm:space-y-5 md:space-y-6 max-w-4xl mx-auto animate-fade-in-up">
+          <div className="space-y-4 sm:space-y-5 md:space-y-6 max-w-6xl mx-auto animate-fade-in-up">
+            {/* First Row: Pie Chart and Payment Evolution */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+              {/* Enhanced Pie Chart with Percentages */}
               <div className="finan-card p-4 sm:p-5 md:p-6">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-4 sm:mb-5 md:mb-6">Composição Total</h3>
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Composição Total do Financiamento</h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Proporção entre valor financiado e juros totais</p>
                 <div className="h-[180px] sm:h-[200px] md:h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                      <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                      <Pie
+                        data={pieData}
+                        innerRadius={50}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                        labelLine={true}
+                      >
                         {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                       </Pie>
-                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                      <Legend verticalAlign="bottom" align="center" />
+                      <Tooltip
+                        formatter={(value: number) => formatCurrency(value)}
+                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                      />
+                      <Legend
+                        verticalAlign="bottom"
+                        align="center"
+                        iconType="circle"
+                        wrapperStyle={{ paddingTop: '10px' }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
+              {/* Enhanced Payment Evolution with Multiple Series */}
               <div className="finan-card p-4 sm:p-5 md:p-6">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-4 sm:mb-5 md:mb-6">Evolução da Parcela</h3>
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Evolução da Parcela</h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Decomposição: Juros vs Amortização</p>
                 <div className="h-[180px] sm:h-[200px] md:h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
                       <defs>
-                        <linearGradient id="colorParcela" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
+                        <linearGradient id="colorJuros" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="colorAmortizacao" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis
+                        dataKey="mes"
+                        tick={{ fontSize: 10 }}
+                        label={{ value: 'Meses', position: 'insideBottom', offset: -5, fontSize: 10 }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                      />
+                      <Tooltip
+                        formatter={(value: number) => formatCurrency(value)}
+                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
+                      />
+                      <Legend
+                        iconType="circle"
+                        wrapperStyle={{ fontSize: '11px' }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="juros"
+                        name="Juros"
+                        stroke="#ef4444"
+                        fillOpacity={1}
+                        fill="url(#colorJuros)"
+                        strokeWidth={2}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="amortizacao"
+                        name="Amortização"
+                        stroke="#10b981"
+                        fillOpacity={1}
+                        fill="url(#colorAmortizacao)"
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            {/* Second Row: Balance Evolution and Amortization Breakdown */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+              {/* Balance Reduction Over Time */}
+              <div className="finan-card p-4 sm:p-5 md:p-6">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Redução do Saldo Devedor</h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Evolução do saldo ao longo do tempo</p>
+                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorSaldo" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#2563eb" stopOpacity={0.2} />
                           <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="mes" hide />
-                      <YAxis hide />
-                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
-                      <Area type="monotone" dataKey="parcela" stroke="#2563eb" fillOpacity={1} fill="url(#colorParcela)" strokeWidth={3} />
+                      <XAxis
+                        dataKey="mes"
+                        tick={{ fontSize: 10 }}
+                        label={{ value: 'Meses', position: 'insideBottom', offset: -5, fontSize: 10 }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                      />
+                      <Tooltip
+                        formatter={(value: number) => formatCurrency(value)}
+                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
+                        labelFormatter={(label) => `Mês ${label}`}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="saldo"
+                        name="Saldo Devedor"
+                        stroke="#2563eb"
+                        fillOpacity={1}
+                        fill="url(#colorSaldo)"
+                        strokeWidth={3}
+                      />
                     </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Amortization Breakdown Bar Chart */}
+              <div className="finan-card p-4 sm:p-5 md:p-6">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Composição das Parcelas</h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Comparação juros vs amortização por ano</p>
+                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData.filter((_, i) => i % 12 === 0)}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis
+                        dataKey="mes"
+                        tick={{ fontSize: 10 }}
+                        tickFormatter={(value) => `Ano ${Math.floor(value / 12) + 1}`}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                      />
+                      <Tooltip
+                        formatter={(value: number) => formatCurrency(value)}
+                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
+                        labelFormatter={(label) => `Ano ${Math.floor(Number(label) / 12) + 1}`}
+                      />
+                      <Legend
+                        iconType="circle"
+                        wrapperStyle={{ fontSize: '11px' }}
+                      />
+                      <Bar dataKey="juros" name="Juros" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="amortizacao" name="Amortização" fill="#10b981" radius={[4, 4, 0, 0]} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
