@@ -89,7 +89,7 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate, user }) =
   return (
     <div className="bg-transparent md:h-full flex flex-col h-full relative animate-fade-in-up">
       {/* Progress Header - Premium Compact */}
-      <div className="px-5 py-3 md:px-8 md:py-4 border-b border-slate-200/50 flex-shrink-0 bg-white/70 backdrop-blur-lg rounded-t-[2rem]">
+      <div className="px-5 py-3 md:px-6 md:py-3 border-b border-slate-200/50 flex-shrink-0 bg-white/70 backdrop-blur-lg rounded-t-2xl">
         <div className="flex justify-between items-center mb-2.5">
           <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
             Etapa {currentStep}/{steps.length}
@@ -107,8 +107,8 @@ const CalculatorForm: React.FC<Props> = ({ data, onChange, onSimulate, user }) =
       </div>
 
       {/* Form Content - Scrollable */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 md:px-10 md:py-8 custom-scrollbar pb-32 md:pb-8">
-        <div className="max-w-md mx-auto space-y-8 animate-fade-in-up">
+      <div className="flex-1 overflow-y-auto px-5 py-5 md:px-8 md:py-6 custom-scrollbar pb-24 md:pb-6">
+        <div className="max-w-sm mx-auto space-y-6 animate-fade-in-up">
 
           {/* --- PASSO 1: DADOS FINANCEIROS --- */}
           {currentStep === 1 && (

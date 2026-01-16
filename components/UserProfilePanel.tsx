@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
 import { formatCurrency } from '../utils/finance';
-import { UserRole } from '../core/system';
+import { UserRole, UserPlan } from '../core/system';
 
 interface Props {
   user: UserProfile;
@@ -137,13 +137,13 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
   const remainingCount = Math.max(5 - user.simulationsCount, 0);
 
   return (
-    <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6 animate-fade-in pb-20 md:pb-8 font-sans">
+    <div className="max-w-4xl mx-auto p-3 md:p-4 space-y-4 animate-fade-in pb-20 md:pb-8 font-sans">
 
       {/* Header Section - Compact */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight text-center md:text-left">Portal do Usuário</h1>
-          <p className="text-slate-500 font-medium text-xs text-center md:text-left">Gerencie sua conta, plano e preferências.</p>
+          <h1 className="text-xl font-black text-slate-900 tracking-tight text-center md:text-left">Portal do Usuário</h1>
+          <p className="text-slate-500 font-medium text-[10px] text-center md:text-left uppercase tracking-wider">Gerencie sua conta e plano.</p>
         </div>
 
         <div className="flex bg-slate-100 p-1 rounded-xl w-full md:w-fit mx-auto md:mx-0">
@@ -163,34 +163,34 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
       </div>
 
       {activeTab === 'OVERVIEW' ? (
-        <div className="space-y-8 animate-fade-in-up">
+        <div className="space-y-6 animate-fade-in-up">
 
           {/* USER CARD PANORAMIC */}
-          <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-slate-100 overflow-hidden relative">
-            <div className="h-44 bg-gradient-to-r from-slate-900 to-blue-900 relative">
+          <div className="bg-white rounded-3xl shadow-2xl shadow-blue-900/5 border border-slate-100 overflow-hidden relative">
+            <div className="h-32 md:h-36 bg-gradient-to-r from-slate-900 to-blue-900 relative">
               {formData.coverUrl && <img src={formData.coverUrl} className="w-full h-full object-cover opacity-60" alt="" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
 
-            <div className="px-8 pb-8 flex flex-col items-center md:items-start text-center md:text-left relative">
-              <div className="absolute -top-14 md:-top-16 left-1/2 md:left-10 -translate-x-1/2 md:translate-x-0">
-                <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2rem] border-[6px] border-white shadow-2xl bg-white overflow-hidden relative">
+            <div className="px-6 pb-6 flex flex-col items-center md:items-start text-center md:text-left relative">
+              <div className="absolute -top-10 md:-top-12 left-1/2 md:left-8 -translate-x-1/2 md:translate-x-0">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-4 border-white shadow-2xl bg-white overflow-hidden relative">
                   {formData.avatarUrl ? (
                     <img src={formData.avatarUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-blue-100 text-blue-600 flex items-center justify-center text-3xl font-black">
+                    <div className="w-full h-full bg-blue-100 text-blue-600 flex items-center justify-center text-2xl font-black">
                       {user.name[0]}
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="pt-20 md:pt-4 md:pl-44 flex flex-col md:flex-row md:items-end justify-between w-full gap-6">
+              <div className="pt-14 md:pt-3 md:pl-36 flex flex-col md:flex-row md:items-end justify-between w-full gap-4">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{user.name}</h2>
-                  <div className="flex items-center gap-2 mt-1 justify-center md:justify-start">
-                    <span className="bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-blue-100 italic">
-                      {user.type === UserRole.CORRETOR ? 'Corretor de Imóveis' : 'Cliente Particular'}
+                  <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">{user.name}</h2>
+                  <div className="flex items-center gap-2 mt-0.5 justify-center md:justify-start">
+                    <span className="bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-blue-100">
+                      {user.type === UserRole.CORRETOR ? 'Corretor' : 'Cliente'}
                     </span>
                   </div>
                 </div>
@@ -232,19 +232,19 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {/* PLAN CARD */}
-            <div className="md:col-span-2 space-y-8">
-              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
-                <div className="flex justify-between items-start mb-8 relative z-10">
+            <div className="md:col-span-2 space-y-6">
+              <div className="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
+                <div className="flex justify-between items-start mb-6 relative z-10">
                   <div>
-                    <h3 className="text-sm font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Status do Plano</h3>
-                    <p className={`text-3xl font-black tracking-tighter ${user.plan === 'PRO' ? 'text-emerald-600' : 'text-slate-900'}`}>
-                      Plano {user.plan}
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status do Plano</h3>
+                    <p className={`text-2xl font-black tracking-tighter ${user.plan === UserPlan.PRO ? 'text-emerald-600' : 'text-slate-900'}`}>
+                      {user.plan}
                     </p>
                   </div>
-                  <div className={`p-4 rounded-3xl ${user.plan === 'PRO' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'} shadow-inner`}>
-                    {user.plan === 'PRO' ? <Shield className="w-8 h-8" /> : <Calculator className="w-8 h-8" />}
+                  <div className={`p-3 rounded-2xl ${user.plan === UserPlan.PRO ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'} shadow-inner`}>
+                    {user.plan === UserPlan.PRO ? <Shield className="w-6 h-6" /> : <Calculator className="w-6 h-6" />}
                   </div>
                 </div>
 
@@ -295,7 +295,7 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
               </div>
 
               {/* RECENT HISTORY LIST */}
-              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+              <div className="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest">Atividade Recente</h3>
                   <button onClick={() => navigate('/dashboard')} className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Ver tudo</button>
@@ -347,22 +347,22 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                 </button>
                 <button
                   onClick={() => navigate('/simulador')}
-                  className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center gap-3 hover:-translate-y-1 transition-all group"
+                  className="bg-white p-5 rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center gap-3 hover:-translate-y-1 transition-all group"
                 >
-                  <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                    <Calculator className="w-6 h-6" />
+                  <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                    <Calculator className="w-5 h-5" />
                   </div>
-                  <span className="text-xs font-black uppercase tracking-widest text-slate-600">Simular</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Simular</span>
                 </button>
               </div>
             </div>
 
             {/* INFO SIDEBAR */}
-            <div className="space-y-8">
-              <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-                <Zap className="absolute top-4 right-4 text-yellow-400 w-10 h-10 opacity-20" />
-                <h3 className="text-lg font-black tracking-tight mb-4">Vantagens PRO</h3>
-                <ul className="space-y-4">
+            <div className="space-y-6">
+              <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-2xl relative overflow-hidden">
+                <Zap className="absolute top-4 right-4 text-yellow-400 w-8 h-8 opacity-20" />
+                <h3 className="text-base font-black tracking-tight mb-4">Vantagens PRO</h3>
+                <ul className="space-y-3">
                   {[
                     "Simulações Ilimitadas",
                     "PDFs com seu nome e foto",
@@ -371,28 +371,28 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                     "Sem anúncios"
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-xs font-medium text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
                       {item}
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Informações de Contato</h3>
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50">
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Informações de Contato</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <Mail className="w-4 h-4 text-blue-600 mt-0.5" />
+                    <Mail className="w-3.5 h-3.5 text-blue-600 mt-0.5" />
                     <div className="overflow-hidden">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</p>
-                      <p className="text-sm font-bold text-slate-700 truncate">{user.email}</p>
+                      <p className="text-xs font-bold text-slate-700 truncate">{user.email}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Phone className="w-4 h-4 text-blue-600 mt-0.5" />
+                    <Phone className="w-3.5 h-3.5 text-blue-600 mt-0.5" />
                     <div>
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">WhatsApp</p>
-                      <p className="text-sm font-bold text-slate-700">{user.phone || 'Não informado'}</p>
+                      <p className="text-xs font-bold text-slate-700">{user.phone || 'Não informado'}</p>
                     </div>
                   </div>
                 </div>
@@ -404,19 +404,19 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
         <div className="animate-fade-in-up space-y-8">
           <form onSubmit={handleSave} className="space-y-8">
             {/* IMAGE UPLOADS */}
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 gap-6">
               {/* Avatar Section */}
-              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center gap-6">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Foto de Perfil</h3>
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center gap-6">
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Foto de Perfil</h3>
                 <div
                   onClick={() => avatarInputRef.current?.click()}
-                  className="relative w-32 h-32 rounded-full cursor-pointer group hover:scale-105 transition-transform"
+                  className="relative w-28 h-28 rounded-full cursor-pointer group hover:scale-105 transition-transform"
                 >
                   <div className="w-full h-full rounded-full border-4 border-white shadow-xl bg-slate-50 overflow-hidden relative">
                     {formData.avatarUrl ? (
                       <img src={formData.avatarUrl} className="w-full h-full object-cover" alt="" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-600 text-3xl font-black">
+                      <div className="w-full h-full flex items-center justify-center bg-blue-50 text-blue-600 text-2xl font-black">
                         {user.name[0]}
                       </div>
                     )}
@@ -438,8 +438,8 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
               </div>
 
               {/* Cover Section */}
-              <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center gap-6">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Capa do Perfil</h3>
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col items-center gap-6">
+                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Capa do Perfil</h3>
                 <div
                   onClick={() => coverInputRef.current?.click()}
                   className="relative w-full h-32 rounded-[1.5rem] cursor-pointer group hover:brightness-95 transition-all overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center"
@@ -467,67 +467,67 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
             </div>
 
             {/* FORM FIELDS */}
-            <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 space-y-8">
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Nome Completo</label>
+            <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome Completo</label>
                   <div className="relative group">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl pl-12 pr-4 py-4 font-bold text-slate-900 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-50 outline-none transition-all"
+                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-xl pl-10 pr-4 py-3 font-bold text-slate-900 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-50 outline-none transition-all text-sm"
                       placeholder="Seu Nome"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">WhatsApp / Telefone</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">WhatsApp / Telefone</label>
                   <div className="relative group">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-emerald-600 transition-colors" />
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-600 transition-colors" />
                     <input
                       type="text"
                       value={formData.phone || ''}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl pl-12 pr-4 py-4 font-bold text-slate-900 focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-50 outline-none transition-all"
+                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-xl pl-10 pr-4 py-3 font-bold text-slate-900 focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-50 outline-none transition-all text-sm"
                       placeholder="(00) 00000-0000"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">E-mail (Inalterável)</label>
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">E-mail (Inalterável)</label>
                   <div className="relative group opacity-60">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
                       type="email"
                       value={user.email}
                       disabled
-                      className="w-full bg-slate-100 border-2 border-slate-100 rounded-2xl pl-12 pr-4 py-4 font-bold text-slate-400 cursor-not-allowed outline-none"
+                      className="w-full bg-slate-100 border-2 border-slate-100 rounded-xl pl-10 pr-4 py-3 font-bold text-slate-400 cursor-not-allowed outline-none text-sm"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-slate-100 flex justify-end">
+              <div className="pt-6 border-t border-slate-100 flex justify-end">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="w-full md:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+                  className="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
                 >
                   {isSaving ? "Salvando..." : "Salvar Alterações"}
-                  <Save className="w-5 h-5" />
+                  <Save className="w-4 h-4" />
                 </button>
               </div>
             </div>
           </form>
 
-          <div className="bg-red-50 p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-6 border border-red-100">
+          <div className="bg-red-50 p-6 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 border border-red-100">
             <div className="text-center md:text-left">
-              <h3 className="text-red-600 font-black text-lg">Zona de Perigo</h3>
-              <p className="text-red-400 text-sm font-medium">Ao sair da conta, você precisará fazer login novamente para acessar seus dados.</p>
+              <h3 className="text-red-600 font-black text-base uppercase tracking-widest">Zona de Perigo</h3>
+              <p className="text-red-400 text-xs font-medium">Ao sair da conta, você precisará fazer login novamente.</p>
             </div>
             <button
               onClick={onLogout}

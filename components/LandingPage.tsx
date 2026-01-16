@@ -53,13 +53,13 @@ const LandingPage: React.FC = () => {
                         A ferramenta definitiva para o mercado imobiliário
                     </div>
 
-                    <h1 className="text-4xl md:text-8xl font-black text-slate-900 tracking-tighter mb-8 leading-[0.9] max-w-5xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                    <h1 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 leading-[0.95] max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                         Financiamento Imobiliário <br />
                         <span className="text-gradient">Inteligente.</span>
                     </h1>
 
-                    <p className="text-base md:text-2xl text-slate-500 max-w-3xl mx-auto mb-12 leading-relaxed font-medium animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                        Simulações ultra-precisas com as taxas reais de todos os bancos brasileiros.
+                    <p className="text-base md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                        Simulações ultra-precisas com as taxas reais de todos os bancos.
                         Transforme conversas em contratos fechados.
                     </p>
 
@@ -80,7 +80,7 @@ const LandingPage: React.FC = () => {
                     </div>
 
                     {/* Dashboard Preview - Premium Style */}
-                    <div className="mt-24 md:mt-32 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                    <div className="mt-16 md:mt-24 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                         <div className="absolute inset-0 bg-blue-600/5 blur-[100px] rounded-full"></div>
                         <div className="relative glass-card rounded-[2.5rem] p-2 md:p-3 border-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden">
                             <div className="bg-slate-900 rounded-[2rem] overflow-hidden aspect-[16/9] relative border border-slate-800">
