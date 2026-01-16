@@ -76,8 +76,17 @@ const App: React.FC = () => {
   // Handle Simulation (Etapa 4 - Mandatory History)
   const handleSimulate = async () => {
     const simData = data; // Use current state
-    // Check Limits First
-    if (user && !canUserSimulate(user as any)) {
+    // 1. Mandatory Login Check
+    if (!user) {
+      toast.info("Por favor, faça login ou cadastre-se para realizar simulações.", {
+        description: "É grátis e leva menos de 1 minuto."
+      });
+      navigate('/login', { state: { from: location } });
+      return;
+    }
+
+    // 2. Check Limits
+    if (!canUserSimulate(user as any)) {
       setShowLimitModal(true);
       return;
     }
@@ -246,7 +255,7 @@ const App: React.FC = () => {
                     onUpgrade={handleUpgrade}
                   />
                 ) : (
-                  <EmptyState />
+                  <EmptyState user={user} />
                 )}
               </section>
 
@@ -335,13 +344,15 @@ const App: React.FC = () => {
   );
 };
 
-const EmptyState = () => (
+const EmptyState = ({ user }: { user: any }) => (
   <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center animate-fade-in">
     <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
       <CalcIcon className="w-10 h-10 text-blue-200" />
     </div>
     <h2 className="text-xl font-bold text-slate-600 mb-2">Simulador FinanSmart</h2>
-    <p className="max-w-md text-sm text-slate-400">Experimente diferentes cenários de financiamento e amortização.</p>
+    <p className="max-w-md text-sm text-slate-400">
+      {user ? 'Ajuste os valores ao lado e clique em simular para ver os resultados detalhados.' : 'Faça login para realizar simulações ultra-precisas com taxas reais dos bancos.'}
+    </p>
   </div>
 );
 

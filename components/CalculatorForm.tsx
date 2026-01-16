@@ -270,10 +270,14 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
           ) : (
             <button
               onClick={onSimulate}
-              className="flex-1 premium-gradient text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+              className={`flex-1 ${user ? 'premium-gradient' : 'bg-slate-900'} text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2`}
             >
-              Simular Agora
-              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              {user ? 'Simular Agora' : 'Login para Simular'}
+              {user ? (
+                <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              ) : (
+                <CheckCircle className="w-4 h-4" />
+              )}
             </button>
           )}
         </div>
