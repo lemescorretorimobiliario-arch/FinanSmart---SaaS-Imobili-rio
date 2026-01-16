@@ -288,12 +288,12 @@ const App: React.FC = () => {
     <div className="h-[100dvh] flex flex-col bg-slate-50 overflow-hidden font-sans">
       {/* --- HEADER - Premium Glassmorphism --- */}
       {!isLanding && (
-        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-14 md:h-16 flex items-center justify-between px-4 md:px-8 flex-shrink-0 z-40 relative">
+        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-14 md:h-16 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-            <div className="premium-gradient p-1.5 rounded-xl shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-              <Layout className="w-4 h-4 md:w-5 md:h-5 text-white" />
+            <div className="premium-gradient p-1.5 rounded-lg shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+              <Layout className="w-4 h-4 text-white" />
             </div>
-            <span className="font-black text-lg md:text-xl text-slate-900 tracking-tighter">Finan<span className="text-blue-600">Smart</span></span>
+            <span className="font-black text-base md:text-lg text-slate-900 tracking-tighter">Finan<span className="text-blue-600">Smart</span></span>
           </div>
 
           {/* Desktop Nav - Pill Style */}
@@ -371,7 +371,7 @@ const App: React.FC = () => {
 
 
       {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 overflow-hidden relative">
+      <main className={`flex-1 relative ${location.pathname === '/' ? 'overflow-y-auto' : 'overflow-hidden'}`}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
 

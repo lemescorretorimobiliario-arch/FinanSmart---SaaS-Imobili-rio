@@ -9,12 +9,12 @@ const LandingPage: React.FC = () => {
         <div className="min-h-screen bg-slate-50 font-sans text-slate-900 overflow-x-hidden">
             {/* Header */}
             <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-lg border-b border-slate-200/50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 md:h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2 group cursor-pointer" onClick={() => navigate('/')}>
                         <div className="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-200 group-hover:scale-105 transition-transform">
                             <Layout className="w-4 h-4 text-white" />
                         </div>
-                        <span className="font-bold text-lg md:text-xl tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
+                        <span className="font-bold text-base md:text-xl tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
                     </div>
                     <div className="flex items-center gap-3 md:gap-6">
                         <button
@@ -47,12 +47,12 @@ const LandingPage: React.FC = () => {
                         <span>A ferramenta nº 1 para Corretores e Compradores</span>
                     </div>
 
-                    <h1 className="text-3xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-[1.1] max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                    <h1 className="text-2xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-[1.1] max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                         Financiamento Imobiliário <br className="hidden md:block" />
                         <span className="text-gradient">Simplificado e Inteligente</span>
                     </h1>
 
-                    <p className="text-base md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                    <p className="text-sm md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                         Simule cenários reais, compare taxas de todos os bancos e tome a melhor decisão para o seu futuro.
                         Dados precisos que geram confiança e fecham negócios.
                     </p>
