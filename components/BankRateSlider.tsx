@@ -76,9 +76,6 @@ const BankRateSlider: React.FC = () => {
                         Taxas de Juros - Crédito Imobiliário
                     </h3>
                 </div>
-                <p className="text-center text-[10px] sm:text-[11px] text-slate-500 mt-1">
-                    Atualizado em tempo real via Banco Central
-                </p>
             </div>
 
             {/* Slider Container */}
@@ -136,7 +133,7 @@ const BankRateSlider: React.FC = () => {
                                     <span className="text-[10px] sm:text-xs font-bold text-slate-400">a.a.</span>
                                 </div>
                                 <div className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5">
-                                    {rate.rateMonthly.toFixed(3)}% a.m.
+                                    {rate.rateMonthly.toFixed(2)}% a.m.
                                 </div>
                             </div>
 
@@ -165,7 +162,7 @@ const BankRateSlider: React.FC = () => {
         }
 
         .animate-scroll {
-          animation: scroll 30s linear infinite;
+          animation: scroll 40s linear infinite;
         }
 
         .animate-scroll:hover {
