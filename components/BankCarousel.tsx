@@ -16,9 +16,9 @@ const BankCarousel: React.FC<BankCarouselProps> = ({ onSelect }) => {
   if (rates.length === 0) return null;
 
   return (
-    <div className="w-full bg-slate-900 overflow-hidden py-3 border-b border-slate-800">
+    <div className="w-full bg-slate-950 overflow-hidden py-2 border-b border-white/5">
       <div className="relative flex overflow-x-auto md:overflow-x-hidden group/marquee touch-manipulation no-scrollbar">
-        <div className="flex md:animate-marquee whitespace-nowrap gap-12 items-center group-hover/marquee:paused px-4 md:px-0">
+        <div className="flex md:animate-marquee whitespace-nowrap gap-10 items-center group-hover/marquee:paused px-4 md:px-0">
           {/* List for infinite loop effect (only animated on desktop) */}
           {[...rates, ...rates, ...rates].map((rate, index) => (
             <div
@@ -27,13 +27,13 @@ const BankCarousel: React.FC<BankCarouselProps> = ({ onSelect }) => {
               onClick={() => onSelect && onSelect(rate.annualRate)}
               title={onSelect ? "Clique para aplicar esta taxa" : ""}
             >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs ${rate.logoColor}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-white text-[10px] ${rate.logoColor} ring-1 ring-white/10`}>
                 {rate.bankName[0]}
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-bold text-white">{rate.bankName}</span>
-                <span className="text-xs">
-                  {rate.annualRate}% a.a. <span className="text-slate-500">|</span> {rate.monthlyRate}% a.m.
+                <span className="text-[10px] font-bold text-white leading-tight">{rate.bankName}</span>
+                <span className="text-[9px] text-slate-400 font-medium">
+                  {rate.annualRate}% a.a. <span className="text-slate-700 mx-1">/</span> {rate.monthlyRate}% a.m.
                 </span>
               </div>
             </div>

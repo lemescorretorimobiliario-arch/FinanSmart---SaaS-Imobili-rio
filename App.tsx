@@ -170,7 +170,7 @@ const App: React.FC = () => {
   return (
     <div className={`flex flex-col bg-slate-50 font-sans ${isLanding ? 'min-h-screen' : 'h-screen overflow-hidden'}`}>
       {!isLanding && (
-        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-12 md:h-14 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
+        <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-10 md:h-12 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
             <div className="premium-gradient p-1 rounded-lg shadow-blue-500/10 group-hover:scale-105 transition-transform duration-300">
               <Layout className="w-3 h-3 text-white" />
@@ -182,9 +182,9 @@ const App: React.FC = () => {
             <div className="hidden md:flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/50">
               <button
                 onClick={() => navigate('/simulador')}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex items-center gap-2 px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                <CalcIcon className="w-3 h-3" /> <span>Simulador</span>
+                <CalcIcon className="w-2.5 h-2.5" /> <span>Simulador</span>
               </button>
               {user && (
                 <button
