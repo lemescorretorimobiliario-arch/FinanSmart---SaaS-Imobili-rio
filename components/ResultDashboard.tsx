@@ -126,36 +126,36 @@ Simule grátis em: ${window.location.origin}`;
 
       <div className="p-3 sm:p-4 md:p-6 flex-1 overflow-y-auto custom-scrollbar no-scrollbar">
         {activeTab === 'SUMMARY' && (
-          <div className="max-w-4xl mx-auto space-y-3 sm:space-y-4 md:space-y-6 animate-fade-in-up">
+          <div className="max-w-5xl mx-auto space-y-4 md:space-y-6 animate-fade-in-up">
 
             {/* Main Result: Installment */}
-            <div className="finan-card-premium p-4 sm:p-5 md:p-6 lg:p-8 border-l-4 border-l-blue-600 relative overflow-hidden">
-              <div className="absolute right-0 top-0 p-4 opacity-5 hidden md:block">
-                <Calculator className="w-16 md:w-20 lg:w-24 h-16 md:h-20 lg:h-24" />
+            <div className="finan-card-premium p-5 md:p-8 border-l-4 border-l-blue-600 relative overflow-hidden">
+              <div className="absolute right-0 top-0 p-4 opacity-5 hidden lg:block">
+                <Calculator className="w-24 h-24" />
               </div>
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 md:gap-6">
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-1.5 sm:px-2 py-0.5 rounded border border-blue-100 mb-1 sm:mb-1.5 inline-block">
+                  <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded border border-blue-100 mb-2 inline-block">
                     Parcela Mensal (1ª)
                   </span>
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tighter">
                     {formatCurrency(result.firstInstallment)}
                   </h1>
-                  <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1 leading-relaxed max-w-xs">
+                  <p className="text-xs md:text-sm text-slate-500 font-medium mt-2 leading-relaxed max-w-sm">
                     {data.amortizationSystem === 'SAC' ? 'As parcelas diminuem ao longo do tempo conforme o saldo devedor é amortizado.' : 'As parcelas permanecem fixas durante todo o contrato.'}
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <div className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border ${result.isCreditApproved ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
-                    {result.isCreditApproved ? <CheckCircle className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> : <XCircle className="w-3.5 sm:w-4 h-3.5 sm:h-4" />}
-                    <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-tight">
+                <div className="flex flex-col gap-3 w-full md:w-auto">
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${result.isCreditApproved ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
+                    {result.isCreditApproved ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                    <span className="text-xs md:text-sm font-bold uppercase tracking-tight">
                       {result.isCreditApproved ? 'Crédito Recomendado' : 'Renda Insuficiente'}
                     </span>
                   </div>
                   {user.type === UserRole.CORRETOR && onSaveLead && (
-                    <button onClick={onSaveLead} className="btn-primary w-full py-2.5">
-                      <Save className="w-3.5 h-3.5" />
+                    <button onClick={onSaveLead} className="btn-primary w-full py-3 text-sm">
+                      <Save className="w-4 h-4" />
                       Salvar Lead
                     </button>
                   )}
@@ -165,26 +165,26 @@ Simule grátis em: ${window.location.origin}`;
 
             {/* Strategy Highlights */}
             {result.comparison?.isActive && (
-              <div className="bg-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 text-white relative overflow-hidden shadow-xl ring-1 ring-white/10">
-                <div className="absolute right-[-20px] top-[-20px] w-32 sm:w-40 h-32 sm:h-40 bg-blue-600/30 rounded-full blur-3xl" />
+              <div className="bg-slate-900 rounded-2xl p-5 md:p-6 text-white relative overflow-hidden shadow-xl ring-1 ring-white/10">
+                <div className="absolute right-[-20px] top-[-20px] w-40 h-40 bg-blue-600/30 rounded-full blur-3xl" />
                 <div className="relative z-10">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-600 rounded flex items-center justify-center">
-                      <Zap className="w-3 sm:w-3.5 h-3 sm:h-3.5 fill-blue-200" />
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                      <Zap className="w-3.5 h-3.5 fill-blue-200" />
                     </div>
-                    <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-blue-400">Poder da Amortização</h3>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-blue-400">Poder da Amortização</h3>
                   </div>
-                  <p className="text-xs sm:text-sm font-medium text-slate-300 mb-4 sm:mb-5 md:mb-6">
+                  <p className="text-sm md:text-base font-medium text-slate-300 mb-6 max-w-2xl">
                     Com um aporte mensal de <span className="text-white font-bold">{formatCurrency(data.extraAmortizationMonthly || 0)}</span>, você economizará uma fortuna em juros bancários.
                   </p>
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
-                      <span className="block text-[9px] sm:text-[10px] uppercase text-slate-500 font-bold mb-1">Economia Total</span>
-                      <span className="text-lg sm:text-xl md:text-2xl font-black text-emerald-400">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
+                      <span className="block text-[10px] uppercase text-slate-500 font-bold mb-1">Economia Total</span>
+                      <span className="text-xl md:text-2xl font-black text-emerald-400">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
                     </div>
                     <div>
-                      <span className="block text-[9px] sm:text-[10px] uppercase text-slate-500 font-bold mb-1">Redução de Prazo</span>
-                      <span className="text-lg sm:text-xl md:text-2xl font-black text-blue-400">-{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos</span>
+                      <span className="block text-[10px] uppercase text-slate-500 font-bold mb-1">Redução de Prazo</span>
+                      <span className="text-xl md:text-2xl font-black text-blue-400">-{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos</span>
                     </div>
                   </div>
                 </div>
@@ -192,55 +192,55 @@ Simule grátis em: ${window.location.origin}`;
             )}
 
             {/* Secondary KPIs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-              <div className="finan-card p-4 sm:p-5">
-                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 mb-2 sm:mb-3">
-                  <DollarSign className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-none">Total Pago</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="finan-card p-5">
+                <div className="flex items-center gap-2 text-slate-400 mb-3">
+                  <DollarSign className="w-4 h-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Total Pago</span>
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-slate-800">{formatCurrency(result.totalPaid)}</div>
-                <div className="text-[9px] sm:text-[10px] text-slate-500 mt-1">Imóvel + Juros bancários</div>
+                <div className="text-xl md:text-2xl font-bold text-slate-800">{formatCurrency(result.totalPaid)}</div>
+                <div className="text-xs text-slate-500 mt-1">Imóvel + Juros bancários</div>
               </div>
 
-              <div className="finan-card p-4 sm:p-5">
-                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 mb-2 sm:mb-3">
-                  <TrendingUp className="w-3.5 h-3.5 font-bold" />
+              <div className="finan-card p-5">
+                <div className="flex items-center gap-2 text-slate-400 mb-3">
+                  <TrendingUp className="w-4 h-4 font-bold" />
                   <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Juros Totais</span>
                 </div>
-                <div className="text-xl font-bold text-red-600">{formatCurrency(result.totalInterest)}</div>
-                <div className="text-[10px] text-slate-500 mt-1">
+                <div className="text-xl md:text-2xl font-bold text-red-600">{formatCurrency(result.totalInterest)}</div>
+                <div className="text-xs text-slate-500 mt-1">
                   {((result.totalInterest / result.financedAmount) * 100).toFixed(0)}% do valor financiado
                 </div>
               </div>
 
               <div className="finan-card p-5">
                 <div className="flex items-center gap-2 text-slate-400 mb-3">
-                  <Clock className="w-3.5 h-3.5" />
+                  <Clock className="w-4 h-4" />
                   <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Última Parcela</span>
                 </div>
-                <div className="text-xl font-bold text-slate-800">
+                <div className="text-xl md:text-2xl font-bold text-slate-800">
                   {formatCurrency(result.lastInstallment)}
                 </div>
-                <div className="text-[10px] text-slate-500 mt-1">Em {data.termYears} anos</div>
+                <div className="text-xs text-slate-500 mt-1">Em {data.termYears} anos</div>
               </div>
             </div>
 
             {/* Additional Info Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="finan-card p-5 bg-slate-50/50">
-                <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                  <Info className="w-3 h-3" /> Distribuição dos Custos
+                <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+                  <Info className="w-4 h-4" /> Distribuição dos Custos
                 </h4>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center text-xs">
+                  <div className="flex justify-between items-center text-sm">
                     <span className="text-slate-500">Valor do Imóvel</span>
                     <span className="font-bold">{formatCurrency(data.propertyValue)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs">
+                  <div className="flex justify-between items-center text-sm">
                     <span className="text-slate-500">Valor Financiado</span>
                     <span className="font-bold">{formatCurrency(result.financedAmount)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-xs">
+                  <div className="flex justify-between items-center text-sm">
                     <span className="text-slate-500">Juros Médios ao Mês</span>
                     <span className="font-bold">{(data.interestRateAnnual / 12).toFixed(2)}%</span>
                   </div>
@@ -248,16 +248,16 @@ Simule grátis em: ${window.location.origin}`;
               </div>
 
               <div className="finan-card p-5">
-                <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-4">Comprometimento de Renda</h4>
-                <div className="relative pt-1">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4">Comprometimento de Renda</h4>
+                <div className="relative pt-2">
                   <div className="flex mb-2 items-center justify-between">
-                    <div><span className="text-[10px] font-bold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">{result.incomeCommitmentPercent.toFixed(1)}%</span></div>
-                    <div className="text-right"><span className="text-[10px] font-bold inline-block text-blue-600">Limite 30%</span></div>
+                    <div><span className="text-xs font-bold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-100">{result.incomeCommitmentPercent.toFixed(1)}%</span></div>
+                    <div className="text-right"><span className="text-xs font-bold inline-block text-blue-600">Limite 30%</span></div>
                   </div>
-                  <div className="overflow-hidden h-1.5 mb-4 text-xs flex rounded bg-blue-100">
+                  <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-50">
                     <div style={{ width: `${Math.min(100, (result.incomeCommitmentPercent / 30) * 100)}%` }} className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${result.incomeCommitmentPercent > 30 ? 'bg-red-500' : 'bg-blue-600'}`}></div>
                   </div>
-                  <p className="text-[10px] text-slate-500 leading-tight">
+                  <p className="text-xs text-slate-500 leading-tight">
                     Bancos costumam limitar a parcela a 30% da sua renda bruta comprovada.
                   </p>
                 </div>
@@ -268,20 +268,20 @@ Simule grátis em: ${window.location.origin}`;
 
         {/* CHARTS TAB - Enhanced version */}
         {activeTab === 'CHARTS' && (
-          <div className="space-y-4 sm:space-y-5 md:space-y-6 max-w-6xl mx-auto animate-fade-in-up">
+          <div className="space-y-6 max-w-6xl mx-auto animate-fade-in-up">
             {/* First Row: Pie Chart and Payment Evolution */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Enhanced Pie Chart with Percentages */}
-              <div className="finan-card p-4 sm:p-5 md:p-6">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Composição Total do Financiamento</h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Proporção entre valor financiado e juros totais</p>
-                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
+              <div className="finan-card p-5 md:p-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-2">Composição Total do Financiamento</h3>
+                <p className="text-xs text-slate-500 mb-6">Proporção entre valor financiado e juros totais</p>
+                <div className="h-[250px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={pieData}
-                        innerRadius={50}
-                        outerRadius={80}
+                        innerRadius={60}
+                        outerRadius={90}
                         paddingAngle={5}
                         dataKey="value"
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
@@ -291,13 +291,13 @@ Simule grátis em: ${window.location.origin}`;
                       </Pie>
                       <Tooltip
                         formatter={(value: number) => formatCurrency(value)}
-                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                       />
                       <Legend
                         verticalAlign="bottom"
                         align="center"
                         iconType="circle"
-                        wrapperStyle={{ paddingTop: '10px' }}
+                        wrapperStyle={{ paddingTop: '20px' }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -305,10 +305,10 @@ Simule grátis em: ${window.location.origin}`;
               </div>
 
               {/* Enhanced Payment Evolution with Multiple Series */}
-              <div className="finan-card p-4 sm:p-5 md:p-6">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Evolução da Parcela</h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Decomposição: Juros vs Amortização</p>
-                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
+              <div className="finan-card p-5 md:p-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-2">Evolução da Parcela</h3>
+                <p className="text-xs text-slate-500 mb-6">Decomposição: Juros vs Amortização</p>
+                <div className="h-[250px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
                       <defs>
@@ -324,21 +324,22 @@ Simule grátis em: ${window.location.origin}`;
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                       <XAxis
                         dataKey="mes"
-                        tick={{ fontSize: 10 }}
-                        label={{ value: 'Meses', position: 'insideBottom', offset: -5, fontSize: 10 }}
+                        tick={{ fontSize: 11 }}
+                        tickLine={false}
+                        axisLine={false}
+                        minTickGap={30}
                       />
                       <YAxis
-                        tick={{ fontSize: 10 }}
-                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                        tick={{ fontSize: 11 }}
+                        tickFormatter={(value) => `R$${(value / 1000).toFixed(0)}k`}
+                        tickLine={false}
+                        axisLine={false}
                       />
                       <Tooltip
                         formatter={(value: number) => formatCurrency(value)}
-                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                       />
-                      <Legend
-                        iconType="circle"
-                        wrapperStyle={{ fontSize: '11px' }}
-                      />
+                      <Legend iconType="circle" />
                       <Area
                         type="monotone"
                         dataKey="juros"
@@ -364,12 +365,12 @@ Simule grátis em: ${window.location.origin}`;
             </div>
 
             {/* Second Row: Balance Evolution and Amortization Breakdown */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Balance Reduction Over Time */}
-              <div className="finan-card p-4 sm:p-5 md:p-6">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Redução do Saldo Devedor</h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Evolução do saldo ao longo do tempo</p>
-                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
+              <div className="finan-card p-5 md:p-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-2">Redução do Saldo Devedor</h3>
+                <p className="text-xs text-slate-500 mb-6">Evolução do saldo ao longo do tempo</p>
+                <div className="h-[250px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
                       <defs>
@@ -381,16 +382,19 @@ Simule grátis em: ${window.location.origin}`;
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                       <XAxis
                         dataKey="mes"
-                        tick={{ fontSize: 10 }}
-                        label={{ value: 'Meses', position: 'insideBottom', offset: -5, fontSize: 10 }}
+                        tick={{ fontSize: 11 }}
+                        tickLine={false}
+                        axisLine={false}
                       />
                       <YAxis
-                        tick={{ fontSize: 10 }}
-                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                        tick={{ fontSize: 11 }}
+                        tickFormatter={(value) => `R$${(value / 1000).toFixed(0)}k`}
+                        tickLine={false}
+                        axisLine={false}
                       />
                       <Tooltip
                         formatter={(value: number) => formatCurrency(value)}
-                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                         labelFormatter={(label) => `Mês ${label}`}
                       />
                       <Area
@@ -408,31 +412,32 @@ Simule grátis em: ${window.location.origin}`;
               </div>
 
               {/* Amortization Breakdown Bar Chart */}
-              <div className="finan-card p-4 sm:p-5 md:p-6">
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-2 sm:mb-3">Composição das Parcelas</h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mb-4 sm:mb-5 md:mb-6">Comparação juros vs amortização por ano</p>
-                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
+              <div className="finan-card p-5 md:p-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-2">Composição das Parcelas</h3>
+                <p className="text-xs text-slate-500 mb-6">Comparação juros vs amortização por ano</p>
+                <div className="h-[250px] md:h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData.filter((_, i) => i % 12 === 0)}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                       <XAxis
                         dataKey="mes"
-                        tick={{ fontSize: 10 }}
+                        tick={{ fontSize: 11 }}
                         tickFormatter={(value) => `Ano ${Math.floor(value / 12) + 1}`}
+                        tickLine={false}
+                        axisLine={false}
                       />
                       <YAxis
-                        tick={{ fontSize: 10 }}
-                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                        tick={{ fontSize: 11 }}
+                        tickFormatter={(value) => `R$${(value / 1000).toFixed(0)}k`}
+                        tickLine={false}
+                        axisLine={false}
                       />
                       <Tooltip
                         formatter={(value: number) => formatCurrency(value)}
-                        contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                         labelFormatter={(label) => `Ano ${Math.floor(Number(label) / 12) + 1}`}
                       />
-                      <Legend
-                        iconType="circle"
-                        wrapperStyle={{ fontSize: '11px' }}
-                      />
+                      <Legend iconType="circle" />
                       <Bar dataKey="juros" name="Juros" fill="#ef4444" radius={[4, 4, 0, 0]} />
                       <Bar dataKey="amortizacao" name="Amortização" fill="#10b981" radius={[4, 4, 0, 0]} />
                     </BarChart>

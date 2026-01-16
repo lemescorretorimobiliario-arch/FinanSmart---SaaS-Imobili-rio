@@ -242,15 +242,17 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
 
           <Route path="/simulador" element={
-            <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
-              <aside className={`w-full md:w-[400px] bg-white z-10 flex-col overflow-hidden transition-all relative border-r border-slate-200 ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+            <div className="h-full flex flex-col md:flex-row pb-20 md:pb-0 relative">
+              {/* DESKTOP/TABLET SIDEBAR */}
+              <aside className={`w-full md:w-[320px] lg:w-[400px] bg-white z-20 flex-col overflow-hidden transition-all duration-300 relative border-r border-slate-200 shadow-xl md:shadow-none ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
                 <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
                 <div className="flex-1 overflow-hidden relative z-10">
                   <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} user={user} />
                 </div>
               </aside>
 
-              <section ref={resultRef} className={`bg-slate-50/50 backdrop-blur-sm overflow-y-auto relative custom-scrollbar ${mobileSimView === 'RESULT' ? 'block flex-1 h-full' : 'hidden md:block md:flex-1 md:h-full'}`}>
+              {/* MAIN CONTENT AREA */}
+              <section ref={resultRef} className={`bg-slate-50/50 backdrop-blur-sm overflow-y-auto relative custom-scrollbar flex-1 ${mobileSimView === 'RESULT' ? 'block h-full' : 'hidden md:block md:h-full'}`}>
                 {result ? (
                   <ResultDashboard
                     data={data}
@@ -272,14 +274,22 @@ const App: React.FC = () => {
                 description={`Você usou seu limite de ${SYSTEM_LIMITS.FREE_SIMULATIONS} simulações gratuitas. Assine o PRO para continuar.`}
               />
 
-              <div className="md:hidden fixed bottom-6 left-6 right-6 bg-white/80 backdrop-blur-2xl rounded-[2rem] border border-white/50 flex z-50 h-20 shadow-2xl overflow-hidden ring-1 ring-black/5">
-                <button onClick={() => setMobileSimView('INPUT')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 ${mobileSimView === 'INPUT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400'}`}>
-                  <CalcIcon className="w-6 h-6" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Simular</span>
+              {/* MOBILE BOTTOM NAVIGATION - Visible only on < md */}
+              <div className="md:hidden fixed bottom-4 left-4 right-4 bg-white/90 backdrop-blur-xl rounded-2xl border border-white/50 flex z-50 h-16 shadow-2xl shadow-blue-900/5 ring-1 ring-black/5 items-center justify-around px-2">
+                <button
+                  onClick={() => setMobileSimView('INPUT')}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 rounded-xl py-1 transition-all ${mobileSimView === 'INPUT' ? 'text-blue-600 bg-blue-50' : 'text-slate-400 hover:bg-slate-50'}`}
+                >
+                  <CalcIcon className="w-5 h-5" />
+                  <span className="text-[10px] font-bold uppercase tracking-wide">Simular</span>
                 </button>
-                <button onClick={() => setMobileSimView('RESULT')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50/50' : 'text-slate-400'}`}>
-                  <PieChart className="w-6 h-6" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Resultado</span>
+                <div className="w-px h-8 bg-slate-100 mx-1"></div>
+                <button
+                  onClick={() => setMobileSimView('RESULT')}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 rounded-xl py-1 transition-all ${mobileSimView === 'RESULT' ? 'text-blue-600 bg-blue-50' : 'text-slate-400 hover:bg-slate-50'}`}
+                >
+                  <PieChart className="w-5 h-5" />
+                  <span className="text-[10px] font-bold uppercase tracking-wide">Resultado</span>
                 </button>
               </div>
             </div>

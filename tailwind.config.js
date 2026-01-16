@@ -10,10 +10,11 @@ export default {
   ],
   theme: {
     screens: {
-      'sm': '640px',   // Mobile breakpoint
-      'md': '1024px',  // Tablet breakpoint
-      'lg': '1280px',  // Desktop breakpoint
-      'xl': '1536px',  // Large desktop
+      'sm': '640px',   // Mobile landscape / Large phones
+      'md': '768px',   // Tablet portrait / Compact desktop
+      'lg': '1024px',  // Tablet landscape / Desktop start
+      'xl': '1280px',  // Large desktop
+      '2xl': '1536px', // Extra large screens
     },
     extend: {
       fontFamily: {
