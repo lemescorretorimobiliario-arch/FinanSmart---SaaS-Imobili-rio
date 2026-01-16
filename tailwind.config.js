@@ -9,9 +9,23 @@ export default {
     "./types.ts",
   ],
   theme: {
+    screens: {
+      'sm': '640px',   // Mobile breakpoint
+      'md': '1024px',  // Tablet breakpoint
+      'lg': '1280px',  // Desktop breakpoint
+      'xl': '1536px',  // Large desktop
+    },
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+      },
+      spacing: {
+        'safe-bottom': 'env(safe-area-inset-bottom)',
+      },
+      maxWidth: {
+        'mobile': '640px',
+        'tablet': '1024px',
+        'desktop': '1280px',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

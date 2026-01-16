@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* Color System */
     --primary: #2563eb;
     --primary-dark: #1e40af;
     --secondary: #64748b;
@@ -14,6 +15,43 @@
     --background: #f8fafc;
     --border: #e2e8f0;
     --ring: rgba(37, 99, 235, 0.1);
+
+    /* Responsive Typography Scale - Mobile First */
+    --text-xs: clamp(0.625rem, 0.5rem + 0.5vw, 0.75rem);
+    /* 10px -> 12px */
+    --text-sm: clamp(0.75rem, 0.65rem + 0.5vw, 0.875rem);
+    /* 12px -> 14px */
+    --text-base: clamp(0.875rem, 0.75rem + 0.625vw, 1rem);
+    /* 14px -> 16px */
+    --text-lg: clamp(1rem, 0.85rem + 0.75vw, 1.125rem);
+    /* 16px -> 18px */
+    --text-xl: clamp(1.125rem, 0.95rem + 0.875vw, 1.25rem);
+    /* 18px -> 20px */
+    --text-2xl: clamp(1.25rem, 1rem + 1.25vw, 1.5rem);
+    /* 20px -> 24px */
+    --text-3xl: clamp(1.5rem, 1.2rem + 1.5vw, 1.875rem);
+    /* 24px -> 30px */
+    --text-4xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.25rem);
+    /* 30px -> 36px */
+
+    /* Responsive Spacing Scale */
+    --spacing-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+    /* 4px -> 8px */
+    --spacing-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+    /* 8px -> 12px */
+    --spacing-md: clamp(0.75rem, 0.6rem + 0.75vw, 1rem);
+    /* 12px -> 16px */
+    --spacing-lg: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+    /* 16px -> 24px */
+    --spacing-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+    /* 24px -> 32px */
+    --spacing-2xl: clamp(2rem, 1.6rem + 2vw, 3rem);
+    /* 32px -> 48px */
+
+    /* Component Max Heights */
+    --card-max-h-mobile: 200px;
+    --card-max-h-tablet: 280px;
+    --card-max-h-desktop: 320px;
   }
 
   body {
@@ -21,33 +59,41 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  /* Responsive Typography - Using CSS Variables */
   h1 {
-    @apply text-2xl tracking-tighter;
+    font-size: var(--text-3xl);
+    @apply tracking-tighter font-black;
   }
 
   h2 {
-    @apply text-xl tracking-tight;
+    font-size: var(--text-2xl);
+    @apply tracking-tight font-bold;
   }
 
   h3 {
-    @apply text-lg tracking-tight;
+    font-size: var(--text-xl);
+    @apply tracking-tight font-bold;
   }
 
-  h4,
+  h4 {
+    font-size: var(--text-lg);
+    @apply font-bold text-slate-950;
+  }
+
   h5,
   h6 {
+    font-size: var(--text-base);
     @apply font-bold text-slate-950;
   }
 }
 
 @layer components {
 
-  /* PROFESSIONAL CARD PATTERN */
+  /* PROFESSIONAL CARD PATTERN - Responsive */
   .finan-card {
     background-color: white;
     border-width: 1px;
     border-color: rgb(241 245 249);
-    /* slate-100 */
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -56,7 +102,6 @@
 
   .finan-card:hover {
     border-color: rgb(226 232 240);
-    /* slate-200 */
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
   }
 
@@ -70,13 +115,41 @@
     overflow: hidden;
   }
 
+  /* Responsive Card Heights */
+  @media (max-width: 640px) {
+    .finan-card-constrained {
+      max-height: var(--card-max-h-mobile);
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .finan-card-constrained {
+      max-height: var(--card-max-h-tablet);
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .finan-card-constrained {
+      max-height: var(--card-max-h-desktop);
+    }
+  }
+
   .glass-card {
     @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-xl;
   }
 
-  /* BUTTON SYSTEM */
+  /* BUTTON SYSTEM - Responsive */
   .btn-base {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-sm);
+  }
+
+  /* Mobile: Full width buttons when needed */
+  @media (max-width: 640px) {
+    .btn-mobile-full {
+      @apply w-full;
+    }
   }
 
   .btn-primary {
@@ -104,7 +177,24 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
   }
 
-  /* UTILS */
+  /* RESPONSIVE UTILITIES */
+  .responsive-padding {
+    padding: var(--spacing-md);
+  }
+
+  @media (max-width: 640px) {
+    .responsive-padding {
+      padding: var(--spacing-sm);
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .responsive-padding {
+      padding: var(--spacing-lg);
+    }
+  }
+
+  /* SCROLLBAR UTILS */
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #e2e8f0 transparent;
@@ -112,6 +202,11 @@
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

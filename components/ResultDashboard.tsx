@@ -78,25 +78,25 @@ Simule grátis em: ${window.location.origin}`;
   return (
     <div className="h-full flex flex-col bg-slate-50 relative overflow-hidden">
       {/* Navigation Tabs - Compact */}
-      <div className="bg-white border-b border-slate-200 px-4 md:px-6 pt-4 flex-shrink-0 z-30">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
-              <TrendingDown className="w-4 h-4" />
+      <div className="bg-white border-b border-slate-200 px-3 sm:px-4 md:px-6 pt-3 sm:pt-4 flex-shrink-0 z-30">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="p-1 sm:p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+              <TrendingDown className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
             </div>
-            <h2 className="text-sm font-bold text-slate-900">Resultado da Simulação</h2>
+            <h2 className="text-xs sm:text-sm font-bold text-slate-900">Resultado da Simulação</h2>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             <button
               onClick={handleWhatsAppShare}
-              className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors"
+              className="p-1.5 sm:p-2 text-slate-400 hover:text-emerald-600 transition-colors rounded-lg hover:bg-emerald-50"
               title="Compartilhar WhatsApp"
             >
               <MessageCircle className="w-4 h-4" />
             </button>
             <button
               onClick={handleExport}
-              className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"
+              className="p-1.5 sm:p-2 text-slate-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50"
               title="Exportar PDF"
             >
               <Download className="w-4 h-4" />
@@ -104,7 +104,7 @@ Simule grátis em: ${window.location.origin}`;
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-2 sm:gap-3 md:gap-4 overflow-x-auto no-scrollbar">
           {[
             { id: 'SUMMARY' as const, label: 'Resumo', icon: LayoutDashboard },
             { id: 'CHARTS' as const, label: 'Gráficos', icon: PieChartIcon },
@@ -113,42 +113,43 @@ Simule grátis em: ${window.location.origin}`;
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 pb-3 px-1 text-xs font-bold transition-all relative ${activeTab === tab.id ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`flex items-center gap-1.5 sm:gap-2 pb-2.5 sm:pb-3 px-0.5 sm:px-1 text-[10px] sm:text-xs font-bold transition-all relative whitespace-nowrap ${activeTab === tab.id ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
+              <tab.icon className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.label.slice(0, 3)}</span>
               {activeTab === tab.id && <div className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="p-4 md:p-6 flex-1 overflow-y-auto custom-scrollbar no-scrollbar">
+      <div className="p-3 sm:p-4 md:p-6 flex-1 overflow-y-auto custom-scrollbar no-scrollbar">
         {activeTab === 'SUMMARY' && (
-          <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 animate-fade-in-up">
+          <div className="max-w-4xl mx-auto space-y-3 sm:space-y-4 md:space-y-6 animate-fade-in-up">
 
             {/* Main Result: Installment */}
-            <div className="finan-card-premium p-6 md:p-8 border-l-4 border-l-blue-600 relative overflow-hidden">
-              <div className="absolute right-0 top-0 p-4 opacity-5">
-                <Calculator className="w-24 h-24" />
+            <div className="finan-card-premium p-4 sm:p-5 md:p-6 lg:p-8 border-l-4 border-l-blue-600 relative overflow-hidden">
+              <div className="absolute right-0 top-0 p-4 opacity-5 hidden md:block">
+                <Calculator className="w-16 md:w-20 lg:w-24 h-16 md:h-20 lg:h-24" />
               </div>
-              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5 md:gap-6">
                 <div>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 mb-1.5 inline-block">
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-1.5 sm:px-2 py-0.5 rounded border border-blue-100 mb-1 sm:mb-1.5 inline-block">
                     Parcela Mensal (1ª)
                   </span>
-                  <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">
                     {formatCurrency(result.firstInstallment)}
                   </h1>
-                  <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed max-w-xs">
+                  <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-1 leading-relaxed max-w-xs">
                     {data.amortizationSystem === 'SAC' ? 'As parcelas diminuem ao longo do tempo conforme o saldo devedor é amortizado.' : 'As parcelas permanecem fixas durante todo o contrato.'}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${result.isCreditApproved ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
-                    {result.isCreditApproved ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-                    <span className="text-[11px] font-bold uppercase tracking-tight">
+                  <div className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border ${result.isCreditApproved ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
+                    {result.isCreditApproved ? <CheckCircle className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> : <XCircle className="w-3.5 sm:w-4 h-3.5 sm:h-4" />}
+                    <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-tight">
                       {result.isCreditApproved ? 'Crédito Recomendado' : 'Renda Insuficiente'}
                     </span>
                   </div>
@@ -164,26 +165,26 @@ Simule grátis em: ${window.location.origin}`;
 
             {/* Strategy Highlights */}
             {result.comparison?.isActive && (
-              <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-xl ring-1 ring-white/10">
-                <div className="absolute right-[-20px] top-[-20px] w-40 h-40 bg-blue-600/30 rounded-full blur-3xl" />
+              <div className="bg-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 text-white relative overflow-hidden shadow-xl ring-1 ring-white/10">
+                <div className="absolute right-[-20px] top-[-20px] w-32 sm:w-40 h-32 sm:h-40 bg-blue-600/30 rounded-full blur-3xl" />
                 <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
-                      <Zap className="w-3.5 h-3.5 fill-blue-200" />
+                  <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-600 rounded flex items-center justify-center">
+                      <Zap className="w-3 sm:w-3.5 h-3 sm:h-3.5 fill-blue-200" />
                     </div>
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-blue-400">Poder da Amortização</h3>
+                    <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-blue-400">Poder da Amortização</h3>
                   </div>
-                  <p className="text-sm font-medium text-slate-300 mb-6">
+                  <p className="text-xs sm:text-sm font-medium text-slate-300 mb-4 sm:mb-5 md:mb-6">
                     Com um aporte mensal de <span className="text-white font-bold">{formatCurrency(data.extraAmortizationMonthly || 0)}</span>, você economizará uma fortuna em juros bancários.
                   </p>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <span className="block text-[10px] uppercase text-slate-500 font-bold mb-1">Economia Total</span>
-                      <span className="text-2xl font-black text-emerald-400">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
+                      <span className="block text-[9px] sm:text-[10px] uppercase text-slate-500 font-bold mb-1">Economia Total</span>
+                      <span className="text-lg sm:text-xl md:text-2xl font-black text-emerald-400">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
                     </div>
                     <div>
-                      <span className="block text-[10px] uppercase text-slate-500 font-bold mb-1">Redução de Prazo</span>
-                      <span className="text-2xl font-black text-blue-400">-{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos</span>
+                      <span className="block text-[9px] sm:text-[10px] uppercase text-slate-500 font-bold mb-1">Redução de Prazo</span>
+                      <span className="text-lg sm:text-xl md:text-2xl font-black text-blue-400">-{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos</span>
                     </div>
                   </div>
                 </div>
@@ -191,18 +192,18 @@ Simule grátis em: ${window.location.origin}`;
             )}
 
             {/* Secondary KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="finan-card p-5">
-                <div className="flex items-center gap-2 text-slate-400 mb-3">
-                  <DollarSign className="w-3.5 h-3.5" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Total Pago</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              <div className="finan-card p-4 sm:p-5">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 mb-2 sm:mb-3">
+                  <DollarSign className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+                  <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-none">Total Pago</span>
                 </div>
-                <div className="text-xl font-bold text-slate-800">{formatCurrency(result.totalPaid)}</div>
-                <div className="text-[10px] text-slate-500 mt-1">Imóvel + Juros bancários</div>
+                <div className="text-lg sm:text-xl font-bold text-slate-800">{formatCurrency(result.totalPaid)}</div>
+                <div className="text-[9px] sm:text-[10px] text-slate-500 mt-1">Imóvel + Juros bancários</div>
               </div>
 
-              <div className="finan-card p-5">
-                <div className="flex items-center gap-2 text-slate-400 mb-3">
+              <div className="finan-card p-4 sm:p-5">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-slate-400 mb-2 sm:mb-3">
                   <TrendingUp className="w-3.5 h-3.5 font-bold" />
                   <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Juros Totais</span>
                 </div>
@@ -267,11 +268,11 @@ Simule grátis em: ${window.location.origin}`;
 
         {/* CHARTS TAB - Compact version */}
         {activeTab === 'CHARTS' && (
-          <div className="space-y-6 max-w-4xl mx-auto animate-fade-in-up">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="finan-card p-6">
-                <h3 className="text-sm font-bold text-slate-900 mb-6">Composição Total</h3>
-                <div className="h-[240px]">
+          <div className="space-y-4 sm:space-y-5 md:space-y-6 max-w-4xl mx-auto animate-fade-in-up">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+              <div className="finan-card p-4 sm:p-5 md:p-6">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-4 sm:mb-5 md:mb-6">Composição Total</h3>
+                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
@@ -284,9 +285,9 @@ Simule grátis em: ${window.location.origin}`;
                 </div>
               </div>
 
-              <div className="finan-card p-6">
-                <h3 className="text-sm font-bold text-slate-900 mb-6">Evolução da Parcela</h3>
-                <div className="h-[240px]">
+              <div className="finan-card p-4 sm:p-5 md:p-6">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-4 sm:mb-5 md:mb-6">Evolução da Parcela</h3>
+                <div className="h-[180px] sm:h-[200px] md:h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData}>
                       <defs>
@@ -310,9 +311,9 @@ Simule grátis em: ${window.location.origin}`;
 
         {/* EVOLUTION TAB - Compact scroll table */}
         {activeTab === 'EVOLUTION' && (
-          <div className="finan-card animate-fade-in-up">
+          <div className="finan-card animate-fade-in-up overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[500px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="px-4 py-3 text-[10px] font-bold uppercase text-slate-500">Mês</th>
