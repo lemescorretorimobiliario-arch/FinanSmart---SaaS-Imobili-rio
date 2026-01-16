@@ -14,9 +14,9 @@ interface CalculatorFormProps {
 const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimulate, user }) => {
   const [currentStep, setCurrentStep] = React.useState(1);
   const steps = [
-    { id: 1, label: 'Patrimônio', icon: Home },
-    { id: 2, label: 'Crédito', icon: Calendar },
-    { id: 3, label: 'Estratégia', icon: Zap }
+    { id: 1, label: 'Patrimônio', icon: Home, subtitle: 'Valor e Entrada' },
+    { id: 2, label: 'Crédito', icon: Calendar, subtitle: 'Condições do Financiamento' },
+    { id: 3, label: 'Estratégia', icon: Zap, subtitle: 'Potencialize sua Economia' }
   ];
 
   const updateField = (field: keyof SimulationData, value: any) => {
@@ -28,7 +28,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
     updateField(field, numericValue);
   };
 
-  const formatCurrency = (value: number) => {
+  const formatCurrencyValue = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -40,162 +40,121 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
 
   const progress = (currentStep / steps.length) * 100;
 
-  // Cálculo de Renda Mínima Estimada (30% da parcela aproximada)
-  const estimatedLoan = data.propertyValue - data.downPayment;
-  const monthlyRateApproximated = (data.interestRateAnnual / 100) / 12;
-  const totalMonths = data.termYears * 12;
-  const approxPayment = estimatedLoan * (monthlyRateApproximated / (1 - Math.pow(1 + monthlyRateApproximated, -totalMonths)));
-  const estimatedMinIncome = approxPayment / 0.3;
-
   return (
-    <div className="md:h-full flex flex-col h-full relative">
-      {/* Progress Header */}
-      <div className="px-5 py-3 border-b border-slate-200 flex-shrink-0 bg-white z-20">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
-              {currentStep}/{steps.length}
-            </span>
-            <span className="text-[11px] text-slate-500 font-bold uppercase tracking-tight">
-              {steps[currentStep - 1].label}
-            </span>
-          </div>
-          <div className="flex gap-1">
-            {steps.map(s => (
-              <div key={s.id} className={`w-1.5 h-1.5 rounded-full transition-colors ${s.id === currentStep ? 'bg-blue-600' : s.id < currentStep ? 'bg-blue-200' : 'bg-slate-100'}`} />
-            ))}
-          </div>
+    <div className="h-full flex flex-col bg-white">
+      {/* HEADER: PROGRESS INDICATOR */}
+      <div className="px-6 py-4 border-b border-slate-100 flex-shrink-0">
+        <div className="flex justify-between items-center mb-3">
+          <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-blue-100/50">
+            Etapa {currentStep} de 3
+          </span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            {steps[currentStep - 1].label}
+          </span>
         </div>
         <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 transition-all duration-500"
+            className="h-full bg-blue-600 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(37,99,235,0.4)]"
             style={{ width: `${progress}%` }}
-          ></div>
+          />
         </div>
       </div>
 
-      {/* Form Content */}
-      <div className="flex-1 overflow-y-auto px-5 py-6 custom-scrollbar pb-24 md:pb-6">
-        <div className="max-w-[340px] mx-auto space-y-5 animate-fade-in-up">
+      {/* BODY: FORM CONTENT */}
+      <div className="flex-1 overflow-y-auto px-6 py-8 custom-scrollbar scroll-smooth">
+        <div className="max-w-[360px] mx-auto">
 
-          {/* PASSO 1 */}
+          {/* PASSO 1: PATRIMÔNIO */}
           {currentStep === 1 && (
-            <div className="space-y-4">
-              <div className="finan-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Home className="w-3.5 h-3.5 text-slate-400" />
-                  <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500">Valor do Imóvel</label>
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="text-center mb-8">
+                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 shadow-sm">
+                  <Home className="w-7 h-7" />
                 </div>
+                <h2 className="text-lg font-bold text-slate-900">Valor do Imóvel</h2>
+                <p className="text-xs text-slate-500 mt-1">Quanto vale o imóvel dos seus sonhos?</p>
+              </div>
+
+              <div className="finan-card-premium p-6 text-center">
+                <label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest block mb-3">Valor de Avaliação</label>
                 <input
                   type="text"
-                  value={formatCurrency(data.propertyValue)}
+                  value={formatCurrencyValue(data.propertyValue)}
                   onChange={(e) => handleCurrencyChange('propertyValue', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full text-2xl font-black text-slate-900 text-center focus:outline-none placeholder-slate-200"
                 />
               </div>
 
-              <div className="finan-card p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-3.5 h-3.5 text-slate-400" />
-                    <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500">Entrada</label>
-                  </div>
-                  <div className="flex gap-1.5">
-                    {[0.2, 0.5].map(p => (
-                      <button
-                        key={p}
-                        onClick={() => updateField('downPayment', data.propertyValue * p)}
-                        className="text-[9px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded hover:bg-blue-600 hover:text-white transition-all"
-                      >
-                        {p * 100}%
-                      </button>
-                    ))}
-                  </div>
+              <div className="finan-card p-5">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="text-[11px] font-bold uppercase text-slate-500 tracking-tight">Entrada Mínima</label>
+                  <span className="text-xs font-bold text-blue-600">{Math.round((data.downPayment / data.propertyValue) * 100)}%</span>
                 </div>
                 <input
                   type="text"
-                  value={formatCurrency(data.downPayment)}
+                  value={formatCurrencyValue(data.downPayment)}
                   onChange={(e) => handleCurrencyChange('downPayment', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-lg font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                 />
-              </div>
-
-              <div className="finan-card p-4 border-blue-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <Briefcase className="w-3.5 h-3.5 text-slate-400" />
-                  <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500">Renda Mensal</label>
-                </div>
-                <input
-                  type="text"
-                  value={formatCurrency(data.monthlyIncome)}
-                  onChange={(e) => handleCurrencyChange('monthlyIncome', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                />
-                <div className="mt-2.5 flex items-center gap-2 text-[10px] text-slate-500 leading-tight">
-                  <Info className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                  <span>Mínimo sugerido: <b className="text-slate-900">{formatCurrency(estimatedMinIncome)}</b></span>
-                </div>
               </div>
             </div>
           )}
 
-          {/* PASSO 2 */}
+          {/* PASSO 2: CRÉDITO */}
           {currentStep === 2 && (
-            <div className="space-y-4">
-              <div className="finan-card p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                    <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500">Prazo anos</label>
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="finan-card-premium p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100">
+                    <Calendar className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-bold text-blue-600">{data.termYears} Anos</span>
+                  <div className="flex-1">
+                    <label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest block">Prazo do Financiamento</label>
+                    <span className="text-xl font-black text-indigo-600">{data.termYears} Anos</span>
+                  </div>
                 </div>
+
                 <input
                   type="range"
                   min="5"
                   max="35"
                   value={data.termYears}
                   onChange={(e) => updateField('termYears', Number(e.target.value))}
-                  className="w-full h-1.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-indigo-600"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-2 font-medium">
-                  <span>5</span>
-                  <span>10</span>
-                  <span>15</span>
-                  <span>20</span>
-                  <span>25</span>
-                  <span>30</span>
-                  <span>35</span>
+                <div className="flex justify-between text-[11px] text-slate-400 mt-3 font-bold">
+                  <span>5 ANOS</span>
+                  <span>35 ANOS</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="finan-card p-4">
-                  <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500 mb-2 block">Taxa (% a.a.)</label>
-                  <div className="relative">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="finan-card p-5">
+                  <label className="text-[10px] font-bold uppercase text-slate-400 mb-3 block">Juros (% a.a.)</label>
+                  <div className="flex items-center gap-2">
                     <input
                       type="number"
                       step="0.1"
                       value={data.interestRateAnnual}
                       onChange={(e) => updateField('interestRateAnnual', Number(e.target.value))}
-                      className="w-full bg-slate-50 border border-slate-100 rounded-lg pl-3 pr-7 py-2 text-base font-bold text-slate-900 outline-none"
+                      className="w-full text-xl font-black text-slate-900 focus:outline-none"
                     />
-                    <Percent className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300" />
+                    <Percent className="w-4 h-4 text-slate-300" />
                   </div>
                 </div>
 
-                <div className="finan-card p-4">
-                  <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500 mb-2 block">Amortização</label>
-                  <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                <div className="finan-card p-5">
+                  <label className="text-[10px] font-bold uppercase text-slate-400 mb-3 block">Parcelas</label>
+                  <div className="flex bg-slate-100 p-1 rounded-xl">
                     <button
                       onClick={() => updateField('amortizationSystem', 'SAC')}
-                      className={`flex-1 py-1.5 text-[9px] font-bold uppercase rounded-md transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                      className={`flex-1 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-400'}`}
                     >
                       SAC
                     </button>
                     <button
                       onClick={() => updateField('amortizationSystem', 'PRICE')}
-                      className={`flex-1 py-1.5 text-[9px] font-bold uppercase rounded-md transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
+                      className={`flex-1 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-400'}`}
                     >
                       PRICE
                     </button>
@@ -203,42 +162,48 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
                 </div>
               </div>
 
-              <div className="text-center p-3 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                <p className="text-[11px] text-slate-500 font-medium">💡 Escolha um banco acima para aplicar taxas reais</p>
+              <div className="bg-amber-50/50 border border-amber-100/50 rounded-2xl p-4 flex gap-3 items-center">
+                <Info className="w-5 h-5 text-amber-500 shrink-0" />
+                <p className="text-[11px] text-amber-700 leading-tight font-medium">
+                  <strong>Dica:</strong> Explore os bancos no topo para carregar taxas oficiais atualizadas.
+                </p>
               </div>
             </div>
           )}
 
-          {/* PASSO 3 */}
+          {/* PASSO 3: OTIMIZAÇÃO (ESTRATÉGIA) */}
           {currentStep === 3 && (
-            <div className="space-y-4">
-              <div className="text-center pb-2">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Zap className="w-5 h-5 fill-blue-600" />
+            <div className="space-y-6 animate-fade-in-up text-center">
+              <div className="pt-2">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-orange-500/20 rotate-3">
+                  <Zap className="w-8 h-8 fill-white" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">Economia Inteligente</h3>
-                <p className="text-[11px] text-slate-500 leading-relaxed mt-1">Quanto mais você paga por mês além da parcela, menos juros pagará ao final.</p>
+                <h2 className="text-xl font-black text-slate-900">Economia Inteligente</h2>
+                <p className="text-xs text-slate-500 mt-2 max-w-[240px] mx-auto leading-relaxed">
+                  Adicionar um valor extra mensal abate juros e reduz o tempo de forma estratégica.
+                </p>
               </div>
 
-              <div className="finan-card p-5 border-blue-200 bg-blue-50/10">
-                <label className="text-[11px] font-bold uppercase tracking-tight text-slate-500 mb-2 block text-center">Aporte Extra Mensal</label>
+              <div className="finan-card-premium p-8 border-amber-200 bg-amber-50/10 ring-4 ring-amber-500/[0.03]">
+                <label className="text-[10px] font-black uppercase text-amber-600 tracking-[0.2em] mb-4 block">Aporte Mensal Extra</label>
                 <input
                   type="text"
-                  value={formatCurrency(data.extraAmortizationMonthly || 0)}
+                  value={formatCurrencyValue(data.extraAmortizationMonthly || 0)}
                   onChange={(e) => handleCurrencyChange('extraAmortizationMonthly', e.target.value)}
-                  className="w-full bg-white border border-blue-100 rounded-xl px-4 py-3 text-xl font-bold text-center text-blue-600 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full bg-transparent text-3xl font-black text-slate-900 text-center focus:outline-none"
                   placeholder="R$ 0,00"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                {[200, 500, 1000, 2000].map(val => (
+              <div className="grid grid-cols-2 gap-3">
+                {[500, 1000].map(val => (
                   <button
                     key={val}
                     onClick={() => updateField('extraAmortizationMonthly', val)}
-                    className={`p-2.5 rounded-xl border text-xs font-bold transition-all ${data.extraAmortizationMonthly === val ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300'}`}
+                    className="group relative px-4 py-4 rounded-2xl border-2 border-dashed border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 transition-all duration-300"
                   >
-                    +{formatCurrency(val)}
+                    <span className="text-[10px] font-black text-slate-400 group-hover:text-blue-600 block uppercase tracking-tighter">Testar com</span>
+                    <span className="text-base font-black text-slate-600 group-hover:text-blue-700">+{formatCurrencyValue(val)}</span>
                   </button>
                 ))}
               </div>
@@ -247,13 +212,13 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
         </div>
       </div>
 
-      {/* Footer Navigation */}
-      <div className="px-5 py-4 border-t border-slate-200 bg-white/80 backdrop-blur-md sticky bottom-0 z-30">
-        <div className="flex gap-3 max-w-[340px] mx-auto">
+      {/* FOOTER: NAVIGATION */}
+      <div className="px-6 py-6 border-t border-slate-100 bg-white/50 backdrop-blur-md">
+        <div className="flex gap-4 max-w-[360px] mx-auto items-center">
           {currentStep > 1 && (
             <button
               onClick={prevStep}
-              className="px-4 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 transition-all"
+              className="w-12 h-12 rounded-full bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center hover:bg-slate-100 transition-all active:scale-90"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -262,7 +227,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
           {currentStep < steps.length ? (
             <button
               onClick={nextStep}
-              className="flex-1 btn-primary py-3 rounded-xl"
+              className="flex-1 bg-slate-900 text-white h-12 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-slate-900/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
             >
               Próximo Passo
               <ArrowRight className="w-4 h-4" />
@@ -270,13 +235,13 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
           ) : (
             <button
               onClick={onSimulate}
-              className={`flex-1 ${user ? 'premium-gradient' : 'bg-slate-900'} text-white py-3 rounded-xl font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2`}
+              className={`flex-1 ${user ? 'premium-gradient shadow-blue-600/20' : 'bg-slate-900'} text-white h-14 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all animate-pulse-subtle`}
             >
               {user ? 'Simular Agora' : 'Login para Simular'}
               {user ? (
                 <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
               ) : (
-                <CheckCircle className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4" />
               )}
             </button>
           )}
