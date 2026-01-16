@@ -286,7 +286,7 @@ const App: React.FC = () => {
   const isOnboarding = location.pathname === '/onboarding';
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-slate-50 overflow-hidden font-sans">
+    <div className="h-screen flex flex-col bg-slate-50 overflow-hidden font-sans">
       {/* --- HEADER - Premium Glassmorphism --- */}
       {!isLanding && (
         <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-14 md:h-16 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
@@ -372,7 +372,7 @@ const App: React.FC = () => {
 
 
       {/* --- MAIN CONTENT --- */}
-      <main className={`flex-1 relative ${location.pathname === '/' ? 'overflow-y-auto' : 'overflow-hidden'}`}>
+      <main className="flex-1 relative overflow-y-auto custom-scrollbar bg-slate-50">
         <Routes>
           <Route path="/" element={<LandingPage />} />
 
@@ -444,27 +444,25 @@ const App: React.FC = () => {
           {/* Protected Dashboard */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
-              <div className="h-full overflow-y-auto bg-slate-50 pb-16 md:pb-0">
-                {user?.type === 'CORRETOR' ? (
-                  <AgentDashboard
-                    user={user}
-                    onSelectLead={(lead) => {
-                      toast.info("Carregando simulação...");
-                      // Handling state passing via navigate
-                      navigate('/simulador', { state: { loadLead: lead } });
-                    }}
-                    onUpgrade={handleUpgrade}
-                  />
-                ) : (
-                  <ClientDashboard
-                    user={user!}
-                    onNewSimulation={() => navigate('/simulador')}
-                    onSelectSimulation={(sim) => {
-                      navigate('/simulador', { state: { loadSim: sim } });
-                    }}
-                  />
-                )}
-              </div>
+              {user?.type === 'CORRETOR' ? (
+                <AgentDashboard
+                  user={user}
+                  onSelectLead={(lead) => {
+                    toast.info("Carregando simulação...");
+                    // Handling state passing via navigate
+                    navigate('/simulador', { state: { loadLead: lead } });
+                  }}
+                  onUpgrade={handleUpgrade}
+                />
+              ) : (
+                <ClientDashboard
+                  user={user!}
+                  onNewSimulation={() => navigate('/simulador')}
+                  onSelectSimulation={(sim) => {
+                    navigate('/simulador', { state: { loadSim: sim } });
+                  }}
+                />
+              )}
             </ProtectedRoute>
           } />
 
@@ -482,13 +480,13 @@ const App: React.FC = () => {
             ) : <Navigate to="/login" />
           } />
 
-          {/* Admin Route - Secret for now, or protected by email check */}
+          {/* Admin Route */}
           <Route path="/admin" element={
             <ProtectedRoute>
               {user?.email?.includes('admin') || user?.email === 'lemes_333@hotmail.com' ? (
                 <AdminPanel />
               ) : (
-                <div className="h-full flex items-center justify-center flex-col">
+                <div className="py-20 flex items-center justify-center flex-col">
                   <h1 className="text-2xl font-black text-slate-900">Acesso Negado</h1>
                   <p className="text-slate-500">Esta área é restrita para administradores.</p>
                   <button onClick={() => navigate('/dashboard')} className="mt-4 text-blue-600 font-bold hover:underline">Voltar</button>
