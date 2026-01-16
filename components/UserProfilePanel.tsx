@@ -142,22 +142,22 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
       {/* Header Section - Compact */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
-          <h1 className="text-xl font-black text-slate-900 tracking-tight text-center md:text-left">Portal do Usuário</h1>
-          <p className="text-slate-500 font-medium text-[10px] text-center md:text-left uppercase tracking-wider">Gerencie sua conta e plano.</p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight text-center md:text-left">Minha Conta</h1>
+          <p className="text-slate-500 font-medium text-[10px] text-center md:text-left uppercase tracking-wider">Gestão de perfil e assinatura.</p>
         </div>
 
-        <div className="flex bg-slate-100 p-1 rounded-xl w-full md:w-fit mx-auto md:mx-0">
+        <div className="flex bg-slate-100 p-0.5 rounded-lg w-full md:w-fit mx-auto md:mx-0">
           <button
             onClick={() => setActiveTab('OVERVIEW')}
-            className={`flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'OVERVIEW' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 md:flex-none px-4 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === 'OVERVIEW' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
             Visão Geral
           </button>
           <button
             onClick={() => setActiveTab('SETTINGS')}
-            className={`flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'SETTINGS' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 md:flex-none px-4 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === 'SETTINGS' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
-            Configurações
+            Preferências
           </button>
         </div>
       </div>
@@ -166,8 +166,8 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
         <div className="space-y-6 animate-fade-in-up">
 
           {/* USER CARD PANORAMIC */}
-          <div className="bg-white rounded-3xl shadow-2xl shadow-blue-900/5 border border-slate-100 overflow-hidden relative">
-            <div className="h-32 md:h-36 bg-gradient-to-r from-slate-900 to-blue-900 relative">
+          <div className="finan-card rounded-2xl">
+            <div className="h-28 md:h-32 bg-slate-900 relative">
               {formData.coverUrl && <img src={formData.coverUrl} className="w-full h-full object-cover opacity-60" alt="" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
@@ -187,10 +187,10 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
 
               <div className="pt-14 md:pt-3 md:pl-36 flex flex-col md:flex-row md:items-end justify-between w-full gap-4">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">{user.name}</h2>
+                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">{user.name}</h2>
                   <div className="flex items-center gap-2 mt-0.5 justify-center md:justify-start">
-                    <span className="bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-blue-100">
-                      {user.type === UserRole.CORRETOR ? 'Corretor' : 'Cliente'}
+                    <span className="bg-blue-50 text-blue-600 text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md border border-blue-100">
+                      {user.type === UserRole.CORRETOR ? 'Corretor' : 'Comprador'}
                     </span>
                   </div>
                 </div>
@@ -235,7 +235,7 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
           <div className="grid md:grid-cols-3 gap-6">
             {/* PLAN CARD */}
             <div className="md:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group">
+              <div className="finan-card p-6 relative group border-blue-100">
                 <div className="flex justify-between items-start mb-6 relative z-10">
                   <div>
                     <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status do Plano</h3>

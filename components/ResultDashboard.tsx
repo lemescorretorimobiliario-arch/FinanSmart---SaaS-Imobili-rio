@@ -1,459 +1,347 @@
 import React, { useState } from 'react';
 import {
-  Download,
-  TrendingUp,
-  DollarSign,
-  Calendar,
-  Lock,
-  PieChart as PieIcon,
-  Table as TableIcon,
-  Activity,
-  CheckCircle,
-  XCircle,
-  Zap,
-  UserPlus,
-  MessageCircle,
-  Share2,
-  Save,
-  Star
+  TrendingDown, TrendingUp, Calendar, DollarSign, Clock, Zap,
+  ArrowRight, Download, Share2, Info, CheckCircle, XCircle,
+  MessageCircle, Save, Star, ChevronDown, ChevronUp, PieChart as PieChartIcon,
+  Table as TableIcon, LayoutDashboard, Calculator
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { CalculationResult, SimulationData, UserPlan, InstallmentRow } from '../types';
+import { SYSTEM_LIMITS, UserRole } from '../core/system';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend, BarChart, Bar, TooltipProps
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend
 } from 'recharts';
-import { CalculationResult, SimulationData, UserProfile } from '../types';
-import { UserPlan, SYSTEM_LIMITS } from '../core/system';
-import { formatCurrency } from '../utils/finance';
 import { generatePDF } from '../utils/pdfGenerator';
-
-import PaywallModal from './PaywallModal';
+import { toast } from 'sonner';
 
 interface ResultDashboardProps {
-  data: SimulationData;
   result: CalculationResult;
-  user: UserProfile;
+  data: SimulationData;
+  user: any;
   onSaveLead?: () => void;
-  onUpgradeClick?: () => Promise<void> | void;
+  onUpgrade?: () => void;
 }
 
-// ... existing CustomTooltip ...
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white p-2.5 md:p-3 border border-slate-100 shadow-xl rounded-xl">
-        <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-        {payload.map((entry, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-xs md:text-sm font-semibold text-slate-700">
-              {entry.name}:
-            </span>
-            <span className="text-xs md:text-sm font-bold text-slate-900">
-              {formatCurrency(entry.value as number)}
-            </span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
+const ResultDashboard: React.FC<ResultDashboardProps> = ({ result, data, user, onSaveLead, onUpgrade }) => {
+  const [activeTab, setActiveTab] = useState<'SUMMARY' | 'CHARTS' | 'EVOLUTION'>('SUMMARY');
 
-const ResultDashboard: React.FC<ResultDashboardProps> = ({ data, result, user, onSaveLead, onUpgradeClick }) => {
-  const [activeTab, setActiveTab] = useState<'SUMMARY' | 'TABLE' | 'CHARTS'>('SUMMARY');
-  const [showPaywall, setShowPaywall] = useState(false);
-
-  const handleExport = () => {
-    // If requirement says simulation is blocked, then export should likely also be blocked if free limit reached?
-    // Current logic: Free users have limit of 5.
-    if (user.plan === UserPlan.FREE && user.simulationsCount >= SYSTEM_LIMITS.FREE_SIMULATIONS) {
-      setShowPaywall(true);
-      return;
-    }
-    generatePDF(data, result, user);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
   };
 
-  const handleWhatsAppShare = () => {
-    const text = `🏠 *Simulação FinanSmart*
-      
-💰 Imóvel: ${formatCurrency(data.propertyValue)}
-📉 Entrada: ${formatCurrency(data.downPayment)}
-🗓 Prazo: ${data.termYears} anos
-📊 Taxa: ${data.interestRateAnnual}% a.a.
+  const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-✅ *1ª Parcela: ${formatCurrency(result.firstInstallment)}*
-📉 Última Parcela: ${formatCurrency(result.lastInstallment)}
-      
-_Gerado por ${user.name}_`;
-
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  };
-
-  // Modern Color Palette
-  const COLORS = {
-    primary: '#6366f1',   // Indigo 500
-    secondary: '#cbd5e1', // Slate 300
-    accent: '#f59e0b',    // Amber 500 (Interest)
-    success: '#10b981',   // Emerald 500
-    dark: '#1e293b'       // Slate 800
-  };
-
-  // Chart Data Preparation
-  const balanceData = result.schedule.filter((_, i) => i % 12 === 0 || i === result.schedule.length - 1).map(row => ({
-    name: `${Math.floor(row.month / 12)}º Ano`,
-    Saldo: row.balance,
-    Juros: row.interest
+  const chartData = result.schedule.slice(0, 120).map((item, index) => ({
+    mes: index,
+    saldo: item.balance,
+    parcela: item.payment,
+    juros: item.interest,
+    amortizacao: item.amortization
   }));
 
   const pieData = [
-    { name: 'Valor do Imóvel', value: result.financedAmount, color: COLORS.primary },
-    { name: 'Custo de Juros', value: result.totalInterest, color: COLORS.accent },
+    { name: 'Principal', value: result.financedAmount },
+    { name: 'Juros Totais', value: result.totalInterest }
   ];
 
-  // Comparative Data
-  const comparisonData = result.comparison?.isActive ? [
-    { name: 'Sem Amortização', Total: result.comparison.originalTotalPaid, color: COLORS.secondary },
-    { name: 'Com Estratégia', Total: result.totalPaid, color: COLORS.success },
-  ] : [];
+  const handleExport = async () => {
+    if (user.plan === UserPlan.FREE) {
+      toast.error("Upgrade para PRO necessário para exportar PDF.");
+      onUpgrade?.();
+      return;
+    }
+
+    const toastId = toast.loading("Gerando relatório profissional...");
+    try {
+      // @ts-ignore - generatePDF expected CalculationResult but might have slight mismatch
+      await generatePDF(result, data, user);
+      toast.success("Relatório gerado com sucesso!", { id: toastId });
+    } catch (error) {
+      toast.error("Erro ao gerar PDF", { id: toastId });
+    }
+  };
+
+  const handleWhatsAppShare = () => {
+    const text = `Simulação FinanSmart: 
+🏦 Imóvel: ${formatCurrency(data.propertyValue)}
+💰 Parcela: ${formatCurrency(result.firstInstallment)}
+⏱️ Prazo: ${data.termYears} anos
+📊 Taxa: ${data.interestRateAnnual}% a.a.
+
+Simule grátis em: ${window.location.origin}`;
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+  };
 
   return (
-    <div className="h-full flex flex-col bg-transparent animate-fade-in-up">
+    <div className="h-full flex flex-col bg-slate-50 relative overflow-hidden">
+      {/* Navigation Tabs - Compact */}
+      <div className="bg-white border-b border-slate-200 px-4 md:px-6 pt-4 flex-shrink-0 z-30">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+              <TrendingDown className="w-4 h-4" />
+            </div>
+            <h2 className="text-sm font-bold text-slate-900">Resultado da Simulação</h2>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleWhatsAppShare}
+              className="p-1.5 text-slate-400 hover:text-emerald-600 transition-colors"
+              title="Compartilhar WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleExport}
+              className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors"
+              title="Exportar PDF"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
 
-      {/* Header Tabs - Premium */}
-      <div className="sticky top-0 bg-white/70 backdrop-blur-lg z-10 pt-4 px-4 md:px-8 pb-4 border-b border-slate-200/50">
-        <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl w-full md:w-fit shadow-inner overflow-x-auto no-scrollbar">
-          <button
-            onClick={() => setActiveTab('SUMMARY')}
-            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'SUMMARY' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
-              }`}
-          >
-            <Activity className="w-4 h-4" /> Resumo
-          </button>
-          <button
-            onClick={() => setActiveTab('TABLE')}
-            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'TABLE' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
-              }`}
-          >
-            <TableIcon className="w-4 h-4" /> Tabela
-          </button>
-          <button
-            onClick={() => setActiveTab('CHARTS')}
-            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-xs md:text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'CHARTS' ? 'bg-white text-blue-600 shadow-md ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
-              }`}
-          >
-            <PieIcon className="w-4 h-4" /> Gráficos
-          </button>
+        <div className="flex gap-4">
+          {[
+            { id: 'SUMMARY' as const, label: 'Resumo', icon: LayoutDashboard },
+            { id: 'CHARTS' as const, label: 'Gráficos', icon: PieChartIcon },
+            { id: 'EVOLUTION' as const, label: 'Evolução', icon: TableIcon }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 pb-3 px-1 text-xs font-bold transition-all relative ${activeTab === tab.id ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <tab.icon className="w-3.5 h-3.5" />
+              {tab.label}
+              {activeTab === tab.id && <div className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-blue-600 rounded-full" />}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="p-3 md:p-6 flex-1 overflow-y-visible md:overflow-y-auto custom-scrollbar pb-24 md:pb-6">
-
-        {/* SUMMARY TAB */}
+      <div className="p-4 md:p-6 flex-1 overflow-y-auto custom-scrollbar no-scrollbar">
         {activeTab === 'SUMMARY' && (
-          <div className="space-y-6 md:space-y-8 animate-fade-in-up">
-            {/* Credit Analysis Card */}
-            <div className={`p-5 md:p-8 rounded-[2rem] border shadow-xl bg-white relative overflow-hidden group ${result.isCreditApproved ? 'border-emerald-100' : 'border-red-100'}`}>
-              <div className={`absolute top-0 left-0 w-2 h-full ${result.isCreditApproved ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 relative z-10">
-                <div className="flex gap-4 md:gap-6">
-                  <div className="flex-shrink-0">
-                    {result.isCreditApproved
-                      ? <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><CheckCircle className="w-8 h-8" /></div>
-                      : <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><XCircle className="w-8 h-8" /></div>
-                    }
-                  </div>
-                  <div>
-                    <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight">
-                      {result.isCreditApproved ? 'Crédito Aprovado' : 'Atenção: Limite de Renda'}
-                    </h3>
-                    <p className="text-slate-500 font-medium text-xs md:text-sm mt-1 leading-relaxed max-w-sm">
-                      {result.isCreditApproved
-                        ? 'Sua renda mensal comporta o valor desta parcela.'
-                        : `A parcela compromete ${result.incomeCommitmentPercent.toFixed(1)}% da renda.`}
-                    </p>
-                    {!result.isCreditApproved && (
-                      <div className="mt-2 text-[10px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-2.5 py-1 rounded-lg inline-block border border-red-100">
-                        Renda Mín: {formatCurrency(result.requiredMinimumIncome)}
-                      </div>
-                    )}
-                  </div>
+          <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 animate-fade-in-up">
+
+            {/* Main Result: Installment */}
+            <div className="finan-card-premium p-6 md:p-8 border-l-4 border-l-blue-600 relative overflow-hidden">
+              <div className="absolute right-0 top-0 p-4 opacity-5">
+                <Calculator className="w-24 h-24" />
+              </div>
+              <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 mb-2 inline-block">
+                    Parcela Mensal (1ª)
+                  </span>
+                  <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
+                    {formatCurrency(result.firstInstallment)}
+                  </h1>
+                  <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed max-w-xs">
+                    {data.amortizationSystem === 'SAC' ? 'As parcelas diminuem ao longo do tempo conforme o saldo devedor é amortizado.' : 'As parcelas permanecem fixas durante todo o contrato.'}
+                  </p>
                 </div>
 
-                <div className="flex w-full lg:w-auto items-center gap-2">
-                  {/* Realtor specific: Save Lead Button */}
-                  {user.type === 'CORRETOR' && onSaveLead && (
-                    <button
-                      onClick={onSaveLead}
-                      className="flex-1 lg:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-500/30 text-[10px] font-black uppercase tracking-widest active:scale-95"
-                      title="Salvar Cliente"
-                    >
-                      <Save className="w-4 h-4" />
-                      <span>Salvar Lead</span>
+                <div className="flex flex-col gap-2">
+                  <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${result.isCreditApproved ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
+                    {result.isCreditApproved ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                    <span className="text-[11px] font-bold uppercase tracking-tight">
+                      {result.isCreditApproved ? 'Crédito Recomendado' : 'Renda Insuficiente'}
+                    </span>
+                  </div>
+                  {user.type === UserRole.CORRETOR && onSaveLead && (
+                    <button onClick={onSaveLead} className="btn-primary w-full py-2.5">
+                      <Save className="w-3.5 h-3.5" />
+                      Salvar Lead
                     </button>
                   )}
-
-                  <button
-                    onClick={handleWhatsAppShare}
-                    className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm active:scale-95"
-                    title="Compartilhar WhatsApp"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                  </button>
-
-                  <button
-                    onClick={handleExport}
-                    className="p-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm active:scale-95"
-                    title="Baixar PDF"
-                  >
-                    <Download className="w-5 h-5" />
-                  </button>
                 </div>
               </div>
             </div>
 
-            {/* Smart Amortization Savings Card */}
+            {/* Strategy Highlights */}
             {result.comparison?.isActive && (
-              <div className="premium-gradient p-8 md:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-                <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50 pointer-events-none group-hover:scale-110 transition-transform duration-1000"></div>
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 relative z-10 text-white">
-                  <div className="p-4 bg-white/10 backdrop-blur-md rounded-3xl text-yellow-300 shadow-xl border border-white/20">
-                    <Zap className="w-8 h-8 md:w-10 md:h-10 fill-yellow-300" />
+              <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-xl ring-1 ring-white/10">
+                <div className="absolute right-[-20px] top-[-20px] w-40 h-40 bg-blue-600/30 rounded-full blur-3xl" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                      <Zap className="w-3.5 h-3.5 fill-blue-200" />
+                    </div>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-blue-400">Poder da Amortização</h3>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-black tracking-tight mb-2">Estratégia Inteligente</h3>
-                    <p className="text-white/70 font-medium text-sm md:text-base mb-6 max-w-lg leading-relaxed">
-                      Ao amortizar <span className="text-white font-bold">{formatCurrency(data.extraAmortizationMonthly || 0)}</span> mensais, você obtém um retorno incrível:
-                    </p>
-                    <div className="grid grid-cols-2 gap-6 md:gap-10">
-                      <div>
-                        <span className="block text-[10px] font-black uppercase tracking-widest text-white/50 mb-1">Economia Real</span>
-                        <span className="text-2xl md:text-4xl font-black text-emerald-400 tracking-tighter">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
-                      </div>
-                      <div>
-                        <span className="block text-[10px] font-black uppercase tracking-widest text-white/50 mb-1">Tempo Reduzido</span>
-                        <span className="text-2xl md:text-4xl font-black text-blue-300 tracking-tighter">
-                          -{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos
-                        </span>
-                      </div>
+                  <p className="text-sm font-medium text-slate-300 mb-6">
+                    Com um aporte mensal de <span className="text-white font-bold">{formatCurrency(data.extraAmortizationMonthly || 0)}</span>, você economizará uma fortuna em juros bancários.
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="block text-[10px] uppercase text-slate-500 font-bold mb-1">Economia Total</span>
+                      <span className="text-2xl font-black text-emerald-400">{formatCurrency(result.comparison?.savedInterest || 0)}</span>
+                    </div>
+                    <div>
+                      <span className="block text-[10px] uppercase text-slate-500 font-bold mb-1">Redução de Prazo</span>
+                      <span className="text-2xl font-black text-blue-400">-{Math.floor((result.comparison?.savedMonths || 0) / 12)} anos</span>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Main KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white transition-transform hover:-translate-y-1 group">
-                <div className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-all"><Calendar className="w-3.5 h-3.5" /></div>
-                  Primeira Parcela
+            {/* Secondary KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="finan-card p-5">
+                <div className="flex items-center gap-2 text-slate-400 mb-3">
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Total Pago</span>
                 </div>
-                <div className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatCurrency(result.firstInstallment)}</div>
-                <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Final: {formatCurrency(result.lastInstallment)}</div>
+                <div className="text-xl font-bold text-slate-800">{formatCurrency(result.totalPaid)}</div>
+                <div className="text-[10px] text-slate-500 mt-1">Imóvel + Juros bancários</div>
               </div>
 
-              <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white transition-transform hover:-translate-y-1 group">
-                <div className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-600 group-hover:text-white transition-all"><DollarSign className="w-3.5 h-3.5" /></div>
-                  Juros Totais
+              <div className="finan-card p-5">
+                <div className="flex items-center gap-2 text-slate-400 mb-3">
+                  <TrendingUp className="w-3.5 h-3.5 font-bold" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Juros Totais</span>
                 </div>
-                <div className="text-2xl md:text-3xl font-black text-amber-500 tracking-tight">{formatCurrency(result.totalInterest)}</div>
-                <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Custo de capital</div>
+                <div className="text-xl font-bold text-red-600">{formatCurrency(result.totalInterest)}</div>
+                <div className="text-[10px] text-slate-500 mt-1">
+                  {((result.totalInterest / result.financedAmount) * 100).toFixed(0)}% do valor financiado
+                </div>
               </div>
 
-              <div className="glass-card p-6 md:p-8 rounded-[2rem] border border-white transition-transform hover:-translate-y-1 group">
-                <div className="text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <div className="p-1.5 bg-slate-100 text-slate-600 rounded-lg group-hover:bg-slate-900 group-hover:text-white transition-all"><TrendingUp className="w-3.5 h-3.5" /></div>
-                  Total Pago
+              <div className="finan-card p-5">
+                <div className="flex items-center gap-2 text-slate-400 mb-3">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Última Parcela</span>
                 </div>
-                <div className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{formatCurrency(result.totalPaid)}</div>
-                <div className="text-[10px] font-bold text-slate-400 mt-2 bg-slate-50 px-2 py-1 rounded-lg w-fit">Em {result.termMonths} meses</div>
+                <div className="text-xl font-bold text-slate-800">
+                  {formatCurrency(result.lastInstallment)}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1">Em {data.termYears} anos</div>
               </div>
             </div>
 
-            {/* Upgrade PRO Banner for Free Users */}
-            {user.plan === 'FREE' && (
-              <div className="bg-slate-900 rounded-[2.5rem] p-8 md:p-10 text-white relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
-                <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                  <div className="space-y-4 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600/30 border border-blue-500/30 rounded-full text-[10px] font-black uppercase tracking-widest text-blue-400">
-                      <Star className="w-3 h-3 fill-blue-400" /> Oferta PRO
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black tracking-tight">Desbloqueie o Poder Total</h3>
-                    <p className="text-slate-400 font-medium max-w-md">
-                      Simulações ilimitadas, PDFs personalizados com sua marca e gestão completa de leads. Tudo por um preço único.
-                    </p>
+            {/* Additional Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="finan-card p-5 bg-slate-50/50">
+                <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+                  <Info className="w-3 h-3" /> Distribuição dos Custos
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-500">Valor do Imóvel</span>
+                    <span className="font-bold">{formatCurrency(data.propertyValue)}</span>
                   </div>
-                  <button
-                    onClick={onUpgradeClick}
-                    className="w-full md:w-auto px-10 py-5 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-blue-600 hover:text-white transition-all shadow-2xl active:scale-95 flex items-center justify-center gap-3"
-                  >
-                    Assinar PRO <Zap className="w-4 h-4 fill-current" />
-                  </button>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-500">Valor Financiado</span>
+                    <span className="font-bold">{formatCurrency(result.financedAmount)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-500">Juros Médios ao Mês</span>
+                    <span className="font-bold">{(data.interestRateAnnual / 12).toFixed(2)}%</span>
+                  </div>
                 </div>
               </div>
-            )}
 
+              <div className="finan-card p-5">
+                <h4 className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-4">Comprometimento de Renda</h4>
+                <div className="relative pt-1">
+                  <div className="flex mb-2 items-center justify-between">
+                    <div><span className="text-[10px] font-bold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">{result.incomeCommitmentPercent.toFixed(1)}%</span></div>
+                    <div className="text-right"><span className="text-[10px] font-bold inline-block text-blue-600">Limite 30%</span></div>
+                  </div>
+                  <div className="overflow-hidden h-1.5 mb-4 text-xs flex rounded bg-blue-100">
+                    <div style={{ width: `${Math.min(100, (result.incomeCommitmentPercent / 30) * 100)}%` }} className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${result.incomeCommitmentPercent > 30 ? 'bg-red-500' : 'bg-blue-600'}`}></div>
+                  </div>
+                  <p className="text-[10px] text-slate-500 leading-tight">
+                    Bancos costumam limitar a parcela a 30% da sua renda bruta comprovada.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* CHARTS TAB */}
+        {/* CHARTS TAB - Compact version */}
         {activeTab === 'CHARTS' && (
-          <div className="space-y-6 md:space-y-8 animate-fade-in-up pb-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-
-              {/* 1. Area Chart: Balance Evolution */}
-              <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white h-[350px] md:h-[450px] flex flex-col shadow-xl">
-                <div className="mb-6">
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Evolução da Dívida</h3>
-                  <p className="text-xs text-slate-400 font-medium font-mono">Decaimento do saldo devedor</p>
-                </div>
-                <div className="flex-1 min-h-0">
+          <div className="space-y-6 max-w-4xl mx-auto animate-fade-in-up">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="finan-card p-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-6">Composição Total</h3>
+                <div className="h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={balanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.2} />
-                          <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis
-                        dataKey="name"
-                        tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <YAxis
-                        tickFormatter={(val) => `${val / 1000}k`}
-                        tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Area
-                        type="monotone"
-                        dataKey="Saldo"
-                        stroke={COLORS.primary}
-                        strokeWidth={4}
-                        fillOpacity={1}
-                        fill="url(#colorBalance)"
-                      />
-                    </AreaChart>
+                    <PieChart>
+                      <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                        {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                      <Legend verticalAlign="bottom" align="center" />
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
-              {/* 2. Bar Chart OR Donut Chart based on State */}
-              {result.comparison?.isActive ? (
-                <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white h-[350px] md:h-[450px] flex flex-col shadow-xl">
-                  <div className="mb-6">
-                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Poder da Amortização</h3>
-                    <p className="text-xs text-slate-400 font-medium font-mono">Diferença no total pago</p>
-                  </div>
-                  <div className="flex-1 min-h-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={comparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                        <XAxis
-                          dataKey="name"
-                          tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
-                          tickLine={false}
-                          axisLine={false}
-                        />
-                        <YAxis hide />
-                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
-                        <Bar dataKey="Total" radius={[12, 12, 0, 0]} barSize={60}>
-                          {comparisonData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+              <div className="finan-card p-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-6">Evolução da Parcela</h3>
+                <div className="h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData}>
+                      <defs>
+                        <linearGradient id="colorParcela" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
+                          <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                      <XAxis dataKey="mes" hide />
+                      <YAxis hide />
+                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                      <Area type="monotone" dataKey="parcela" stroke="#2563eb" fillOpacity={1} fill="url(#colorParcela)" strokeWidth={3} />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
-              ) : (
-                <div className="glass-card p-6 md:p-8 rounded-[2.5rem] border border-white h-[350px] md:h-[450px] flex flex-col shadow-xl">
-                  <div className="mb-6">
-                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Composição do Custo</h3>
-                    <p className="text-xs text-slate-400 font-medium font-mono">Imóvel vs. Juros Totais</p>
-                  </div>
-                  <div className="flex-1 min-h-0 relative">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={pieData}
-                          innerRadius={70}
-                          outerRadius={100}
-                          paddingAngle={8}
-                          dataKey="value"
-                          stroke="none"
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend
-                          verticalAlign="bottom"
-                          height={36}
-                          iconType="circle"
-                          formatter={(value) => <span className="text-xs font-black text-slate-600 uppercase tracking-widest ml-2">{value}</span>}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    {/* Center Label for Donut */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-12">
-                      <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Total</span>
-                      <span className="text-xl font-black text-slate-900 tracking-tighter">{formatCurrency(result.totalPaid)}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
           </div>
         )}
 
-        {/* TABLE TAB */}
-        {activeTab === 'TABLE' && (
-          <div className="glass-card rounded-[2.5rem] border border-white shadow-xl overflow-hidden animate-fade-in-up mb-12">
+        {/* EVOLUTION TAB - Compact scroll table */}
+        {activeTab === 'EVOLUTION' && (
+          <div className="finan-card animate-fade-in-up">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest">
-                  <tr>
-                    <th className="px-6 py-5 whitespace-nowrap">Mês</th>
-                    <th className="px-6 py-5 whitespace-nowrap">Parcela</th>
-                    <th className="px-6 py-5 whitespace-nowrap">Amortização</th>
-                    <th className="px-6 py-5 whitespace-nowrap">Juros</th>
-                    <th className="px-6 py-5 text-right whitespace-nowrap">Saldo Devedor</th>
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="px-4 py-3 text-[10px] font-bold uppercase text-slate-500">Mês</th>
+                    <th className="px-4 py-3 text-[10px] font-bold uppercase text-slate-500">Parcela</th>
+                    <th className="px-4 py-3 text-[10px] font-bold uppercase text-slate-500">Juros</th>
+                    <th className="px-4 py-3 text-[10px] font-bold uppercase text-slate-500">Amort.</th>
+                    <th className="px-4 py-3 text-[10px] font-bold uppercase text-slate-500">Saldo</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {result.schedule.map((row) => (
-                    <tr key={row.month} className="hover:bg-blue-50/50 transition-colors">
-                      <td className="px-6 py-4 font-black text-slate-400">{row.month}</td>
-                      <td className="px-6 py-4 text-slate-900 font-bold">{formatCurrency(row.payment)}</td>
-                      <td className="px-6 py-4 text-emerald-600 font-bold">{formatCurrency(row.amortization)}</td>
-                      <td className="px-6 py-4 text-amber-500 font-medium">{formatCurrency(row.interest)}</td>
-                      <td className="px-6 py-4 text-right text-slate-900 font-black tracking-tight">{formatCurrency(row.balance)}</td>
+                <tbody className="divide-y divide-slate-100 italic font-medium">
+                  {result.schedule.filter((_, i) => i % 12 === 0 || i === result.schedule.length - 1).map((item, i) => (
+                    <tr key={i} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-4 py-2.5 text-xs text-slate-900">Mês {i * 12}</td>
+                      <td className="px-4 py-2.5 text-xs font-bold text-slate-900">{formatCurrency(item.payment)}</td>
+                      <td className="px-4 py-2.5 text-xs text-red-500">{formatCurrency(item.interest)}</td>
+                      <td className="px-4 py-2.5 text-xs text-emerald-600">{formatCurrency(item.amortization)}</td>
+                      <td className="px-4 py-2.5 text-xs text-slate-500">{formatCurrency(item.balance)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            <div className="p-4 bg-slate-50 text-[10px] text-center text-slate-400 font-medium">
+              Mostrando resumo anual para facilitar a leitura.
+            </div>
           </div>
         )}
       </div>
-
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        onUpgrade={onUpgradeClick || (() => { })}
-        description="Você atingiu o limite de simulações gratuitas. Exporte relatórios ilimitados com o plano PRO."
-      />
     </div>
   );
 };

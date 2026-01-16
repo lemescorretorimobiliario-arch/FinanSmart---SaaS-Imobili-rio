@@ -163,26 +163,26 @@ const App: React.FC = () => {
       {!isLanding && (
         <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-12 md:h-14 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-            <div className="premium-gradient p-1.5 rounded-lg shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-              <Layout className="w-4 h-4 text-white" />
+            <div className="premium-gradient p-1.5 rounded-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+              <Layout className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="font-black text-base md:text-lg text-slate-900 tracking-tighter">Finan<span className="text-blue-600">Smart</span></span>
+            <span className="font-bold text-sm md:text-base text-slate-900 tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
           </div>
 
           {!isOnboarding && (
-            <div className="hidden md:flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
+            <div className="hidden md:flex bg-slate-100 p-0.5 rounded-lg border border-slate-200/50">
               <button
                 onClick={() => navigate('/simulador')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${location.pathname === '/simulador' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                <CalcIcon className="w-3.5 h-3.5" /> <span>Simulador</span>
+                <CalcIcon className="w-3 h-3" /> <span>Simulador</span>
               </button>
               {user && (
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${location.pathname === '/dashboard' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-700'}`}
                 >
-                  <LayoutDashboard className="w-3.5 h-3.5" /> <span>Painel</span>
+                  <LayoutDashboard className="w-3 h-3" /> <span>Painel</span>
                 </button>
               )}
             </div>
@@ -190,36 +190,31 @@ const App: React.FC = () => {
 
           <div className="flex items-center gap-4">
             {user ? (
-              <div className="flex items-center gap-4">
-                <div className="hidden md:flex flex-col items-end">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Plano {user.plan}</span>
+              <div className="flex items-center gap-3">
+                <div className="hidden md:flex flex-col items-end leading-none">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Plano {user.plan}</span>
                   <div className="flex items-center gap-1.5">
-                    {user.plan === 'PRO' && <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />}
-                    <span className="text-sm font-black text-slate-900">{user.name}</span>
-                    {user.plan === 'FREE' && (
-                      <span className="ml-1 text-[9px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full border border-blue-100 font-bold">
-                        {user.simulationsCount}/{SYSTEM_LIMITS.FREE_SIMULATIONS}
-                      </span>
-                    )}
+                    {user.plan === 'PRO' && <Star className="w-3 h-3 text-amber-500 fill-amber-500" />}
+                    <span className="text-xs font-bold text-slate-900">{user.name}</span>
                   </div>
                 </div>
                 <button
                   onClick={() => navigate('/profile')}
-                  className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90"
+                  className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs hover:bg-blue-600 hover:text-white transition-all active:scale-95"
                 >
                   {user.name[0]}
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => navigate('/login')}
-                className="bg-slate-900 text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl active:scale-95"
+                className="btn-primary"
               >
                 Entrar
               </button>
@@ -234,7 +229,7 @@ const App: React.FC = () => {
 
           <Route path="/simulador" element={
             <div className="h-full flex flex-col md:flex-row pb-16 md:pb-0 relative">
-              <aside className={`w-full md:w-[450px] bg-white z-10 flex-col overflow-hidden transition-all relative border-r border-slate-200/50 ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
+              <aside className={`w-full md:w-[400px] bg-white z-10 flex-col overflow-hidden transition-all relative border-r border-slate-200 ${mobileSimView === 'INPUT' ? 'flex flex-1 h-full' : 'hidden md:flex md:h-full'}`}>
                 <BankCarousel onSelect={(rate) => { setData(prev => ({ ...prev, interestRateAnnual: rate })); toast.success("Taxa aplicada!"); }} />
                 <div className="flex-1 overflow-hidden relative z-10">
                   <CalculatorForm data={data} onChange={setData} onSimulate={handleSimulate} user={user} />
@@ -248,7 +243,7 @@ const App: React.FC = () => {
                     result={result}
                     user={user || { name: 'Visitante', email: '', type: UserRole.CLIENTE, id: 'guest', plan: UserPlan.FREE, simulationsCount: 0 } as any}
                     onSaveLead={() => setShowLeadModal(true)}
-                    onUpgradeClick={handleUpgrade}
+                    onUpgrade={handleUpgrade}
                   />
                 ) : (
                   <EmptyState />
