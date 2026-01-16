@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calculator, CheckCircle, ArrowRight, Star, Shield, Layout, TrendingUp, Users, Zap, Search, PieChart, FileText } from 'lucide-react';
+import BankRateSlider from './BankRateSlider';
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -75,6 +76,9 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Bank Rates Slider */}
+            <BankRateSlider />
 
             {/* Logical Flow: Features */}
             <section id="features" className="py-12 sm:py-16 md:py-24 bg-slate-50 border-t border-slate-200/60">
