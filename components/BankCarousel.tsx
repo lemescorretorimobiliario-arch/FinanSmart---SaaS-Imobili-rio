@@ -15,7 +15,6 @@ const BankCarousel: React.FC<BankCarouselProps> = ({ onSelect }) => {
 
   if (rates.length === 0) return null;
 
-  // Duplicate for infinite scroll
   const duplicatedRates = [...rates, ...rates, ...rates];
 
   return (
@@ -34,26 +33,25 @@ const BankCarousel: React.FC<BankCarouselProps> = ({ onSelect }) => {
         <div className="flex md:animate-marquee whitespace-nowrap gap-6 sm:gap-8 md:gap-10 items-center px-4 md:px-0">
           {duplicatedRates.map((rate, index) => (
             <div
-              key={`${rate.id}-${index}`}
-              className={`flex items-center gap-2 sm:gap-3 text-slate-300 transition-all ${onSelect ? 'cursor-pointer hover:scale-110 hover:text-white' : ''}`}
+              key={rate.id + '-' + index}
+              className={'flex items-center gap-2 sm:gap-3 text-slate-300 transition-all ' + (onSelect ? 'cursor-pointer hover:scale-110 hover:text-white' : '')}
               onClick={() => onSelect && onSelect(rate.annualRate)}
               title={onSelect ? "Clique para aplicar esta taxa" : ""}
             >
-              {/* Bank Logo */}
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/10 flex-shrink-0">
-                <img
-                  src={rate.logo || `https://ui-avatars.com/api/?name=${rate.bankName}&background=1e293b&color=fff&size=32`}
-                  alt={rate.bankName}
-                  className="w-full h-full object-contain p-0.5"
-                  loading="lazy"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = `https://ui-avatars.com/api/?name=${rate.bankName}&background=1e293b&color=fff&size=32`;
-                  }}
-                />
+                {rate.logo && (
+                  <img
+                    src={rate.logo}
+                    alt={rate.bankName}
+                    className="w-full h-full object-contain p-0.5"
+                    loading="lazy"
+                  />
+                )}
+                {!rate.logo && (
+                  <span className="text-xs font-bold text-white">{rate.bankName.substring(0, 2)}</span>
+                )}
               </div>
 
-              {/* Bank Info */}
               <div className="flex flex-col">
                 <span className="text-[10px] sm:text-[11px] font-bold text-white leading-tight">{rate.bankName}</span>
                 <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium">

@@ -52,6 +52,7 @@ export interface BankRate {
   id: string;
   bankName: string;
   logoColor: string;
+  logo?: string;
   annualRate: number;
   monthlyRate: number;
   updateDate: string;
