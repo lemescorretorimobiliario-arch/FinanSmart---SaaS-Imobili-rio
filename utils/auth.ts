@@ -111,7 +111,7 @@ export const googleLogin = async (): Promise<void> => {
   await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/dashboard`
+      redirectTo: 'https://finan-smart-saa-s-imobili-rio.vercel.app/simulador'
     }
   });
 };
