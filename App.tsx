@@ -66,10 +66,15 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  // Mandatory Onboarding Check (Etapa 3)
+  // Mandatory Onboarding Check (Etapa 3) & Fallback Redirect
   useEffect(() => {
-    if (!isLoadingSession && user && !user.setupCompleted && location.pathname !== '/onboarding') {
-      navigate('/onboarding', { replace: true });
+    if (!isLoadingSession && user) {
+      if (!user.setupCompleted && location.pathname !== '/onboarding') {
+        navigate('/onboarding', { replace: true });
+      } else if (location.pathname === '/' || location.pathname === '/login') {
+        // Fallback: If user is logged in but landed on landing/login (common after Google OAuth fallback to Site URL)
+        navigate('/simulador', { replace: true });
+      }
     }
   }, [user, location.pathname, isLoadingSession, navigate]);
 
