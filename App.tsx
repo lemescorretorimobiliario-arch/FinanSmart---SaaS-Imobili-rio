@@ -192,17 +192,7 @@ const App: React.FC = () => {
 
   const handleUpgrade = async () => {
     if (!user) return navigate('/login');
-
-    // Simulating Upgrade
-    toast.info("Iniciando checkout...");
-    const result = await subscribeToPro(user.email, user.id);
-
-    if (result && result.simulated) {
-      const updatedUser: UserProfile = { ...user, plan: 'PRO' };
-      setUser(updatedUser);
-      await updateUserProfile(updatedUser);
-      toast.success("Upgrade realizado com sucesso!");
-    }
+    await subscribeToPro(user.email, user.id);
   };
 
   const handleSimulate = async () => {
