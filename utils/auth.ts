@@ -31,10 +31,10 @@ export const getStoredUser = async (): Promise<UserProfile | null> => {
   if (error || !profile) {
     // FALLBACK: Se o perfil não existe (trigger falhou?), cria agora para não bloquear o usuário.
     console.warn("Perfil não encontrado. Tentando criar automaticamente...");
-    
+
     // Obter dados meta da sessão
     const meta = session.user.user_metadata || {};
-    
+
     const { data: newProfile, error: createError } = await supabase
       .from('profiles')
       .insert({
@@ -54,10 +54,10 @@ export const getStoredUser = async (): Promise<UserProfile | null> => {
       console.error("ERRO CRÍTICO: Falha ao auto-criar perfil.", createError);
       return null;
     }
-    
+
     return mapProfileToUser(newProfile);
   }
-  
+
   return mapProfileToUser(profile);
 };
 
@@ -111,7 +111,7 @@ export const googleLogin = async (userType: 'CORRETOR' | 'CLIENTE'): Promise<voi
   await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin,
+      redirectTo: `${window.location.origin}/dashboard`,
       queryParams: {
         // Note: passing custom data to OAuth for triggers is tricky. 
         // For simplicity in this demo, the user might need to set type after login if not using a custom flow.

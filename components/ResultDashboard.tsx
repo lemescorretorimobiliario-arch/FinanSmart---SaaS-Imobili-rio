@@ -153,39 +153,39 @@ _Gerado por ${user.name}_`;
         {activeTab === 'SUMMARY' && (
           <div className="space-y-6 md:space-y-8 animate-fade-in-up">
             {/* Credit Analysis Card */}
-            <div className={`p-6 md:p-8 rounded-[2.5rem] border shadow-xl bg-white relative overflow-hidden group ${result.isCreditApproved ? 'border-emerald-100' : 'border-red-100'}`}>
+            <div className={`p-5 md:p-8 rounded-[2rem] border shadow-xl bg-white relative overflow-hidden group ${result.isCreditApproved ? 'border-emerald-100' : 'border-red-100'}`}>
               <div className={`absolute top-0 left-0 w-2 h-full ${result.isCreditApproved ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-                <div className="flex gap-5 md:gap-6">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 relative z-10">
+                <div className="flex gap-4 md:gap-6">
                   <div className="flex-shrink-0">
                     {result.isCreditApproved
-                      ? <div className="p-4 bg-emerald-50 text-emerald-600 rounded-3xl"><CheckCircle className="w-10 h-10" /></div>
-                      : <div className="p-4 bg-red-50 text-red-600 rounded-3xl"><XCircle className="w-10 h-10" /></div>
+                      ? <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl"><CheckCircle className="w-8 h-8" /></div>
+                      : <div className="p-3 bg-red-50 text-red-600 rounded-2xl"><XCircle className="w-8 h-8" /></div>
                     }
                   </div>
                   <div>
-                    <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                    <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight leading-tight">
                       {result.isCreditApproved ? 'Crédito Aprovado' : 'Atenção: Limite de Renda'}
                     </h3>
-                    <p className="text-slate-500 font-medium text-sm md:text-base mt-1.5 leading-relaxed max-w-sm">
+                    <p className="text-slate-500 font-medium text-xs md:text-sm mt-1 leading-relaxed max-w-sm">
                       {result.isCreditApproved
-                        ? 'Sua renda mensal comporta perfeitamente o valor desta parcela.'
-                        : `A parcela compromete ${result.incomeCommitmentPercent.toFixed(1)}% da renda informada.`}
+                        ? 'Sua renda mensal comporta o valor desta parcela.'
+                        : `A parcela compromete ${result.incomeCommitmentPercent.toFixed(1)}% da renda.`}
                     </p>
                     {!result.isCreditApproved && (
-                      <div className="mt-3 text-[10px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-3 py-1.5 rounded-lg inline-block border border-red-100">
-                        Renda Mín. Sugerida: {formatCurrency(result.requiredMinimumIncome)}
+                      <div className="mt-2 text-[10px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-2.5 py-1 rounded-lg inline-block border border-red-100">
+                        Renda Mín: {formatCurrency(result.requiredMinimumIncome)}
                       </div>
                     )}
                   </div>
                 </div>
 
-                <div className="flex w-full md:w-auto items-center gap-3">
+                <div className="flex w-full lg:w-auto items-center gap-2">
                   {/* Realtor specific: Save Lead Button */}
                   {user.type === 'CORRETOR' && onSaveLead && (
                     <button
                       onClick={onSaveLead}
-                      className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-500/30 text-sm font-black uppercase tracking-widest active:scale-95"
+                      className="flex-1 lg:flex-none bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xl shadow-blue-500/30 text-[10px] font-black uppercase tracking-widest active:scale-95"
                       title="Salvar Cliente"
                     >
                       <Save className="w-4 h-4" />
@@ -195,18 +195,18 @@ _Gerado por ${user.name}_`;
 
                   <button
                     onClick={handleWhatsAppShare}
-                    className="p-3.5 bg-emerald-50 text-emerald-600 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm active:scale-95"
+                    className="p-3 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all border border-emerald-100 shadow-sm active:scale-95"
                     title="Compartilhar WhatsApp"
                   >
-                    <MessageCircle className="w-6 h-6" />
+                    <MessageCircle className="w-5 h-5" />
                   </button>
 
                   <button
                     onClick={handleExport}
-                    className="p-3.5 bg-slate-100 text-slate-600 rounded-2xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm active:scale-95"
+                    className="p-3 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all border border-slate-200 shadow-sm active:scale-95"
                     title="Baixar PDF"
                   >
-                    <Download className="w-6 h-6" />
+                    <Download className="w-5 h-5" />
                   </button>
                 </div>
               </div>

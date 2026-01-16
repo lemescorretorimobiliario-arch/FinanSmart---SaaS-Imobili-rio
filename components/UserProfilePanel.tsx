@@ -136,25 +136,25 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
   const remainingCount = Math.max(5 - user.simulationsCount, 0);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-10 space-y-8 animate-fade-in pb-24 font-sans">
+    <div className="max-w-4xl mx-auto p-3 md:p-6 space-y-4 md:space-y-6 animate-fade-in pb-20 md:pb-8 font-sans">
 
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-8">
+      {/* Header Section - Compact */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Portal do Usuário</h1>
-          <p className="text-slate-500 font-medium">Gerencie sua conta, plano e preferências.</p>
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight text-center md:text-left">Portal do Usuário</h1>
+          <p className="text-slate-500 font-medium text-xs text-center md:text-left">Gerencie sua conta, plano e preferências.</p>
         </div>
 
-        <div className="flex bg-slate-100 p-1.5 rounded-2xl md:w-fit">
+        <div className="flex bg-slate-100 p-1 rounded-xl w-full md:w-fit mx-auto md:mx-0">
           <button
             onClick={() => setActiveTab('OVERVIEW')}
-            className={`flex-1 md:w-32 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'OVERVIEW' ? 'bg-white text-blue-600 shadow-xl' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'OVERVIEW' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
             Visão Geral
           </button>
           <button
             onClick={() => setActiveTab('SETTINGS')}
-            className={`flex-1 md:w-32 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'SETTINGS' ? 'bg-white text-blue-600 shadow-xl' : 'text-slate-500 hover:text-slate-700'}`}
+            className={`flex-1 md:flex-none px-5 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'SETTINGS' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
           >
             Configurações
           </button>
@@ -209,6 +209,16 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                   >
                     <Settings className="w-6 h-6" />
                   </button>
+                  {/* ADMIN LINK */}
+                  {(user.email?.includes('admin') || user.email === 'lemes_333@hotmail.com') && (
+                    <button
+                      onClick={() => navigate('/admin')}
+                      className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-600 transition-all shadow-sm shadow-slate-900/20"
+                      title="Painel Admin"
+                    >
+                      <Shield className="w-6 h-6" />
+                    </button>
+                  )}
                   <button
                     onClick={onLogout}
                     className="p-3 bg-red-50 text-red-500 rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
@@ -268,6 +278,14 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                       <CheckCircle2 className="w-6 h-6" />
                       <span className="font-bold">Acesso ilimitado ativo.</span>
                     </div>
+                    <button
+                      onClick={() => {
+                        toast.info("Para gerenciar sua assinatura, acesse o email enviado pela Stripe ou contate o suporte.");
+                      }}
+                      className="w-full bg-white text-slate-500 py-3 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all text-xs uppercase tracking-widest"
+                    >
+                      Gerenciar Assinatura
+                    </button>
                   </div>
                 )}
 
@@ -518,8 +536,9 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
             </button>
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 

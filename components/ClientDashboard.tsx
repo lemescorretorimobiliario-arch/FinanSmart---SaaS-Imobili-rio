@@ -86,24 +86,26 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
   const remaining = Math.max(MAX_FREE_SIMULATIONS - user.simulationsCount, 0);
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-8 animate-fade-in pb-24 font-sans">
+    <div className="p-3 md:p-6 max-w-6xl mx-auto space-y-4 md:space-y-6 animate-fade-in pb-20 md:pb-8 font-sans">
 
       {/* HEADER SECTION - Compact */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
             Painel do Cliente
           </h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Gerencie suas simulações e assinaturas.</p>
+          <p className="text-slate-500 font-medium text-xs mt-0.5">Gerencie suas simulações e assinaturas.</p>
         </div>
 
-        <button
-          onClick={onNewSimulation}
-          className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
-        >
-          <Calculator className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-          Nova Simulação
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onNewSimulation}
+            className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-600 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
+          >
+            <Calculator className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+            Nova Simulação
+          </button>
+        </div>
       </div>
 
       {/* PLAN & USAGE WIDGET - Compact Grid */}

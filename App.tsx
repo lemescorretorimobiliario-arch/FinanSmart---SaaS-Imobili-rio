@@ -20,6 +20,7 @@ import AuthScreen from './components/AuthScreen';
 import PaywallModal from './components/PaywallModal';
 import LandingPage from './components/LandingPage';
 import OnboardingScreen from './components/OnboardingScreen';
+import AdminPanel from './components/AdminPanel';
 
 
 const App: React.FC = () => {
@@ -480,6 +481,22 @@ const App: React.FC = () => {
               user.setupCompleted ? <Navigate to="/dashboard" /> : <OnboardingScreen user={user} onComplete={setUser} />
             ) : <Navigate to="/login" />
           } />
+
+          {/* Admin Route - Secret for now, or protected by email check */}
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              {user?.email?.includes('admin') || user?.email === 'lemes_333@hotmail.com' ? (
+                <AdminPanel />
+              ) : (
+                <div className="h-full flex items-center justify-center flex-col">
+                  <h1 className="text-2xl font-black text-slate-900">Acesso Negado</h1>
+                  <p className="text-slate-500">Esta área é restrita para administradores.</p>
+                  <button onClick={() => navigate('/dashboard')} className="mt-4 text-blue-600 font-bold hover:underline">Voltar</button>
+                </div>
+              )}
+            </ProtectedRoute>
+          } />
+
         </Routes>
       </main>
 
