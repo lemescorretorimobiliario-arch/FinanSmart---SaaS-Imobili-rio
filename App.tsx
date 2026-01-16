@@ -172,10 +172,10 @@ const App: React.FC = () => {
       {!isLanding && (
         <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-12 md:h-14 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
           <div className="flex items-center gap-2 cursor-pointer group" onClick={() => navigate('/')}>
-            <div className="premium-gradient p-1.5 rounded-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
-              <Layout className="w-3.5 h-3.5 text-white" />
+            <div className="premium-gradient p-1 rounded-lg shadow-blue-500/10 group-hover:scale-105 transition-transform duration-300">
+              <Layout className="w-3 h-3 text-white" />
             </div>
-            <span className="font-bold text-sm md:text-base text-slate-900 tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
+            <span className="font-bold text-xs md:text-sm text-slate-900 tracking-tight">Finan<span className="text-blue-600">Smart</span></span>
           </div>
 
           {!isOnboarding && (
@@ -209,7 +209,7 @@ const App: React.FC = () => {
                 </div>
                 <button
                   onClick={() => navigate('/profile')}
-                  className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs hover:bg-blue-600 hover:text-white transition-all active:scale-95"
+                  className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-[10px] hover:bg-blue-600 hover:text-white transition-all active:scale-95"
                 >
                   {user.name[0]}
                 </button>

@@ -43,18 +43,18 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
   return (
     <div className="h-full flex flex-col bg-white">
       {/* HEADER: PROGRESS INDICATOR */}
-      <div className="px-6 py-4 border-b border-slate-100 flex-shrink-0">
-        <div className="flex justify-between items-center mb-3">
-          <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-blue-100/50">
+      <div className="px-5 py-3 border-b border-slate-100 flex-shrink-0">
+        <div className="flex justify-between items-center mb-2">
+          <span className="bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border border-blue-100/50">
             Etapa {currentStep} de 3
           </span>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
             {steps[currentStep - 1].label}
           </span>
         </div>
         <div className="h-1 w-full bg-slate-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-600 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(37,99,235,0.4)]"
+            className="h-full bg-blue-600 transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -67,34 +67,34 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
           {/* PASSO 1: PATRIMÔNIO */}
           {currentStep === 1 && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="text-center mb-8">
-                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 shadow-sm">
-                  <Home className="w-7 h-7" />
+              <div className="text-center mb-6">
+                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-blue-100 shadow-sm">
+                  <Home className="w-6 h-6" />
                 </div>
-                <h2 className="text-lg font-bold text-slate-900">Valor do Imóvel</h2>
-                <p className="text-xs text-slate-500 mt-1">Quanto vale o imóvel dos seus sonhos?</p>
+                <h2 className="text-base font-bold text-slate-900">Valor do Imóvel</h2>
+                <p className="text-[10px] text-slate-500 mt-1">Quanto vale o imóvel dos seus sonhos?</p>
               </div>
 
-              <div className="finan-card-premium p-6 text-center">
-                <label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest block mb-3">Valor de Avaliação</label>
+              <div className="finan-card-premium p-5 text-center">
+                <label className="text-[9px] font-bold uppercase text-slate-400 tracking-widest block mb-2">Valor de Avaliação</label>
                 <input
                   type="text"
                   value={formatCurrencyValue(data.propertyValue)}
                   onChange={(e) => handleCurrencyChange('propertyValue', e.target.value)}
-                  className="w-full text-2xl font-black text-slate-900 text-center focus:outline-none placeholder-slate-200"
+                  className="w-full text-xl font-black text-slate-900 text-center focus:outline-none placeholder-slate-200"
                 />
               </div>
 
-              <div className="finan-card p-5">
-                <div className="flex justify-between items-center mb-3">
-                  <label className="text-[11px] font-bold uppercase text-slate-500 tracking-tight">Entrada Mínima</label>
-                  <span className="text-xs font-bold text-blue-600">{Math.round((data.downPayment / data.propertyValue) * 100)}%</span>
+              <div className="finan-card p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-[10px] font-bold uppercase text-slate-500 tracking-tight">Entrada Mínima</label>
+                  <span className="text-[10px] font-bold text-blue-600">{Math.round((data.downPayment / data.propertyValue) * 100)}%</span>
                 </div>
                 <input
                   type="text"
                   value={formatCurrencyValue(data.downPayment)}
                   onChange={(e) => handleCurrencyChange('downPayment', e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-lg font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-base font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
                 />
               </div>
             </div>
@@ -103,14 +103,14 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
           {/* PASSO 2: CRÉDITO */}
           {currentStep === 2 && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="finan-card-premium p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100">
-                    <Calendar className="w-5 h-5" />
+              <div className="finan-card-premium p-5">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-9 h-9 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100">
+                    <Calendar className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
-                    <label className="text-[10px] font-bold uppercase text-slate-400 tracking-widest block">Prazo do Financiamento</label>
-                    <span className="text-xl font-black text-indigo-600">{data.termYears} Anos</span>
+                    <label className="text-[9px] font-bold uppercase text-slate-400 tracking-widest block">Prazo do Financiamento</label>
+                    <span className="text-lg font-black text-indigo-600">{data.termYears} Anos</span>
                   </div>
                 </div>
 
@@ -129,32 +129,32 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({ data, onChange, onSimul
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="finan-card p-5">
-                  <label className="text-[10px] font-bold uppercase text-slate-400 mb-3 block">Juros (% a.a.)</label>
+                <div className="finan-card p-4">
+                  <label className="text-[9px] font-bold uppercase text-slate-400 mb-2 block">Juros (% a.a.)</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
                       step="0.1"
                       value={data.interestRateAnnual}
                       onChange={(e) => updateField('interestRateAnnual', Number(e.target.value))}
-                      className="w-full text-xl font-black text-slate-900 focus:outline-none"
+                      className="w-full text-lg font-black text-slate-900 focus:outline-none"
                     />
-                    <Percent className="w-4 h-4 text-slate-300" />
+                    <Percent className="w-3 h-3 text-slate-300" />
                   </div>
                 </div>
 
-                <div className="finan-card p-5">
-                  <label className="text-[10px] font-bold uppercase text-slate-400 mb-3 block">Parcelas</label>
-                  <div className="flex bg-slate-100 p-1 rounded-xl">
+                <div className="finan-card p-4">
+                  <label className="text-[9px] font-bold uppercase text-slate-400 mb-2 block">Parcelas</label>
+                  <div className="flex bg-slate-100 p-1 rounded-lg">
                     <button
                       onClick={() => updateField('amortizationSystem', 'SAC')}
-                      className={`flex-1 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-400'}`}
+                      className={`flex-1 py-1 text-[8px] font-black uppercase rounded-md transition-all ${data.amortizationSystem === 'SAC' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-400'}`}
                     >
                       SAC
                     </button>
                     <button
                       onClick={() => updateField('amortizationSystem', 'PRICE')}
-                      className={`flex-1 py-1.5 text-[9px] font-black uppercase rounded-lg transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-400'}`}
+                      className={`flex-1 py-1 text-[8px] font-black uppercase rounded-md transition-all ${data.amortizationSystem === 'PRICE' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5' : 'text-slate-400'}`}
                     >
                       PRICE
                     </button>

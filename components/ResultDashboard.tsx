@@ -134,10 +134,10 @@ Simule grátis em: ${window.location.origin}`;
               </div>
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 mb-2 inline-block">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 mb-1.5 inline-block">
                     Parcela Mensal (1ª)
                   </span>
-                  <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
+                  <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter">
                     {formatCurrency(result.firstInstallment)}
                   </h1>
                   <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed max-w-xs">
