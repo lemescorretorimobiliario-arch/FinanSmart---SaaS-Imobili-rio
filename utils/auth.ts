@@ -108,10 +108,11 @@ export const registerUser = async (userData: { name: string; email: string; pass
 };
 
 export const googleLogin = async (): Promise<void> => {
+  const origin = window.location.origin;
   await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'https://finan-smart-saa-s-imobili-rio.vercel.app/simulador'
+      redirectTo: `${origin}/simulador`
     }
   });
 };
