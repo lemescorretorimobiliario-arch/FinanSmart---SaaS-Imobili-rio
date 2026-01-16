@@ -22,7 +22,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, BarChart, Bar, TooltipProps
 } from 'recharts';
-import { CalculationResult, SimulationData, UserProfile, MAX_FREE_SIMULATIONS } from '../types';
+import { CalculationResult, SimulationData, UserProfile } from '../types';
+import { UserPlan, SYSTEM_LIMITS } from '../core/system';
 import { formatCurrency } from '../utils/finance';
 import { generatePDF } from '../utils/pdfGenerator';
 
@@ -66,7 +67,7 @@ const ResultDashboard: React.FC<ResultDashboardProps> = ({ data, result, user, o
   const handleExport = () => {
     // If requirement says simulation is blocked, then export should likely also be blocked if free limit reached?
     // Current logic: Free users have limit of 5.
-    if (user.plan === 'FREE' && user.simulationsCount >= MAX_FREE_SIMULATIONS) {
+    if (user.plan === UserPlan.FREE && user.simulationsCount >= SYSTEM_LIMITS.FREE_SIMULATIONS) {
       setShowPaywall(true);
       return;
     }

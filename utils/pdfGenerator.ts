@@ -2,6 +2,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { CalculationResult, SimulationData, UserProfile } from '../types';
 import { formatCurrency } from './finance';
+import { UserRole } from '../core/system';
 
 // Modern Color Palette (Matches Dashboard)
 const COLORS = {
@@ -321,7 +322,7 @@ export const generatePDF = (data: SimulationData, result: CalculationResult, use
     doc.setLineWidth(0.5);
     doc.line(margin, footerY - 5, width - margin, footerY - 5);
 
-    if (user.type === 'CORRETOR') {
+    if (user.type === UserRole.CORRETOR) {
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(COLORS.primary[0], COLORS.primary[1], COLORS.primary[2]);

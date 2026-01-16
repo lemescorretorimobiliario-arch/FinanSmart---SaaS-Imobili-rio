@@ -10,7 +10,7 @@ import { subscribeToPro } from './utils/stripePayment';
 
 import { useAuth } from './context/AuthContext';
 import { simulationService } from './services/simulationService';
-import { SYSTEM_LIMITS, canUserSimulate } from './core/system';
+import { SYSTEM_LIMITS, canUserSimulate, UserRole, UserPlan } from './core/system';
 
 import CalculatorForm from './components/CalculatorForm';
 import ResultDashboard from './components/ResultDashboard';
@@ -74,7 +74,8 @@ const App: React.FC = () => {
   }, [user, location.pathname, isLoadingSession, navigate]);
 
   // Handle Simulation (Etapa 4 - Mandatory History)
-  const handleSimulate = async (simData: SimulationData) => {
+  const handleSimulate = async () => {
+    const simData = data; // Use current state
     // Check Limits First
     if (user && !canUserSimulate(user as any)) {
       setShowLimitModal(true);
@@ -245,7 +246,7 @@ const App: React.FC = () => {
                   <ResultDashboard
                     data={data}
                     result={result}
-                    user={user || { name: 'Visitante', email: '', type: 'CLIENTE', id: 'guest', plan: 'FREE', simulationsCount: 0 } as any}
+                    user={user || { name: 'Visitante', email: '', type: UserRole.CLIENTE, id: 'guest', plan: UserPlan.FREE, simulationsCount: 0 } as any}
                     onSaveLead={() => setShowLeadModal(true)}
                     onUpgradeClick={handleUpgrade}
                   />
@@ -279,7 +280,7 @@ const App: React.FC = () => {
 
           <Route path="/dashboard" element={
             <ProtectedRoute>
-              {user?.type === 'CORRETOR' ? (
+              {user?.type === UserRole.CORRETOR ? (
                 <AgentDashboard user={user} onSelectLead={(lead) => navigate('/simulador', { state: { loadLead: lead } })} onUpgrade={handleUpgrade} />
               ) : (
                 <ClientDashboard

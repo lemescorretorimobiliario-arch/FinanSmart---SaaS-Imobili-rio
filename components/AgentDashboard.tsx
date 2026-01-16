@@ -7,7 +7,7 @@ import {
 import { supabase } from '../utils/supabaseClient';
 import { formatCurrency, parseCurrency } from '../utils/finance';
 import { toast } from 'sonner';
-import { SYSTEM_LIMITS } from '../core/system';
+import { UserPlan, SYSTEM_LIMITS } from '../core/system';
 
 interface Props {
   user: UserProfile;
@@ -156,12 +156,12 @@ const AgentDashboard: React.FC<Props> = ({ user, onSelectLead, onUpgrade }) => {
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">VGV em Aberto</p>
           <p className="text-xl font-black text-emerald-600">{formatBRL(potentialValue)}</p>
         </div>
-        <div className={`p-4 rounded-xl border flex items-center justify-between ${user.plan === 'PRO' ? 'bg-slate-900 text-white border-slate-800' : 'bg-white border-slate-100'}`}>
+        <div className={`p-4 rounded-xl border flex items-center justify-between ${user.plan === UserPlan.PRO ? 'bg-slate-900 text-white border-slate-800' : 'bg-white border-slate-100'}`}>
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Status do Plano</p>
-            <p className="text-xs font-black">{user.plan === 'PRO' ? 'Plano PRO Ativo' : 'Versão Gratuita'}</p>
+            <p className="text-xs font-black">{user.plan === UserPlan.PRO ? 'Plano PRO Ativo' : 'Versão Gratuita'}</p>
           </div>
-          {user.plan === 'PRO' ? <Star className="w-5 h-5 text-amber-500 fill-current" /> : <button onClick={onUpgrade} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">Upgrade</button>}
+          {user.plan === UserPlan.PRO ? <Star className="w-5 h-5 text-amber-500 fill-current" /> : <button onClick={onUpgrade} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">Upgrade</button>}
         </div>
       </div>
 

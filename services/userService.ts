@@ -1,6 +1,6 @@
 import { supabase } from '../utils/supabaseClient';
-import { UserProfile, UserPlan } from '../types';
-import { UserRole, SubscriptionStatus } from '../core/system';
+import { UserProfile } from '../types';
+import { UserRole, UserPlan, SubscriptionStatus } from '../core/system';
 
 export const userService = {
     mapProfileToUser: (profile: any): UserProfile => ({
@@ -11,7 +11,7 @@ export const userService = {
         avatarUrl: profile.avatar_url,
         coverUrl: profile.cover_url,
         plan: profile.plan as UserPlan,
-        type: profile.user_type as 'CORRETOR' | 'CLIENTE',
+        type: profile.user_type as UserRole,
         simulationsCount: profile.simulations_count || 0,
         setupCompleted: profile.setup_completed || false,
         stripeCustomerId: profile.stripe_customer_id,

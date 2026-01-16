@@ -3,6 +3,7 @@ import { UserProfile } from '../types';
 import { Briefcase, Smile, ArrowRight, Layout, CheckCircle2 } from 'lucide-react';
 import { updateUserProfile } from '../utils/auth';
 import { toast } from 'sonner';
+import { UserRole } from '../core/system';
 
 interface OnboardingScreenProps {
     user: UserProfile;
@@ -10,7 +11,7 @@ interface OnboardingScreenProps {
 }
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete }) => {
-    const [selectedType, setSelectedType] = useState<'CORRETOR' | 'CLIENTE' | null>(null);
+    const [selectedType, setSelectedType] = useState<UserRole | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleFinish = async () => {
@@ -59,19 +60,19 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* CLIENTE OPTION */}
                     <button
-                        onClick={() => setSelectedType('CLIENTE')}
-                        className={`group relative p-8 rounded-[2.5rem] bg-white border-2 transition-all duration-500 flex flex-col items-center text-center gap-6 shadow-sm hover:shadow-2xl hover:-translate-y-2 ${selectedType === 'CLIENTE'
+                        onClick={() => setSelectedType(UserRole.CLIENTE)}
+                        className={`group relative p-8 rounded-[2.5rem] bg-white border-2 transition-all duration-500 flex flex-col items-center text-center gap-6 shadow-sm hover:shadow-2xl hover:-translate-y-2 ${selectedType === UserRole.CLIENTE
                             ? 'border-blue-600 ring-4 ring-blue-50'
                             : 'border-slate-100'
                             }`}
                     >
-                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${selectedType === 'CLIENTE' ? 'bg-blue-600 text-white rotate-6' : 'bg-slate-50 text-slate-400'
+                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${selectedType === UserRole.CLIENTE ? 'bg-blue-600 text-white rotate-6' : 'bg-slate-50 text-slate-400'
                             }`}>
                             <Smile className="w-10 h-10" />
                         </div>
 
                         <div className="space-y-2">
-                            <h3 className={`text-xl font-black ${selectedType === 'CLIENTE' ? 'text-blue-600' : 'text-slate-900'}`}>
+                            <h3 className={`text-xl font-black ${selectedType === UserRole.CLIENTE ? 'text-blue-600' : 'text-slate-900'}`}>
                                 Sou Cliente
                             </h3>
                             <p className="text-slate-500 text-sm font-medium leading-relaxed px-4">
@@ -79,7 +80,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
                             </p>
                         </div>
 
-                        {selectedType === 'CLIENTE' && (
+                        {selectedType === UserRole.CLIENTE && (
                             <div className="absolute top-6 right-6 text-blue-600 animate-scale-in">
                                 <CheckCircle2 className="w-8 h-8 fill-blue-50" />
                             </div>
@@ -88,19 +89,19 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
 
                     {/* CORRETOR OPTION */}
                     <button
-                        onClick={() => setSelectedType('CORRETOR')}
-                        className={`group relative p-8 rounded-[2.5rem] bg-white border-2 transition-all duration-500 flex flex-col items-center text-center gap-6 shadow-sm hover:shadow-2xl hover:-translate-y-2 ${selectedType === 'CORRETOR'
+                        onClick={() => setSelectedType(UserRole.CORRETOR)}
+                        className={`group relative p-8 rounded-[2.5rem] bg-white border-2 transition-all duration-500 flex flex-col items-center text-center gap-6 shadow-sm hover:shadow-2xl hover:-translate-y-2 ${selectedType === UserRole.CORRETOR
                             ? 'border-indigo-600 ring-4 ring-indigo-50'
                             : 'border-slate-100'
                             }`}
                     >
-                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${selectedType === 'CORRETOR' ? 'bg-indigo-600 text-white -rotate-6' : 'bg-slate-50 text-slate-400'
+                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${selectedType === UserRole.CORRETOR ? 'bg-indigo-600 text-white -rotate-6' : 'bg-slate-50 text-slate-400'
                             }`}>
                             <Briefcase className="w-10 h-10" />
                         </div>
 
                         <div className="space-y-2">
-                            <h3 className={`text-xl font-black ${selectedType === 'CORRETOR' ? 'text-indigo-600' : 'text-slate-900'}`}>
+                            <h3 className={`text-xl font-black ${selectedType === UserRole.CORRETOR ? 'text-indigo-600' : 'text-slate-900'}`}>
                                 Sou Corretor
                             </h3>
                             <p className="text-slate-500 text-sm font-medium leading-relaxed px-4">
@@ -108,7 +109,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ user, onComplete })
                             </p>
                         </div>
 
-                        {selectedType === 'CORRETOR' && (
+                        {selectedType === UserRole.CORRETOR && (
                             <div className="absolute top-6 right-6 text-indigo-600 animate-scale-in">
                                 <CheckCircle2 className="w-8 h-8 fill-indigo-50" />
                             </div>

@@ -1,16 +1,17 @@
 import { supabase } from './supabaseClient';
 import { UserProfile } from '../types';
+import { UserRole, UserPlan } from '../core/system';
 
 // Helper to map Supabase DB Profile to App UserProfile
-const mapProfileToUser = (profile: any): UserProfile => ({
+export const mapProfileToUser = (profile: any): UserProfile => ({
   id: profile.id,
   name: profile.full_name || 'Usuário',
   email: profile.email,
   phone: profile.phone,
   avatarUrl: profile.avatar_url,
   coverUrl: profile.cover_url,
-  plan: profile.plan as 'FREE' | 'PRO',
-  type: profile.user_type as 'CORRETOR' | 'CLIENTE',
+  plan: profile.plan as UserPlan,
+  type: profile.user_type as UserRole,
   simulationsCount: profile.simulations_count || 0,
   setupCompleted: profile.setup_completed || false,
   stripeCustomerId: profile.stripe_customer_id,
@@ -42,8 +43,8 @@ export const getStoredUser = async (): Promise<UserProfile | null> => {
         email: session.user.email,
         full_name: meta.full_name || meta.name || 'Usuário',
         avatar_url: meta.avatar_url || meta.picture,
-        user_type: 'CLIENTE', // Padrão seguro, muda no onboarding
-        plan: 'FREE',
+        user_type: UserRole.CLIENTE, // Padrão seguro, muda no onboarding
+        plan: UserPlan.FREE,
         simulations_count: 0,
         setup_completed: false
       })
@@ -77,7 +78,7 @@ export const loginWithEmail = async (email: string, password: string): Promise<U
   return user;
 };
 
-export const registerUser = async (userData: { name: string; email: string; password: string; type: 'CORRETOR' | 'CLIENTE' }): Promise<UserProfile> => {
+export const registerUser = async (userData: { name: string; email: string; password: string; type: UserRole }): Promise<UserProfile> => {
   // Sign up creates the Auth User. 
   // The SQL Trigger (handle_new_user) MUST be set up in Supabase to create the Profile row automatically.
   const { data, error } = await supabase.auth.signUp({
@@ -94,29 +95,23 @@ export const registerUser = async (userData: { name: string; email: string; pass
   if (error) throw new Error(error.message);
   if (!data.user) throw new Error('Erro no cadastro.');
 
-  // Optimistic return or fetch
+  // The record in 'profiles' is usually created by trigger, but we return the initial state for the UI
   return {
     id: data.user.id,
     name: userData.name,
     email: userData.email,
     type: userData.type,
-    plan: 'FREE',
+    plan: UserPlan.FREE,
     simulationsCount: 0,
-    setupCompleted: true // Email registration already selects type
+    setupCompleted: true // Manual email reg usually completes setup
   };
 };
 
-export const googleLogin = async (userType: 'CORRETOR' | 'CLIENTE'): Promise<void> => {
-  // Google login redirects, so we pass metadata to be handled by trigger on return
+export const googleLogin = async (): Promise<void> => {
   await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/dashboard`,
-      queryParams: {
-        // Note: passing custom data to OAuth for triggers is tricky. 
-        // For simplicity in this demo, the user might need to set type after login if not using a custom flow.
-        // Assuming the trigger handles defaults or updates.
-      }
+      redirectTo: `${window.location.origin}/dashboard`
     }
   });
 };
@@ -145,5 +140,5 @@ export const updateUserProfile = async (user: UserProfile): Promise<UserProfile>
 
 export const logout = async () => {
   await supabase.auth.signOut();
-  localStorage.removeItem('finansmart_user'); // Clear legacy if exists
+  localStorage.removeItem('finansmart_user');
 };

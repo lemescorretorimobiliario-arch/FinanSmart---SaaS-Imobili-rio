@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
 import { formatCurrency } from '../utils/finance';
+import { UserRole } from '../core/system';
 
 interface Props {
   user: UserProfile;
@@ -189,7 +190,7 @@ const UserProfilePanel: React.FC<Props> = ({ user, onUpdate, onLogout, onUpgrade
                   <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">{user.name}</h2>
                   <div className="flex items-center gap-2 mt-1 justify-center md:justify-start">
                     <span className="bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-blue-100 italic">
-                      {user.type === 'CORRETOR' ? 'Corretor de Imóveis' : 'Cliente Particular'}
+                      {user.type === UserRole.CORRETOR ? 'Corretor de Imóveis' : 'Cliente Particular'}
                     </span>
                   </div>
                 </div>

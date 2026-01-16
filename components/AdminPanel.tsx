@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabaseClient';
 import {
     LayoutDashboard, Users, Shield, TrendingUp,
-    Search, RefreshCw, BarChart3, Clock, TrendingDown, Star, Zap, CreditCard, Lock, ArrowRight, AlertTriangle
+    Search, RefreshCw, BarChart3, Clock, TrendingDown, Star, Zap, CreditCard, Lock, ArrowRight, Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { UserRole, UserPlan, SYSTEM_LIMITS } from '../core/system';
@@ -31,7 +31,6 @@ const AdminPanel: React.FC = () => {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Simple protection for the demonstration, as requested the Admin should be functional
         if (loginForm.username === 'admin' && loginForm.password === '123456') {
             setIsAuthenticated(true);
             toast.success("Acesso Admin concedido!");
@@ -79,7 +78,7 @@ const AdminPanel: React.FC = () => {
     const fetchSimulations = async () => {
         setIsLoading(true);
         try {
-            const { data, error } = await supabase.from('saved_simulations').select('*, profiles(name, email)').order('created_at', { ascending: false }).limit(50);
+            const { data, error } = await supabase.from('saved_simulations').select('*, profiles(full_name, email)').order('created_at', { ascending: false }).limit(50);
             if (error) throw error;
             setSimulations(data || []);
         } finally {
@@ -114,7 +113,7 @@ const AdminPanel: React.FC = () => {
 
     const filteredUsers = users.filter(u =>
         u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        u.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (!isAuthenticated) {
@@ -183,9 +182,9 @@ const AdminPanel: React.FC = () => {
                                     {users.slice(0, 5).map(u => (
                                         <div key={u.id} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-all rounded-xl px-2">
                                             <div className="flex items-center gap-3 text-sm">
-                                                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs">{u.name?.[0]}</div>
+                                                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs">{u.full_name?.[0]}</div>
                                                 <div>
-                                                    <p className="font-black text-slate-900">{u.name}</p>
+                                                    <p className="font-black text-slate-900">{u.full_name}</p>
                                                     <p className="text-[10px] text-slate-400 font-bold">{u.email}</p>
                                                 </div>
                                             </div>
@@ -203,7 +202,7 @@ const AdminPanel: React.FC = () => {
                                         <div key={s.id} className="flex items-center justify-between py-3 border-b border-slate-50 last:border-0 px-2">
                                             <div>
                                                 <p className="text-sm font-black text-slate-900">R$ {s.property_value.toLocaleString()}</p>
-                                                <p className="text-[10px] text-slate-400 font-bold">{s.profiles?.name || 'User'}</p>
+                                                <p className="text-[10px] text-slate-400 font-bold">{s.profiles?.full_name || 'User'}</p>
                                             </div>
                                             <span className="text-[9px] font-black text-slate-300 uppercase">{new Date(s.created_at).toLocaleDateString()}</span>
                                         </div>
@@ -239,7 +238,7 @@ const AdminPanel: React.FC = () => {
                                     {filteredUsers.map(u => (
                                         <tr key={u.id} className="hover:bg-slate-50/50 transition-all">
                                             <td className="p-5">
-                                                <p className="font-black text-slate-900 text-sm">{u.name}</p>
+                                                <p className="font-black text-slate-900 text-sm">{u.full_name}</p>
                                                 <p className="text-slate-400 text-[10px]">{u.email}</p>
                                             </td>
                                             <td className="p-5">
@@ -283,7 +282,7 @@ const StatCard = ({ label, value, icon, color }: any) => (
     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
         <div className={`absolute top-0 left-0 w-1 h-full ${color === 'blue' ? 'bg-blue-600' : color === 'amber' ? 'bg-amber-500' : color === 'indigo' ? 'bg-indigo-600' : 'bg-emerald-500'}`}></div>
         <div className="flex items-center gap-3 mb-4">
-            <div className={`p-2 rounded-xl ${color === 'blue' ? 'bg-blue-50 text-blue-600' : color === 'amber' ? 'bg-amber-50 text-amber-600' : color === 'indigo' ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'}`}>
+            <div className={`p-2 rounded-xl ${color === 'blue' ? 'bg-blue-50 text-blue-600' : color === 'amber' ? 'bg-amber-50 text-amber-600' : color === 'indigo' ? 'bg-indigo-50 text-indigo-600' : color === 'emerald' ? 'bg-emerald-50 text-emerald-600' : ''}`}>
                 {icon}
             </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>

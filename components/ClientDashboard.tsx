@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SavedSimulation, UserProfile } from '../types';
 import { Clock, Calculator, Trash2, Zap, Star, RefreshCw, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { formatCurrency } from '../utils/finance';
@@ -6,7 +7,7 @@ import { supabase } from '../utils/supabaseClient';
 import { toast } from 'sonner';
 import { subscribeToPro } from '../utils/stripePayment';
 import { simulationService } from '../services/simulationService';
-import { SYSTEM_LIMITS } from '../core/system';
+import { UserPlan, SYSTEM_LIMITS } from '../core/system';
 
 interface Props {
   user: UserProfile;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimulation }) => {
+  const navigate = useNavigate();
   const [history, setHistory] = useState<SavedSimulation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -87,15 +89,15 @@ const ClientDashboard: React.FC<Props> = ({ user, onNewSimulation, onSelectSimul
         {/* Card 1: Status */}
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center justify-between group">
           <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-xl ${user.plan === 'PRO' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
-              {user.plan === 'PRO' ? <Star className="w-6 h-6 fill-emerald-600" /> : <Zap className="w-6 h-6 fill-blue-600" />}
+            <div className={`p-3 rounded-xl ${user.plan === UserPlan.PRO ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'}`}>
+              {user.plan === UserPlan.PRO ? <Star className="w-6 h-6 fill-emerald-600" /> : <Zap className="w-6 h-6 fill-blue-600" />}
             </div>
             <div>
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status da Conta</div>
               <div className="text-xl font-black text-slate-900 uppercase">{user.plan}</div>
             </div>
           </div>
-          {user.plan === 'FREE' && (
+          {user.plan === UserPlan.FREE && (
             <button
               onClick={handleUpgrade}
               className="px-4 py-2 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20"
