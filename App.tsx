@@ -286,7 +286,7 @@ const App: React.FC = () => {
   const isOnboarding = location.pathname === '/onboarding';
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 overflow-hidden font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
       {/* --- HEADER - Premium Glassmorphism --- */}
       {!isLanding && (
         <header className="bg-white/70 backdrop-blur-xl border-b border-slate-200/50 h-14 md:h-16 flex items-center justify-between px-3 md:px-6 flex-shrink-0 z-40 relative">
@@ -372,7 +372,7 @@ const App: React.FC = () => {
 
 
       {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 relative overflow-y-auto custom-scrollbar bg-slate-50">
+      <main className="flex-1 relative bg-slate-50">
         <Routes>
           <Route path="/" element={<LandingPage />} />
 
